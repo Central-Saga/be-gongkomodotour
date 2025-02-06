@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email', 150)->unique(); // set panjang karakter untuk 'email'
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255); // set panjang karakter untuk 'password'
+            $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->rememberToken();
             $table->timestamps();
         });
