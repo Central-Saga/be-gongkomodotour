@@ -2,9 +2,21 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Eloquent\RoleRepository;
+use App\Repositories\Eloquent\UserRepository;
+use App\Services\Implementations\RoleService;
+use App\Services\Implementations\UserService;
+use App\Services\Contracts\RoleServiceInterface;
+use App\Services\Contracts\UserServiceInterface;
+use Illuminate\Auth\Notifications\ResetPassword;
+use App\Repositories\Eloquent\PermissionRepository;
+use App\Services\Implementations\PermissionService;
+use App\Services\Contracts\PermissionServiceInterface;
+use App\Repositories\Contracts\RoleRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\PermissionRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
