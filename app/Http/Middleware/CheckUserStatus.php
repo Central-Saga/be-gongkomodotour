@@ -17,7 +17,7 @@ class CheckUserStatus
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->status !== 'Aktif') {
-            Auth::logout();
+            $request->user()->currentAccessToken()->delete();
             return response()->json(['message' => 'Akun anda tidak aktif.
             '], 403);
         }

@@ -29,6 +29,14 @@ class AuthenticatedSessionController extends Controller
         }
 
         $user = Auth::user();
+
+        if ($user->status !== 'Aktif') {
+            Auth::logout();
+            return response()->json([
+                'message' => 'Akun anda tidak aktif.',
+            ], 403);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
         $roles = $user->getRoleNames(); // Ambil roles
         $permissions = $user->getPermissionsViaRoles()->pluck('name');
