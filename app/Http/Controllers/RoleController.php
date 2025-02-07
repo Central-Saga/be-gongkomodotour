@@ -7,9 +7,22 @@ use App\Http\Requests\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use App\Services\Contracts\RoleServiceInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware the controller should use.
+     *
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            'permission:mengelola role',
+        ];
+    }
+
     /**
      * @var RoleServiceInterface $roleService
      */

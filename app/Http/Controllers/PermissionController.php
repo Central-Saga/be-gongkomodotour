@@ -8,10 +8,23 @@ use App\Http\Resources\PermissionResource;
 use App\Http\Requests\PermissionStoreRequest;
 use App\Http\Requests\PermissionUpdateRequest;
 use App\Services\Contracts\PermissionServiceInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Spatie\Permission\Models\Permission;
 
-class PermissionController extends Controller
+class PermissionController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware the controller should use.
+     *
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            'permission:mengelola permissions',
+        ];
+    }
+
     /**
      * @var PermissionServiceInterface $permissionService
      */
