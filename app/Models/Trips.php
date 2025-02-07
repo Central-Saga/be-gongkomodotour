@@ -32,6 +32,11 @@ class Trips extends Model
 
     public function flightSchedule()
     {
-        return $this->hasOne(FlightSchedule::class);
+        return $this->hasMany(FlightSchedule::class);
+    }
+
+    public function tripDuration()
+    {
+        return $this->hasMany(TripDuration::class);
     }
 }

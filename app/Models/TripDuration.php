@@ -5,20 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FlightSchedule extends Model
+class TripDuration extends Model
 {
-    /** @use HasFactory<\Database\Factories\FlightScheduleFactory> */
+    /** @use HasFactory<\Database\Factories\TripDurationFactory> */
     use HasFactory;
 
-    protected $table = 'flight_schedules';
+    protected $table = 'trip_durations';
 
     protected $fillable = [
         'trip_id',
-        'route',
-        'eta_time',
-        'eta_text',
-        'etd_time',
-        'etd_text',
+        'duration_label',
+        'duration_days',
+        'status',
     ];
 
     public function trip()
