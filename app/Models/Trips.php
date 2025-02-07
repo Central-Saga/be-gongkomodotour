@@ -24,4 +24,9 @@ class Trips extends Model
         'type',
         'status',
     ];
+
+    public function itineraries()
+    {
+        return $this->hasMany(Itineraries::class);
+    }
 }
