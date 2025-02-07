@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 50);
+            $table->text('include');
+            $table->text('exclude');
+            $table->text('note');
+            $table->string('duration');
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->string('meeting_point');
+            $table->enum('type', ['Open Trip', 'Private Trip']);
+            $table->enum('status', ['Aktif', 'Non Aktif']);
             $table->timestamps();
         });
     }

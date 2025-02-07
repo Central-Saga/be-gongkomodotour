@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Trips;
 
 class TripsSeeder extends Seeder
 {
@@ -12,6 +12,6 @@ class TripsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Trips::factory()->count(10)->create();
     }
 }
