@@ -29,4 +29,9 @@ class Trips extends Model
     {
         return $this->hasMany(Itineraries::class);
     }
+
+    public function flightSchedule()
+    {
+        return $this->hasOne(FlightSchedule::class);
+    }
 }
