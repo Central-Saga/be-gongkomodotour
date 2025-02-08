@@ -30,7 +30,7 @@ class CustomersFactory extends Factory
             'no_hp' => $this->faker->phoneNumber(),
             'nasionality' => $this->faker->country(),
             'region' => $this->faker->state(),
-            'status' => $this->faker->randomElement(array: ['Aktif', 'Non Aktif']),
+            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
             'created_at' => now(),
             'updated_at' => now(),
         ];

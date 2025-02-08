@@ -26,7 +26,7 @@ class HotelOccupanciesstoreRequest extends FormRequest
             'hotel_type' => 'required|string|max:50',
             'occupancy' => 'required|integer',
             'price' => 'required|numeric',
-            'status' => 'required|string|in:active,inactive',
+            'status' => 'required|string|in:Aktif, Non Aktif',
         ];
     }
 }

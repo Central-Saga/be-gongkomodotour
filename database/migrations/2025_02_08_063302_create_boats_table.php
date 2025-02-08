@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hoteloccupancies', function (Blueprint $table) {
+        Schema::create('boats', function (Blueprint $table) {
             $table->id();
-            $table->string('hotel_name');
-            $table->string('hotel_type');
-            $table->integer('occupancy');
-            $table->decimal('price', 20, 2);
-            $table->enum('status', allowed: ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
     }
@@ -27,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hoteloccupancies');
+        Schema::dropIfExists('boats');
     }
 };

@@ -29,7 +29,7 @@ class HotelOccupanciesFactory extends Factory
             'hotel_type' => $this->faker->randomElement(['Luxury', 'Budget', 'Boutique']),
             'occupancy' => $this->faker->numberBetween(1, 100),
             'price' => $this->faker->randomFloat(2, 50, 500),
-            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'status' => $this->faker->randomElement(array: ['Aktif', 'Non Aktif']),
             'created_at' => now(),
             'updated_at' => now(),
         ];

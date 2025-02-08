@@ -54,7 +54,7 @@ class HotelOccupanciesController extends Controller
     public function store(HotelOccupanciesStoreRequest $request)
     {
         $hotelOccupancy = $this->hotelOccupanciesService->createHotelOccupancies($request->validated());
-        return response()->json(new HotelOccupancyResource($hotelOccupancy), 201);
+        return response()->json(new HotelOccupancyResource($hotelOccupancy), status: 201);
     }
 
     /**
