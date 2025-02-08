@@ -25,7 +25,7 @@ class TripPricesFactory extends Factory
             'pax_min'          => $paxMin,
             'pax_max'          => $paxMax,
             'price_per_pax'    => $this->faker->randomFloat(2, 50, 500),
-            'status'           => $this->faker->randomElement(['Active', 'Inactive']),
+            'status'           => $this->faker->randomElement(['Aktif', 'Non Aktif']),
         ];
     }
 }
