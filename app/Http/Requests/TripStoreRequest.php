@@ -11,7 +11,7 @@ class TripStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class TripStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'          => 'required|string|max:255',
+            'include'       => 'required|string',
+            'exclude'       => 'required|string',
+            'note'          => 'nullable|string',
+            'duration'      => 'required|integer',
+            'start_time'    => 'required|date',
+            'end_time'      => 'required|date|after_or_equal:start_time',
+            'meeting_point' => 'required|string',
+            'type'          => 'required|string',
+            'status'        => 'required|in:Aktif,Non Aktif',
         ];
     }
 }
