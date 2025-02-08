@@ -25,5 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Customers
     Route::apiResource('customers', CustomersController::class);
     // Hotel Occupancies
-    Route::apiResource('hotel-occupancies', HotelOccupanciesController::class);
+    Route::apiResource('hoteloccupancies', HotelOccupanciesController::class);
 });

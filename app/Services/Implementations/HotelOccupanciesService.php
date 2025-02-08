@@ -2,6 +2,7 @@
 
 namespace App\Services\Implementations;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Services\Contracts\HotelOccupanciesServiceInterface;
 use App\Repositories\Contracts\HotelOccupanciesRepositoryInterface;
@@ -102,7 +103,7 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
      */
     public function createHotelOccupancies(array $data)
     {
-        $data['guard_name'] = 'web';
+        Log::info('Creating HotelOccupancies with data: ' . json_encode($data));
         $result = $this->hotelOccupanciesRepository->createHotelOccupancies($data);
         Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
         Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);
@@ -118,7 +119,6 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
      */
     public function updateHotelOccupancies($id, array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->hotelOccupanciesRepository->updateHotelOccupancies($id, $data);
         Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
         Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);

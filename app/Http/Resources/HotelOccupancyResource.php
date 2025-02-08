@@ -16,8 +16,10 @@ class HotelOccupancyResource extends JsonResource
     {
         return [
             'id'         => $this->id,
-            'hotel_id'   => $this->hotel_id,
+            'hotel_name' => $this->hotel_name,
+            'hotel_type' => $this->hotel_type,
             'occupancy'  => $this->occupancy,
+            'price'      => $this->price,
             'status'     => $this->status,
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,

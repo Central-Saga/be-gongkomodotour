@@ -7,6 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class HotelOccupancies extends Model
 {
-    /** @use HasFactory<\Database\Factories\HotelOccupanciesFactory> */
     use HasFactory;
+
+    // Jika nama tabel tidak sesuai dengan konvensi, aktifkan baris berikut:
+
+    protected $table = 'hoteloccupancies';
+
+    // Field yang dapat diisi melalui mass assignment
+    protected $fillable = [
+        'hotel_name',
+        'hotel_type',
+        'occupancy',
+        'price',
+        'status'
+    ];
 }

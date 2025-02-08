@@ -27,7 +27,7 @@ class CustomersStoreRequest extends FormRequest
             'no_hp' => 'required|string|max:15',
             'nasionality' => 'required|string|max:50',
             'region' => 'required|string|max:50',
-            'status' => 'required|string|in:active,inactive',
+            'status' => 'required|string|in:Aktif, Non Aktif',
         ];
     }
 }

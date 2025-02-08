@@ -27,7 +27,7 @@ class CustomersUpdateRequest extends FormRequest
             'no_hp' => 'sometimes|required|string|max:15',
             'nasionality' => 'sometimes|required|string|max:50',
             'region' => 'sometimes|required|string|max:50',
-            'status' => 'sometimes|required|string|in:active,inactive',
+            'status' => 'sometimes|required|string|in:Aktif, Non Aktif',
         ];
     }
 }
