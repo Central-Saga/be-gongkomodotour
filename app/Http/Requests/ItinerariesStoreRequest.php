@@ -22,7 +22,9 @@ class ItinerariesStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'trip_id' => 'required|exists:trips,id',
+            'day_number' => 'required|integer|min:1',
+            'activities' => 'required|string',
         ];
     }
 }

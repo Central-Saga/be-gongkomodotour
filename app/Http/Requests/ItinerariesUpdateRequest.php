@@ -11,7 +11,7 @@ class ItinerariesUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class ItinerariesUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'trip_id' => 'sometimes|exists:trips,id',
+            'day_number' => 'sometimes|integer|min:1',
+            'activities' => 'sometimes|string',
         ];
     }
 }
