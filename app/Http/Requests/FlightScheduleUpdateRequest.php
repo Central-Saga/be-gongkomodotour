@@ -11,7 +11,7 @@ class FlightScheduleUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class FlightScheduleUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'trip_id' => 'sometimes|required|exists:trips,id',
+            'route' => 'sometimes|required|string|max:255',
+            'eta_time' => 'sometimes|required|date',
+            'eta_text' => 'sometimes|required|string|max:255',
+            'etd_time' => 'sometimes|required|date',
+            'etd_text' => 'sometimes|required|string|max:255',
         ];
     }
 }

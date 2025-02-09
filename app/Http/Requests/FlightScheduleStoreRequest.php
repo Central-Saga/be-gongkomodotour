@@ -11,7 +11,7 @@ class FlightScheduleStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class FlightScheduleStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'trip_id' => 'required|exists:trips,id',
+            'route' => 'required|string|max:255',
+            'eta_time' => 'required|date',
+            'eta_text' => 'required|string|max:255',
+            'etd_time' => 'required|date',
+            'etd_text' => 'required|string|max:255',
         ];
     }
 }
