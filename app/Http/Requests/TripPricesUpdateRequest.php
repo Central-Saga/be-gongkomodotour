@@ -11,7 +11,7 @@ class TripPricesUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class TripPricesUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'trip_duration_id' => 'sometimes|exists:trip_durations,id',
+            'pax_min' => 'sometimes|integer|min:1',
+            'pax_max' => 'sometimes|integer|min:1',
+            'price_per_pax' => 'sometimes|numeric|min:0',
+            'status' => 'sometimes|in:Aktif,Non Aktif',
         ];
     }
 }

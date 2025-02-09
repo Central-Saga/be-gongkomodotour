@@ -11,7 +11,7 @@ class TripDurationUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class TripDurationUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'trip_id' => 'sometimes|exists:trips,id',
+            'duration_label' => 'sometimes|string|max:255',
+            'duration_days' => 'sometimes|integer|min:1',
+            'status' => 'sometimes|in:Aktif,Non Aktif',
         ];
     }
 }
