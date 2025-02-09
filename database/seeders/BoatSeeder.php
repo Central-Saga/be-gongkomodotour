@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Boat;
 use Illuminate\Database\Seeder;
 
 class BoatSeeder extends Seeder
@@ -10,8 +10,7 @@ class BoatSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        //
+    public function run() {
+        Boat::factory(5)->create();
     }
 }

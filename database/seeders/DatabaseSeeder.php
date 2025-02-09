@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CustomersSeeder::class,
             HotelOccupanciesSeeder::class,
+            BoatSeeder::class,
+            CabinSeeder::class,
         ]);
     }
 }
