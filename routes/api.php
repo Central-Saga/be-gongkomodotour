@@ -9,6 +9,8 @@ use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\HotelOccupanciesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BoatController;
+use App\Http\Controllers\CabinController;
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -26,4 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('customers', CustomersController::class);
     // Hotel Occupancies
     Route::apiResource('hoteloccupancies', HotelOccupanciesController::class);
+    // Boats
+    Route::apiResource('boat', BoatController::class);
+    // Cabins
+    Route::apiResource('cabin', CabinController::class);
 });

@@ -78,7 +78,7 @@ class CabinService implements CabinServiceInterface
     public function getActiveCabin()
     {
         return Cache::remember(self::CABIN_ACTIVE_CACHE_KEY, 3600, function () {
-            return $this->cabinRepository->getCabinByStatus('Aktif');
+            return $this->cabinRepository->getCabinByStatus('available');
         });
     }
 
@@ -90,7 +90,7 @@ class CabinService implements CabinServiceInterface
     public function getInactiveCabin()
     {
         return Cache::remember(self::CABIN_INACTIVE_CACHE_KEY, 3600, function () {
-            return $this->cabinRepository->getCabinByStatus('Non Aktif');
+            return $this->cabinRepository->getCabinByStatus('booked');
         });
     }
 
