@@ -32,6 +32,14 @@ use App\Repositories\Eloquent\CabinRepository;
 use App\Repositories\Contracts\CabinRepositoryInterface;
 use App\Services\Contracts\CabinServiceInterface;
 use App\Services\Implementations\CabinService;
+use App\Repositories\Eloquent\EmailBlastRepository;
+use App\Repositories\Contracts\EmailBlastRepositoryInterface;
+use App\Services\Contracts\EmailBlastServiceInterface;
+use App\Services\Implementations\EmailBlastService;
+use App\Repositories\Eloquent\EmailBlastRecipientRepository;
+use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
+use App\Services\Contracts\EmailBlastRecipientServiceInterface;
+use App\Services\Implementations\EmailBlastRecipientService;
 use App\Repositories\Contracts\PermissionRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -83,6 +91,19 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding CabinServiceInterface to CabinService
         $this->app->bind(CabinServiceInterface::class, CabinService::class);
+
+        // Binding EmailBlastRepositoryInterface to EmailBlastRepository
+        $this->app->bind(EmailBlastRepositoryInterface::class, EmailBlastRepository::class);
+
+        // Binding EmailBlastServiceInterface to EmailBlastService
+        $this->app->bind(EmailBlastServiceInterface::class, EmailBlastService::class);
+
+        // Binding EmailBlastRecipientRepositoryInterface to EmailBlastRecipientRepository
+        $this->app->bind(EmailBlastRecipientRepositoryInterface::class, EmailBlastRecipientRepository::class);
+
+        // Binding EmailBlastRecipientServiceInterface to EmailBlastRecipientService
+        $this->app->bind(EmailBlastRecipientServiceInterface::class, EmailBlastRecipientService::class);
+        
 
     }
 

@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BoatController;
 use App\Http\Controllers\CabinController;
+use App\Http\Controllers\EmailBlastController;
+use App\Http\Controllers\EmailBlastRecipientController;
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -32,4 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('boat', BoatController::class);
     // Cabins
     Route::apiResource('cabin', CabinController::class);
+
+    // EmailBlast
+    Route::apiResource('emailblast', EmailBlastController::class);
+    
+    // EmailBlastRecipient
+    Route::apiResource('emailblastrecipient', EmailBlastRecipientController::class);
+
+
 });
