@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             ItinerariesSeeder::class,
             TripDurationSeeder::class,
             TripPricesSeeder::class,
-
+            FlightScheduleSeeder::class,
         ]);
     }
 }

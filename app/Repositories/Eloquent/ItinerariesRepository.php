@@ -16,15 +16,15 @@ class ItinerariesRepository implements ItinerariesRepositoryInterface
     /**
      * Konstruktor ItinerariesRepository.
      *
-     * @param Itinerariess $itineraries
+     * @param Itineraries $itineraries
      */
-    public function __construct(Itinerariess $itineraries)
+    public function __construct(Itineraries $itineraries)
     {
         $this->itineraries = $itineraries;
     }
 
     /**
-     * Mengambil semua itinerariess.
+     * Mengambil semua itineraries.
      *
      * @return mixed
      */

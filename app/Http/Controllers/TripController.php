@@ -21,7 +21,7 @@ class TripController extends Controller implements HasMiddleware
      */
     public static function middleware()
     {
-        return ['permission:mengelola trip'];
+        return ['permission:mengelola trips'];
     }
 
     /**

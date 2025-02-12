@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\TripDurations;
+use App\Models\TripDuration;
 use App\Repositories\Contracts\TripDurationRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 
@@ -16,9 +16,9 @@ class TripDurationRepository implements TripDurationRepositoryInterface
     /**
      * Konstruktor TripDurationRepository.
      *
-     * @param TripDurations $tripduration
+     * @param TripDuration $tripduration
      */
-    public function __construct(TripDurations $tripduration)
+    public function __construct(TripDuration $tripduration)
     {
         $this->tripduration = $tripduration;
     }

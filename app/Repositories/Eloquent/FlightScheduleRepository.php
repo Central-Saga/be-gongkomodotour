@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\FlightSchedules;
+use App\Models\FlightSchedule;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 
@@ -16,9 +16,9 @@ class FlightScheduleRepository implements FlightScheduleRepositoryInterface
     /**
      * Konstruktor FlightScheduleRepository.
      *
-     * @param FlightSchedules $flightschedule
+     * @param FlightSchedule $flightschedule
      */
-    public function __construct(FlightSchedules $flightschedule)
+    public function __construct(FlightSchedule $flightschedule)
     {
         $this->flightschedule = $flightschedule;
     }
