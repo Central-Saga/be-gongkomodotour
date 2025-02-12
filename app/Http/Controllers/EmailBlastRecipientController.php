@@ -8,12 +8,11 @@ use App\Http\Resources\EmailBlastRecipientResource;
 use App\Http\Requests\EmailBlastRecipientStoreRequest;
 use App\Http\Requests\EmailBlastRecipientUpdateRequest;
 use App\Services\Contracts\EmailBlastRecipientServiceInterface;
-use Spatie\EmailBlastRecipient\Models\EmailBlastRecipient;
 
 class EmailBlastRecipientController extends Controller
 {
     /**
-     * @var EmailBlastRecipientServiceInterface $emailblastRecipientService
+     * @var EmailBlastRecipientServiceInterface
      */
     protected $emailblastRecipientService;
 
@@ -31,17 +30,18 @@ class EmailBlastRecipientController extends Controller
     public function index(Request $request)
     {
         // Ambil parameter status dari query string
+        // Berikut: pending, sent, failed
         $status = $request->query('status');
 
         if ($status === null) {
             // Jika tidak ada query parameter, ambil semua emailBlastRecipient
             $emailBlastRecipient = $this->emailblastRecipientService->getAllEmailBlastRecipient();
-        } elseif ($status == 1) {
-            // Jika status = 1, ambil emailBlastRecipient dengan status aktif
-            $emailBlastRecipient = $this->emailblastRecipientService->getActiveEmailBlastRecipient();
-        } elseif ($status == 0) {
-            // Jika status = 0 ambil emailBlastRecipient dengan status tidak aktif
-            $emailBlastRecipient = $this->emailblastRecipientService->getInactiveEmailBlastRecipient();
+        } elseif (strtolower($status) === 1) {
+            $emailBlastRecipient = $this->emailblastRecipientService->getPendingEmailBlastRecipient();
+        } elseif (strtolower($status) === 0) {
+            $emailBlastRecipient = $this->emailblastRecipientService->getSentEmailBlastRecipient();
+        } elseif (strtolower($status) === 2) {
+            $emailBlastRecipient = $this->emailblastRecipientService->getFailedEmailBlastRecipient();
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
@@ -78,7 +78,6 @@ class EmailBlastRecipientController extends Controller
         if (!$emailBlastRecipient) {
             return response()->json(['message' => 'EmailBlastRecipient not found'], 404);
         }
-
         return new EmailBlastRecipientResource($emailBlastRecipient);
     }
 
@@ -88,21 +87,9 @@ class EmailBlastRecipientController extends Controller
     public function destroy(string $id)
     {
         $deleted = $this->emailblastRecipientService->deleteEmailBlastRecipient($id);
-
         if (!$deleted) {
             return response()->json(['message' => 'EmailBlastRecipient not found'], 404);
         }
-
         return response()->json(['message' => 'EmailBlastRecipient deleted successfully'], 200);
-    }
-
-    /**
-     * Get Active EmailBlastRecipient.
-     */
-    public function getActiveEmailBlastRecipient()
-    {
-        $emailBlastRecipient = $this->emailblastRecipientService->getActiveEmailBlastRecipient();
-        // $emailBlastRecipient = EmailBlastRecipient::where('status', 'Aktif')->get();
-        return EmailBlastRecipientResource::collection($emailBlastRecipient);
     }
 }

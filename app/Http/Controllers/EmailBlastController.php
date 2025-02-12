@@ -8,12 +8,11 @@ use App\Http\Resources\EmailBlastResource;
 use App\Http\Requests\EmailBlastStoreRequest;
 use App\Http\Requests\EmailBlastUpdateRequest;
 use App\Services\Contracts\EmailBlastServiceInterface;
-use Spatie\EmailBlast\Models\EmailBlast;
 
 class EmailBlastController extends Controller
 {
     /**
-     * @var EmailBlastServiceInterface $emailblastService
+     * @var EmailBlastServiceInterface
      */
     protected $emailblastService;
 
@@ -30,20 +29,26 @@ class EmailBlastController extends Controller
      */
     public function index(Request $request)
     {
-        // Ambil parameter status dari query string
+        // Ambil parameter status dari query string (contoh: draft, pending, scheduled, failed)
         $status = $request->query('status');
 
         if ($status === null) {
             // Jika tidak ada query parameter, ambil semua emailBlast
             $emailBlast = $this->emailblastService->getAllEmailBlast();
-        } elseif ($status == 1) {
-            // Jika status = 1, ambil emailBlast dengan status aktif
-            $emailBlast = $this->emailblastService->getActiveEmailBlast();
-        } elseif ($status == 0) {
-            // Jika status = 0 ambil emailBlast dengan status tidak aktif
-            $emailBlast = $this->emailblastService->getInactiveEmailBlast();
         } else {
-            return response()->json(['error' => 'Invalid status parameter'], 400);
+            // Bandingkan status secara case-insensitive
+            $status = strtolower($status);
+            if ($status === 1) {
+                $emailBlast = $this->emailblastService->getDraftEmailBlast();
+            } elseif ($status === 0) {
+                $emailBlast = $this->emailblastService->getPendingEmailBlast();
+            } elseif ($status === 2) {
+                $emailBlast = $this->emailblastService->getScheduledEmailBlast();
+            } elseif ($status === 3) {
+                $emailBlast = $this->emailblastService->getFailedEmailBlast();
+            } else {
+                return response()->json(['error' => 'Invalid status parameter'], 400);
+            }
         }
         return EmailBlastResource::collection($emailBlast);
     }
@@ -78,7 +83,6 @@ class EmailBlastController extends Controller
         if (!$emailBlast) {
             return response()->json(['message' => 'EmailBlast not found'], 404);
         }
-
         return new EmailBlastResource($emailBlast);
     }
 
@@ -88,21 +92,9 @@ class EmailBlastController extends Controller
     public function destroy(string $id)
     {
         $deleted = $this->emailblastService->deleteEmailBlast($id);
-
         if (!$deleted) {
             return response()->json(['message' => 'EmailBlast not found'], 404);
         }
-
         return response()->json(['message' => 'EmailBlast deleted successfully'], 200);
-    }
-
-    /**
-     * Get Active EmailBlast.
-     */
-    public function getActiveEmailBlast()
-    {
-        $emailBlast = $this->emailblastService->getActiveEmailBlast();
-        // $emailBlast = EmailBlast::where('status', 'Aktif')->get();
-        return EmailBlastResource::collection($emailBlast);
     }
 }

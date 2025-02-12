@@ -65,12 +65,19 @@ interface EmailBlastRecipientServiceInterface
      *
      * @return mixed
      */
-    public function getActiveEmailBlastRecipient();
+    public function getPendingEmailBlastRecipient();
 
     /**
      * Mengambil semua emailBlastRecipient yang tidak aktif.
      *
      * @return mixed
      */
-    public function getInactiveEmailBlastRecipient();
+    public function getSentEmailBlastRecipient();
+    
+    /**
+     * Mengambil semua emailBlastRecipient yang tidak aktif.
+     *
+     * @return mixed
+     */
+    public function getFailedEmailBlastRecipient();
 }

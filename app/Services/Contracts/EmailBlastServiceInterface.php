@@ -65,12 +65,26 @@ interface EmailBlastServiceInterface
      *
      * @return mixed
      */
-    public function getActiveEmailBlast();
+    public function getDraftEmailBlast();
 
     /**
-     * Mengambil semua emailBlast yang tidak aktif.
+     * Mengambil emailBlast dengan status pending.
      *
      * @return mixed
      */
-    public function getInactiveEmailBlast();
+    public function getPendingEmailBlast();
+
+    /**
+     * Mengambil emailBlast dengan status scheduled.
+     *
+     * @return mixed
+     */
+    public function getScheduledEmailBlast();
+
+    /**
+     * Mengambil emailBlast dengan status failed.
+     *
+     * @return mixed
+     */
+    public function getFailedEmailBlast();
 }

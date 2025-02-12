@@ -6,17 +6,17 @@ use Illuminate\Support\Facades\Cache;
 use App\Services\Contracts\EmailBlastRecipientServiceInterface;
 use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
 
-
 class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
 {
     protected $emailblastrecipientrepository;
 
     const EMAILBLASTRECIPIENT_ALL_CACHE_KEY = 'emailblastrecipient.all';
-    const EMAILBLASTRECIPIENT_ACTIVE_CACHE_KEY = 'emailblastrecipient.active';
-    const EMAILBLASTRECIPIENT_INACTIVE_CACHE_KEY = 'emailblastrecipient.inactive';
+    const EMAILBLAST_PENDING_CACHE_KEY       = 'emailblastrecipient.pending';
+    const EMAILBLAST_SENT_CACHE_KEY          = 'emailblastrecipient.sent';
+    const EMAILBLAST_FAILED_CACHE_KEY        = 'emailblastrecipient.failed';
 
     /**
-     * Konstruktor EmailBlastRecipientervice.
+     * Konstruktor EmailBlastRecipientService.
      *
      * @param EmailBlastRecipientRepositoryInterface $emailblastrecipientrepository
      */
@@ -49,52 +49,6 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
     }
 
     /**
-     * Mengambil emailBlastRecipient berdasarkan nama.
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function getEmailBlastRecipientByName($name)
-    {
-        return $this->emailblastrecipientrepository->getEmailBlastRecipientByName($name);
-    }
-
-    /**
-     * Mengambil emailBlastRecipient berdasarkan status.
-     *
-     * @param string $status
-     * @return mixed
-     */
-    public function getEmailBlastRecipientByStatus($status)
-    {
-        return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus($status);
-    }
-
-    /**
-     * Mengambil emailBlastRecipient dengan status aktif.
-     *
-     * @return mixed
-     */
-    public function getActiveEmailBlastRecipient()
-    {
-        return Cache::remember(self::EMAILBLASTRECIPIENT_ACTIVE_CACHE_KEY, 3600, function () {
-            return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Aktif');
-        });
-    }
-
-    /**
-     * Mengambil emailBlastRecipient dengan status tidak aktif.
-     *
-     * @return mixed
-     */
-    public function getInactiveEmailBlastRecipient()
-    {
-        return Cache::remember(self::EMAILBLASTRECIPIENT_INACTIVE_CACHE_KEY, 3600, function () {
-            return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Non Aktif');
-        });
-    }
-
-    /**
      * Membuat emailBlastRecipient baru.
      *
      * @param array $data
@@ -103,12 +57,18 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
     public function createEmailBlastRecipient(array $data)
     {
         $data['guard_name'] = 'web';
+        if (isset($data['status'])) {
+            // Menstandarisasi status dengan format Capitalized
+            $data['status'] = ucfirst(strtolower($data['status']));
+        }
         $result = $this->emailblastrecipientrepository->createEmailBlastRecipient($data);
         Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLASTRECIPIENT_ACTIVE_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
         return $result;
     }
-
+    
     /**
      * Memperbarui emailBlastRecipient berdasarkan ID.
      *
@@ -119,24 +79,88 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
     public function updateEmailBlastRecipient($id, array $data)
     {
         $data['guard_name'] = 'web';
+        if (isset($data['status'])) {
+            $data['status'] = ucfirst(strtolower($data['status']));
+        }
         $result = $this->emailblastrecipientrepository->updateEmailBlastRecipient($id, $data);
         Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLASTRECIPIENT_ACTIVE_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
         return $result;
     }
-
+    
     /**
      * Menghapus emailBlastRecipient berdasarkan ID.
      *
      * @param int $id
-     * @return bool
+     * @return mixed
      */
     public function deleteEmailBlastRecipient($id)
     {
         $result = $this->emailblastrecipientrepository->deleteEmailBlastRecipient($id);
         Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLASTRECIPIENT_ACTIVE_CACHE_KEY);
-
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
         return $result;
+    }
+    
+    /**
+     * Mengambil emailBlastRecipient berdasarkan nama.
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function getEmailBlastRecipientByName($name)
+    {
+        return $this->emailblastrecipientrepository->getEmailBlastRecipientByName($name);
+    }
+    
+    /**
+     * Mengambil emailBlastRecipient berdasarkan status.
+     *
+     * @param string $status
+     * @return mixed
+     */
+    public function getEmailBlastRecipientByStatus($status)
+    {
+        return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus($status);
+    }
+    
+    /**
+     * Mengambil emailBlastRecipient dengan status Pending.
+     *
+     * @return mixed
+     */
+    public function getPendingEmailBlastRecipient()
+    {
+        return Cache::remember(self::EMAILBLAST_PENDING_CACHE_KEY, 3600, function () {
+            return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Pending');
+        });
+    }
+    
+    /**
+     * Mengambil emailBlastRecipient dengan status Sent.
+     *
+     * @return mixed
+     */
+    public function getSentEmailBlastRecipient()
+    {
+        return Cache::remember(self::EMAILBLAST_SENT_CACHE_KEY, 3600, function () {
+            return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Sent');
+        });
+    }
+    
+    /**
+     * Mengambil emailBlastRecipient dengan status Failed.
+     *
+     * @return mixed
+     */
+    public function getFailedEmailBlastRecipient()
+    {
+        return Cache::remember(self::EMAILBLAST_FAILED_CACHE_KEY, 3600, function () {
+            return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Failed');
+        });
     }
 }
