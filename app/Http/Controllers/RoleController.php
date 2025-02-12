@@ -56,6 +56,11 @@ class RoleController extends Controller implements HasMiddleware
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
+
+        if (!$roles) {
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
+        }
+
         return RoleResource::collection($roles);
     }
 
@@ -65,6 +70,9 @@ class RoleController extends Controller implements HasMiddleware
     public function store(RoleStoreRequest $request)
     {
         $role = $this->roleService->createRole($request->all());
+        if (!$role) {
+            return response()->json(['message' => 'Gagal membuat role'], 400);
+        }
         return new RoleResource($role);
     }
 
@@ -75,7 +83,7 @@ class RoleController extends Controller implements HasMiddleware
     {
         $role = $this->roleService->getRoleById($id);
         if (!$role) {
-            return response()->json(['message' => 'Role not found.'], 404);
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
         }
         return new RoleResource($role);
     }
@@ -87,7 +95,7 @@ class RoleController extends Controller implements HasMiddleware
     {
         $role = $this->roleService->updateRole($id, $request->all());
         if (!$role) {
-            return response()->json(['message' => 'Role not found.'], 404);
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
         }
         return new RoleResource($role);
     }
@@ -100,9 +108,9 @@ class RoleController extends Controller implements HasMiddleware
         $deleted = $this->roleService->deleteRole($id);
 
         if (!$deleted) {
-            return response()->json(['message' => 'Role not found'], 404);
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
         }
 
-        return response()->json(['message' => 'Role deleted successfully'], 200);
+        return response()->json(['message' => 'Role berhasil dihapus'], 200);
     }
 }

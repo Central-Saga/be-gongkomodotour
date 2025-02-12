@@ -56,6 +56,11 @@ class UserController extends Controller implements HasMiddleware
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
+
+        if (!$users) {
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
+        }
+
         return UserResource::collection($users);
     }
 
@@ -65,6 +70,9 @@ class UserController extends Controller implements HasMiddleware
     public function store(UserStoreRequest $request)
     {
         $user = $this->userService->createUser($request->all());
+        if (!$user) {
+            return response()->json(['message' => 'Gagal membuat user'], 400);
+        }
         return new UserResource($user);
     }
 
@@ -75,7 +83,7 @@ class UserController extends Controller implements HasMiddleware
     {
         $user = $this->userService->getUserById($id);
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
         return new UserResource($user);
     }
@@ -87,7 +95,7 @@ class UserController extends Controller implements HasMiddleware
     {
         $user = $this->userService->updateUser($id, $request->all());
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
         return new UserResource($user);
     }
@@ -100,8 +108,8 @@ class UserController extends Controller implements HasMiddleware
         $deleted = $this->userService->deleteUser($id);
 
         if (!$deleted) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
-        return response()->json(['message' => 'User deleted successfully.']);
+        return response()->json(['message' => 'User berhasil dihapus']);
     }
 }

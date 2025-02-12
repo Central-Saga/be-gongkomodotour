@@ -58,6 +58,11 @@ class PermissionController extends Controller implements HasMiddleware
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
+
+        if (!$permissions) {
+            return response()->json(['message' => 'Permission tidak ditemukan'], 404);
+        }
+
         return PermissionResource::collection($permissions);
     }
 
@@ -67,6 +72,9 @@ class PermissionController extends Controller implements HasMiddleware
     public function store(PermissionStoreRequest $request)
     {
         $permission = $this->permissionService->createPermission($request->validated());
+        if (!$permission) {
+            return response()->json(['message' => 'Gagal membuat permission'], 400);
+        }
         return new PermissionResource($permission);
     }
 
@@ -77,7 +85,7 @@ class PermissionController extends Controller implements HasMiddleware
     {
         $permission = $this->permissionService->getPermissionById($id);
         if (!$permission) {
-            return response()->json(['message' => 'Permission not found'], 404);
+            return response()->json(['message' => 'Permission tidak ditemukan'], 404);
         }
         return new PermissionResource($permission);
     }
@@ -89,7 +97,7 @@ class PermissionController extends Controller implements HasMiddleware
     {
         $permission = $this->permissionService->updatePermission($id, $request->validated());
         if (!$permission) {
-            return response()->json(['message' => 'Permission not found'], 404);
+            return response()->json(['message' => 'Permission tidak ditemukan'], 404);
         }
 
         return new PermissionResource($permission);
@@ -103,10 +111,10 @@ class PermissionController extends Controller implements HasMiddleware
         $deleted = $this->permissionService->deletePermission($id);
 
         if (!$deleted) {
-            return response()->json(['message' => 'Permission not found'], 404);
+            return response()->json(['message' => 'Permission tidak ditemukan'], 404);
         }
 
-        return response()->json(['message' => 'Permission deleted successfully'], 200);
+        return response()->json(['message' => 'Permission berhasil dihapus'], 200);
     }
 
     /**
@@ -115,7 +123,9 @@ class PermissionController extends Controller implements HasMiddleware
     public function getActivePermissions()
     {
         $permissions = $this->permissionService->getActivePermissions();
-        // $permissions = Permission::where('status', 'Aktif')->get();
+        if (!$permissions) {
+            return response()->json(['message' => 'Permission tidak ditemukan'], 404);
+        }
         return PermissionResource::collection($permissions);
     }
 }
