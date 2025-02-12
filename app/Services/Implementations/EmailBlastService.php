@@ -12,7 +12,7 @@ class EmailBlastService implements EmailBlastServiceInterface
 
     const EMAILBLAST_ALL_CACHE_KEY        = 'emailblast.all';
     const EMAILBLAST_DRAFT_CACHE_KEY      = 'emailblast.draft';
-    const EMAILBLAST_PENDING_CACHE_KEY    = 'emailblast.pending';
+    const EMAILBLAST_SENT_CACHE_KEY    = 'emailblast.sent';
     const EMAILBLAST_SCHEDULED_CACHE_KEY  = 'emailblast.scheduled';
     const EMAILBLAST_FAILED_CACHE_KEY     = 'emailblast.failed';
 
@@ -84,14 +84,14 @@ class EmailBlastService implements EmailBlastServiceInterface
     }
 
     /**
-     * Mengambil emailBlast dengan status pending.
+     * Mengambil emailBlast dengan status sent.
      *
      * @return mixed
      */
-    public function getPendingEmailBlast()
+    public function getSentEmailBlast()
     {
-        return Cache::remember(self::EMAILBLAST_PENDING_CACHE_KEY, 3600, function () {
-            return $this->emailblastrepository->getEmailBlastByStatus('pending');
+        return Cache::remember(self::EMAILBLAST_SENT_CACHE_KEY, 3600, function () {
+            return $this->emailblastrepository->getEmailBlastByStatus(status: 'sent');
         });
     }
 
@@ -131,7 +131,7 @@ class EmailBlastService implements EmailBlastServiceInterface
         $result = $this->emailblastrepository->createEmailBlast($data);
         Cache::forget(self::EMAILBLAST_ALL_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_DRAFT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
         return $result;
@@ -150,7 +150,7 @@ class EmailBlastService implements EmailBlastServiceInterface
         $result = $this->emailblastrepository->updateEmailBlast($id, $data);
         Cache::forget(self::EMAILBLAST_ALL_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_DRAFT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
         return $result;
@@ -167,7 +167,7 @@ class EmailBlastService implements EmailBlastServiceInterface
         $result = $this->emailblastrepository->deleteEmailBlast($id);
         Cache::forget(self::EMAILBLAST_ALL_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_DRAFT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
         return $result;

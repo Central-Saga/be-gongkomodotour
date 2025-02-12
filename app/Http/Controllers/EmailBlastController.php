@@ -41,7 +41,7 @@ class EmailBlastController extends Controller
             if ($status === 1) {
                 $emailBlast = $this->emailblastService->getDraftEmailBlast();
             } elseif ($status === 0) {
-                $emailBlast = $this->emailblastService->getPendingEmailBlast();
+                $emailBlast = $this->emailblastService->getSentEmailBlast();
             } elseif ($status === 2) {
                 $emailBlast = $this->emailblastService->getScheduledEmailBlast();
             } elseif ($status === 3) {

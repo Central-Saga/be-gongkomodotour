@@ -72,7 +72,7 @@ interface EmailBlastServiceInterface
      *
      * @return mixed
      */
-    public function getPendingEmailBlast();
+    public function getSentEmailBlast();
 
     /**
      * Mengambil emailBlast dengan status scheduled.
