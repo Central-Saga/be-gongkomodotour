@@ -20,7 +20,7 @@ class EmailBlastFactory extends Factory
         return [
             'subject'        => $this->faker->sentence,
             'body'           => $this->faker->paragraph,
-            'recipient_type' => $this->faker->randomElement(['all', 'subscribers']),
+            'recipient_type' => $this->faker->randomElement(['all_customers', 'subscribers', 'spesific_list']),
             'status'         => $this->faker->randomElement(['draft', 'scheduled', 'sent', 'failed']),
             'scheduled_at'   => $this->faker->optional()->dateTime(),
             'sent_at'        => $this->faker->optional()->dateTime(),

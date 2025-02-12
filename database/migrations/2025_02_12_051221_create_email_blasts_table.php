@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('subject');
             $table->text('body');
-            $table->string('recipient_type');
+            $table->enum('recipient_type', ['all_customers', 'subscribers', 'spesific_list']);
             $table->enum('status', ['draft', 'scheduled', 'sent', 'failed'])->default('draft');
             $table->dateTime('scheduled_at')->nullable();
             $table->dateTime('sent_at')->nullable();

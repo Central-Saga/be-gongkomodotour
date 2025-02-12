@@ -36,10 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('cabin', CabinController::class);
 
     // EmailBlast
-    Route::apiResource('emailblast', EmailBlastController::class);
+    Route::apiResource('email_blast', EmailBlastController::class);
     
     // EmailBlastRecipient
-    Route::apiResource('emailblastrecipient', EmailBlastRecipientController::class);
+    Route::apiResource('email_blast_recipient', EmailBlastRecipientController::class);
 
 
 });
