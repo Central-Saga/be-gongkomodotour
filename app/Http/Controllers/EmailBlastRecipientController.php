@@ -36,14 +36,17 @@ class EmailBlastRecipientController extends Controller
         if ($status === null) {
             // Jika tidak ada query parameter, ambil semua emailBlastRecipient
             $emailBlastRecipient = $this->emailblastRecipientService->getAllEmailBlastRecipient();
-        } elseif (strtolower($status) === 1) {
-            $emailBlastRecipient = $this->emailblastRecipientService->getPendingEmailBlastRecipient();
-        } elseif (strtolower($status) === 0) {
-            $emailBlastRecipient = $this->emailblastRecipientService->getSentEmailBlastRecipient();
-        } elseif (strtolower($status) === 2) {
-            $emailBlastRecipient = $this->emailblastRecipientService->getFailedEmailBlastRecipient();
         } else {
-            return response()->json(['error' => 'Invalid status parameter'], 400);
+            $status = (int) $request->query('status');;
+            if ($status === 0) {
+                $emailBlastRecipient = $this->emailblastRecipientService->getPendingEmailBlastRecipient();
+            } elseif ($status === 1) {
+                $emailBlastRecipient = $this->emailblastRecipientService->getSentEmailBlastRecipient();
+            } elseif ($status === 2) {
+                $emailBlastRecipient = $this->emailblastRecipientService->getFailedEmailBlastRecipient();
+            } else {
+                return response()->json(['error' => 'Invalid status parameter'], 400);
+            }
         }
         return EmailBlastRecipientResource::collection($emailBlastRecipient);
     }

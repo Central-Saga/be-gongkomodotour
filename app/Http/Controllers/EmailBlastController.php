@@ -37,10 +37,10 @@ class EmailBlastController extends Controller
             $emailBlast = $this->emailblastService->getAllEmailBlast();
         } else {
             // Bandingkan status secara case-insensitive
-            $status = strtolower($status);
-            if ($status === 1) {
+            $status = (int) $request->query('status');
+            if ($status === 0) {
                 $emailBlast = $this->emailblastService->getDraftEmailBlast();
-            } elseif ($status === 0) {
+            } elseif ($status === 1) {
                 $emailBlast = $this->emailblastService->getSentEmailBlast();
             } elseif ($status === 2) {
                 $emailBlast = $this->emailblastService->getScheduledEmailBlast();
