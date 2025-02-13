@@ -16,7 +16,7 @@ class SubscriberFactory extends Factory
             'customer_id' => Customers::factory(),
             'email' => $this->faker->unique()->safeEmail,
             'name' => $this->faker->name,
-            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
         ];
     }
 }
