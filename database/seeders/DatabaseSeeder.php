@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             CabinSeeder::class,
             EmailBlastSeeder::class,
             EmailBlastRecipientSeeder::class,
+            BlogSeeder::class,
+            SubscriberSeeder::class,
         ]);
     }
 }

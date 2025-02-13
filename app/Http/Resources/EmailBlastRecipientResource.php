@@ -19,7 +19,8 @@ class EmailBlastRecipientResource extends JsonResource
             'email_blast_id'   => $this->email_blast_id,
             'recipient_email'  => $this->recipient_email,
             'status'           => $this->status,
-            'created_at'       => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'email_blast'             => new EmailBlastResource($this->whenLoaded('boat')),
+            'created_at'       => $this->created_at ?$this->created_at->toDateTimeString() : null,
             'updated_at'       => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
         ];
     }
