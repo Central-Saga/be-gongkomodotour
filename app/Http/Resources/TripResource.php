@@ -28,10 +28,10 @@ class TripResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            
+
             // Relasi
-            'itineraries' => $this->whenLoaded('itineraries', function() {
-                return $this->itineraries->map(function($itinerary) {
+            'itineraries' => $this->whenLoaded('itineraries', function () {
+                return $this->itineraries->map(function ($itinerary) {
                     return [
                         'id' => $itinerary->id,
                         'day_number' => $itinerary->day_number,
@@ -39,9 +39,9 @@ class TripResource extends JsonResource
                     ];
                 });
             }),
-            
-            'flight_schedules' => $this->whenLoaded('flightSchedule', function() {
-                return $this->flightSchedule->map(function($schedule) {
+
+            'flight_schedules' => $this->whenLoaded('flightSchedule', function () {
+                return $this->flightSchedule->map(function ($schedule) {
                     return [
                         'id' => $schedule->id,
                         'route' => $schedule->route,
@@ -52,25 +52,23 @@ class TripResource extends JsonResource
                     ];
                 });
             }),
-            
-            'trip_durations' => $this->whenLoaded('tripDuration', function() {
-                return $this->tripDuration->map(function($duration) {
+
+            'trip_durations' => $this->whenLoaded('tripDuration', function () {
+                return $this->tripDuration->map(function ($duration) {
                     return [
                         'id' => $duration->id,
                         'duration_label' => $duration->duration_label,
                         'duration_days' => $duration->duration_days,
                         'status' => $duration->status,
-                        'prices' => $duration->whenLoaded('prices', function() use ($duration) {
-                            return $duration->prices->map(function($price) {
-                                return [
-                                    'id' => $price->id,
-                                    'pax_min' => $price->pax_min,
-                                    'pax_max' => $price->pax_max,
-                                    'price_per_pax' => $price->price_per_pax,
-                                    'status' => $price->status,
-                                ];
-                            });
-                        }),
+                        'prices' => $duration->relationLoaded('prices') ? $duration->prices->map(function ($price) {
+                            return [
+                                'id' => $price->id,
+                                'pax_min' => $price->pax_min,
+                                'pax_max' => $price->pax_max,
+                                'price_per_pax' => $price->price_per_pax,
+                                'status' => $price->status,
+                            ];
+                        }) : null
                     ];
                 });
             }),

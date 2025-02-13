@@ -22,6 +22,6 @@ class TripPrices extends Model
 
     public function tripDuration()
     {
-        return $this->belongsTo(TripDuration::class);
+        return $this->belongsTo(TripDuration::class, 'trip_duration_id', 'id');
     }
 }

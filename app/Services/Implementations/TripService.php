@@ -159,12 +159,15 @@ class TripService implements TripServiceInterface
                 foreach ($data['trip_durations'] as $duration) {
                     $duration['trip_id'] = $trip->id;
                     $tripDuration = $this->tripDurationRepository->createTripDuration($duration);
+                    if (!$tripDuration || !isset($tripDuration->id)) {
+                        throw new \Exception("Trip duration creation failed: repository returned invalid trip duration object.");
+                    }
 
                     // Buat trip prices untuk setiap duration jika ada
                     if (isset($duration['prices'])) {
                         foreach ($duration['prices'] as $price) {
                             $price['trip_duration_id'] = $tripDuration->id;
-                            $this->tripPricesRepository->createTripPrice($price);
+                            $this->tripPricesRepository->createTripPrices($price);
                         }
                     }
                 }
@@ -209,11 +212,14 @@ class TripService implements TripServiceInterface
                 'status'
             ]);
             $trip = $this->tripRepository->updateTrip($id, $tripData);
+            if (!$trip || !isset($trip->id)) {
+                throw new \Exception("Trip update failed: repository returned invalid trip object.");
+            }
 
             // Update itineraries jika ada
             if (isset($data['itineraries'])) {
                 // Hapus itineraries lama
-                $this->itinerariesRepository->deleteItinerariesByTripId($id);
+                $this->itinerariesRepository->deleteItineraries($id);
 
                 // Buat itineraries baru
                 foreach ($data['itineraries'] as $itinerary) {
@@ -225,7 +231,7 @@ class TripService implements TripServiceInterface
             // Update flight schedules jika ada
             if (isset($data['flight_schedules'])) {
                 // Hapus flight schedules lama
-                $this->flightScheduleRepository->deleteFlightScheduleByTripId($id);
+                $this->flightScheduleRepository->deleteFlightSchedule($id);
 
                 // Buat flight schedules baru
                 foreach ($data['flight_schedules'] as $schedule) {
@@ -237,12 +243,15 @@ class TripService implements TripServiceInterface
             // Update trip durations jika ada
             if (isset($data['trip_durations'])) {
                 // Hapus trip durations lama
-                $this->tripDurationRepository->deleteTripDurationByTripId($id);
+                $this->tripDurationRepository->deleteTripDuration($id);
 
                 // Buat trip durations baru
                 foreach ($data['trip_durations'] as $duration) {
                     $duration['trip_id'] = $trip->id;
                     $tripDuration = $this->tripDurationRepository->createTripDuration($duration);
+                    if (!$tripDuration || !isset($tripDuration->id)) {
+                        throw new \Exception("Trip duration update failed: repository returned invalid trip duration object.");
+                    }
 
                     // Update trip prices jika ada
                     if (isset($duration['prices'])) {
@@ -279,9 +288,9 @@ class TripService implements TripServiceInterface
             DB::beginTransaction();
 
             // Delete related data first
-            $this->itinerariesRepository->deleteItinerariesByTripId($id);
-            $this->flightScheduleRepository->deleteFlightScheduleByTripId($id);
-            $this->tripDurationRepository->deleteTripDurationByTripId($id);
+            $this->itinerariesRepository->deleteItineraries($id);
+            $this->flightScheduleRepository->deleteFlightSchedule($id);
+            $this->tripDurationRepository->deleteTripDuration($id);
 
             // Delete the trip
             $result = $this->tripRepository->deleteTrip($id);

@@ -23,4 +23,9 @@ class TripDuration extends Model
     {
         return $this->belongsTo(Trips::class);
     }
+
+    public function tripPrices()
+    {
+        return $this->hasMany(TripPrices::class, 'trip_duration_id', 'id');
+    }
 }

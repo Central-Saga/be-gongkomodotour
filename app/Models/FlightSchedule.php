@@ -23,6 +23,6 @@ class FlightSchedule extends Model
 
     public function trip()
     {
-        return $this->belongsTo(Trips::class);
+        return $this->belongsTo(Trips::class, 'trip_id', 'id');
     }
 }

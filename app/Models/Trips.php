@@ -27,16 +27,16 @@ class Trips extends Model
 
     public function itineraries()
     {
-        return $this->hasMany(Itineraries::class);
+        return $this->hasMany(Itineraries::class, 'trip_id', 'id');
     }
 
     public function flightSchedule()
     {
-        return $this->hasMany(FlightSchedule::class);
+        return $this->hasMany(FlightSchedule::class, 'trip_id', 'id');
     }
 
     public function tripDuration()
     {
-        return $this->hasMany(TripDuration::class);
+        return $this->hasMany(TripDuration::class, 'trip_id', 'id');
     }
 }
