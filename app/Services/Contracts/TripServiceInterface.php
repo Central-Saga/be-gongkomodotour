@@ -40,6 +40,20 @@ interface TripServiceInterface
      *
      * @return mixed
      */
+    public function getOpenTrips();
+
+    /**
+     * Mengambil semua trips yang tidak aktif.
+     *
+     * @return mixed
+     */
+    public function getPrivateTrips();
+
+    /**
+     * Mengambil semua trips yang aktif.
+     *
+     * @return mixed
+     */
     public function getActiveTrips();
 
     /**

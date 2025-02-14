@@ -2,6 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Trips;
+use App\Models\Itineraries;
+use App\Models\FlightSchedule;
+use App\Models\TripDuration;
+use App\Models\TripPrices;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TripsFactory extends Factory
 {
+    protected $model = Trips::class;
+
     /**
      * Define the model's default state.
      *
@@ -28,5 +35,30 @@ class TripsFactory extends Factory
             'type' => $this->faker->randomElement(['Open Trip', 'Private Trip']),
             'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Trips $trip) {
+            // Membuat 3 itineraries untuk trip tersebut
+            Itineraries::factory()->count(3)->create([
+                'trip_id' => $trip->id,
+            ]);
+
+            // Membuat 2 flight schedule untuk trip tersebut
+            FlightSchedule::factory()->count(2)->create([
+                'trip_id' => $trip->id,
+            ]);
+
+            // Membuat 2 trip durations untuk trip tersebut
+            // dan untuk tiap trip duration, buat 2 trip prices
+            TripDuration::factory()->count(2)->create([
+                'trip_id' => $trip->id,
+            ])->each(function ($tripDuration) {
+                TripPrices::factory()->count(2)->create([
+                    'trip_duration_id' => $tripDuration->id,
+                ]);
+            });
+        });
     }
 }

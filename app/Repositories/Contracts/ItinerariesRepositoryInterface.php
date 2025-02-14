@@ -59,4 +59,12 @@ interface ItinerariesRepositoryInterface
      * @return mixed
      */
     public function deleteItineraries($id);
+
+    /**
+     * Menghapus itineraries berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteItinerariesByTripId($trip_id);
 }

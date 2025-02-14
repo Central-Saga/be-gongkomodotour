@@ -26,6 +26,8 @@ class TripService implements TripServiceInterface
     const TRIPS_ACTIVE_CACHE_KEY = 'trips.active';
     const TRIPS_INACTIVE_CACHE_KEY = 'trips.inactive';
     const TRIP_DETAIL_CACHE_KEY = 'trip.detail.';
+    const TRIP_OPEN_CACHE_KEY = 'trip.open';
+    const TRIP_PRIVATE_CACHE_KEY = 'trip.private';
 
     /**
      * Konstruktor TripService.
@@ -86,6 +88,30 @@ class TripService implements TripServiceInterface
     public function getTripByStatus($status)
     {
         return $this->tripRepository->getTripByStatus($status);
+    }
+
+    /**
+     * Mengambil trips dengan status aktif.
+     *
+     * @return mixed
+     */
+    public function getOpenTrips()
+    {
+        return Cache::remember(self::TRIP_OPEN_CACHE_KEY, 3600, function () {
+            return $this->tripRepository->getTripByType('Open Trip');
+        });
+    }
+
+    /**
+     * Mengambil trips dengan status tidak aktif.
+     *
+     * @return mixed
+     */
+    public function getPrivateTrips()
+    {
+        return Cache::remember(self::TRIP_PRIVATE_CACHE_KEY, 3600, function () {
+            return $this->tripRepository->getTripByType('Private Trip');
+        });
     }
 
     /**
@@ -198,7 +224,7 @@ class TripService implements TripServiceInterface
         try {
             DB::beginTransaction();
 
-            // Update trip utama
+            // Update data trip utama secara parsial (salah satu field yang dikirim akan diupdate)
             $tripData = Arr::only($data, [
                 'name',
                 'include',
@@ -216,61 +242,73 @@ class TripService implements TripServiceInterface
                 throw new \Exception("Trip update failed: repository returned invalid trip object.");
             }
 
-            // Update itineraries jika ada
+            // Update itineraries secara parsial
             if (isset($data['itineraries'])) {
-                // Hapus itineraries lama
-                $this->itinerariesRepository->deleteItineraries($id);
-
-                // Buat itineraries baru
-                foreach ($data['itineraries'] as $itinerary) {
-                    $itinerary['trip_id'] = $trip->id;
-                    $this->itinerariesRepository->createItineraries($itinerary);
+                foreach ($data['itineraries'] as $itineraryData) {
+                    $itineraryData['trip_id'] = $trip->id;
+                    if (isset($itineraryData['id'])) {
+                        // Jika id sudah ada, update itinerary yang sudah ada
+                        $this->itinerariesRepository->updateItineraries($itineraryData['id'], $itineraryData);
+                    } else {
+                        // Jika tidak ada, buat itinerary baru
+                        $this->itinerariesRepository->createItineraries($itineraryData);
+                    }
                 }
+                // Opsional: Hapus itinerary yang tidak termasuk payload update jika diperlukan
             }
 
-            // Update flight schedules jika ada
+            // Update flight schedules secara parsial
             if (isset($data['flight_schedules'])) {
-                // Hapus flight schedules lama
-                $this->flightScheduleRepository->deleteFlightSchedule($id);
-
-                // Buat flight schedules baru
-                foreach ($data['flight_schedules'] as $schedule) {
-                    $schedule['trip_id'] = $trip->id;
-                    $this->flightScheduleRepository->createFlightSchedule($schedule);
+                foreach ($data['flight_schedules'] as $scheduleData) {
+                    $scheduleData['trip_id'] = $trip->id;
+                    if (isset($scheduleData['id'])) {
+                        $this->flightScheduleRepository->updateFlightSchedule($scheduleData['id'], $scheduleData);
+                    } else {
+                        $this->flightScheduleRepository->createFlightSchedule($scheduleData);
+                    }
                 }
+                // Opsional: Hapus flight schedules yang tidak termasuk payload update jika diperlukan
             }
 
-            // Update trip durations jika ada
+            // Update trip durations beserta trip prices secara parsial
             if (isset($data['trip_durations'])) {
-                // Hapus trip durations lama
-                $this->tripDurationRepository->deleteTripDuration($id);
+                foreach ($data['trip_durations'] as $durationData) {
+                    $durationData['trip_id'] = $trip->id;
+                    if (isset($durationData['id'])) {
+                        // Update trip duration yang sudah ada
+                        $tripDuration = $this->tripDurationRepository->updateTripDuration($durationData['id'], $durationData);
+                    } else {
+                        // Buat trip duration baru
+                        $tripDuration = $this->tripDurationRepository->createTripDuration($durationData);
+                    }
 
-                // Buat trip durations baru
-                foreach ($data['trip_durations'] as $duration) {
-                    $duration['trip_id'] = $trip->id;
-                    $tripDuration = $this->tripDurationRepository->createTripDuration($duration);
                     if (!$tripDuration || !isset($tripDuration->id)) {
                         throw new \Exception("Trip duration update failed: repository returned invalid trip duration object.");
                     }
 
-                    // Update trip prices jika ada
-                    if (isset($duration['prices'])) {
-                        foreach ($duration['prices'] as $price) {
-                            $price['trip_duration_id'] = $tripDuration->id;
-                            $this->tripPricesRepository->createTripPrices($price);
+                    // Update trip prices untuk masing-masing trip duration secara parsial
+                    if (isset($durationData['prices'])) {
+                        foreach ($durationData['prices'] as $priceData) {
+                            $priceData['trip_duration_id'] = $tripDuration->id;
+                            if (isset($priceData['id'])) {
+                                $this->tripPricesRepository->updateTripPrices($priceData['id'], $priceData);
+                            } else {
+                                $this->tripPricesRepository->createTripPrices($priceData);
+                            }
                         }
+                        // Opsional: Hapus trip prices yang tidak ada pada payload update jika diperlukan
                     }
                 }
             }
 
             DB::commit();
 
-            // Clear all related caches
+            // Clear cache yang terkait
             $this->clearTripCaches($id);
 
             return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices']);
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             Log::error('Error updating trip: ' . $e->getMessage());
             throw $e;
         }
@@ -319,6 +357,8 @@ class TripService implements TripServiceInterface
         Cache::forget(self::TRIPS_ALL_CACHE_KEY);
         Cache::forget(self::TRIPS_ACTIVE_CACHE_KEY);
         Cache::forget(self::TRIPS_INACTIVE_CACHE_KEY);
+        Cache::forget(self::TRIP_OPEN_CACHE_KEY);
+        Cache::forget(self::TRIP_PRIVATE_CACHE_KEY);
 
         if ($tripId) {
             Cache::forget(self::TRIP_DETAIL_CACHE_KEY . $tripId);

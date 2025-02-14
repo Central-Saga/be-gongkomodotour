@@ -39,24 +39,31 @@ class TripController extends Controller implements HasMiddleware
     {
         // Ambil parameter status dari query string
         $status = $request->query('status');
+        $type = $request->query('type');
 
-        if ($status === null) {
-            // Jika tidak ada query parameter, ambil semua trip
-            $trips = $this->tripService->getAllTrips();
-        } elseif ($status == 1) {
-            // Jika status = 1, ambil trip dengan status aktif
-            $trips = $this->tripService->getActiveTrips();
-        } elseif ($status == 0) {
-            // Jika status = 0, ambil trip dengan status tidak aktif
-            $trips = $this->tripService->getInactiveTrips();
+        if ($type) {
+            if (strtolower($type) === 'open') {
+                $trips = $this->tripService->getOpenTrips();
+            } elseif (strtolower($type) === 'private') {
+                $trips = $this->tripService->getPrivateTrips();
+            } else {
+                return response()->json(['message' => 'Invalid type parameter'], 400);
+            }
+        } elseif ($status) {
+            if (strtolower($status) == 1) {
+                $trips = $this->tripService->getActiveTrips();
+            } elseif (strtolower($status) == 0) {
+                $trips = $this->tripService->getInactiveTrips();
+            } else {
+                return response()->json(['message' => 'Invalid status parameter'], 400);
+            }
         } else {
-            return response()->json(['error' => 'Invalid status parameter'], 400);
+            $trips = $this->tripService->getAllTrips();
         }
 
         if (!$trips) {
             return response()->json(['message' => 'Trip tidak ditemukan'], 404);
         }
-
         return TripResource::collection($trips);
     }
 

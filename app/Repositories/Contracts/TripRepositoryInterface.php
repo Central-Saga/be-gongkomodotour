@@ -36,6 +36,14 @@ interface TripRepositoryInterface
     public function getTripByStatus($status);
 
     /**
+     * Mengambil trip berdasarkan type.
+     *
+     * @param string $type
+     * @return mixed
+     */
+    public function getTripByType($type);
+
+    /**
      * Membuat trip baru.
      *
      * @param array $data

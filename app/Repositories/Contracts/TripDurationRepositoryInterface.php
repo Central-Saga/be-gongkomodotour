@@ -59,4 +59,12 @@ interface TripDurationRepositoryInterface
      * @return mixed
      */
     public function deleteTripDuration($id);
+
+    /**
+     * Menghapus tripduration berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteTripDurationByTripId($trip_id);
 }

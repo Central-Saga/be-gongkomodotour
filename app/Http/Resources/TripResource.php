@@ -31,46 +31,19 @@ class TripResource extends JsonResource
 
             // Relasi
             'itineraries' => $this->whenLoaded('itineraries', function () {
-                return $this->itineraries->map(function ($itinerary) {
-                    return [
-                        'id' => $itinerary->id,
-                        'day_number' => $itinerary->day_number,
-                        'activities' => $itinerary->activities,
-                    ];
-                });
+                return ItinerariesResource::collection($this->itineraries);
             }),
 
             'flight_schedules' => $this->whenLoaded('flightSchedule', function () {
-                return $this->flightSchedule->map(function ($schedule) {
-                    return [
-                        'id' => $schedule->id,
-                        'route' => $schedule->route,
-                        'eta_time' => $schedule->eta_time,
-                        'eta_text' => $schedule->eta_text,
-                        'etd_time' => $schedule->etd_time,
-                        'etd_text' => $schedule->etd_text,
-                    ];
-                });
+                return FlightScheduleResource::collection($this->flightSchedule);
             }),
 
             'trip_durations' => $this->whenLoaded('tripDuration', function () {
-                return $this->tripDuration->map(function ($duration) {
-                    return [
-                        'id' => $duration->id,
-                        'duration_label' => $duration->duration_label,
-                        'duration_days' => $duration->duration_days,
-                        'status' => $duration->status,
-                        'prices' => $duration->relationLoaded('prices') ? $duration->prices->map(function ($price) {
-                            return [
-                                'id' => $price->id,
-                                'pax_min' => $price->pax_min,
-                                'pax_max' => $price->pax_max,
-                                'price_per_pax' => $price->price_per_pax,
-                                'status' => $price->status,
-                            ];
-                        }) : null
-                    ];
-                });
+                return TripDurationResource::collection($this->tripDuration);
+            }),
+
+            'trip_prices' => $this->whenLoaded('tripDuration.tripPrices', function () {
+                return TripPricesResource::collection($this->tripDuration->tripPrices);
             }),
         ];
     }

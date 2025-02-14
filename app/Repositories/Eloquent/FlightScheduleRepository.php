@@ -148,4 +148,20 @@ class FlightScheduleRepository implements FlightScheduleRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Menghapus flightSchedule berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteFlightScheduleByTripId($trip_id)
+    {
+        try {
+            return $this->flightschedule->where('trip_id', $trip_id)->delete();
+        } catch (\Exception $e) {
+            Log::error("Failed to delete flightSchedule with trip_id {$trip_id}: {$e->getMessage()}");
+            return false;
+        }
+    }
 }
