@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('trip_duration_id')->constrained('trip_durations')->onDelete('cascade');
             $table->integer('pax_min');
             $table->integer('pax_max');
-            $table->decimal('price_per_pax', 10, 2);
+            $table->decimal('price_per_pax', 15, 2);
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });

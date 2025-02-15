@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             // FlightScheduleSeeder::class,
             CustomersSeeder::class,
             HotelOccupanciesSeeder::class,
+            AdditionalFeeSeeder::class,
+            SurchargeSeeder::class,
         ]);
     }
 }

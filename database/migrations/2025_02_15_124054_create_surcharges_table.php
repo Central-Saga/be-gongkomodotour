@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('surcharges', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
+            $table->string('season');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->decimal('surcharge_price', 15, 2);
+            $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
     }
