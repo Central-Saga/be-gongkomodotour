@@ -224,7 +224,7 @@ class TripService implements TripServiceInterface
         try {
             DB::beginTransaction();
 
-            // Update data trip utama secara parsial (salah satu field yang dikirim akan diupdate)
+            // Update data trip utama secara parsial
             $tripData = Arr::only($data, [
                 'name',
                 'include',
@@ -244,61 +244,83 @@ class TripService implements TripServiceInterface
 
             // Update itineraries secara parsial
             if (isset($data['itineraries'])) {
+                $payloadItineraryIds = [];
                 foreach ($data['itineraries'] as $itineraryData) {
                     $itineraryData['trip_id'] = $trip->id;
                     if (isset($itineraryData['id'])) {
-                        // Jika id sudah ada, update itinerary yang sudah ada
+                        // Update itinerary yang sudah ada
                         $this->itinerariesRepository->updateItineraries($itineraryData['id'], $itineraryData);
+                        $payloadItineraryIds[] = $itineraryData['id'];
                     } else {
-                        // Jika tidak ada, buat itinerary baru
-                        $this->itinerariesRepository->createItineraries($itineraryData);
+                        // Buat itinerary baru
+                        $newItinerary = $this->itinerariesRepository->createItineraries($itineraryData);
+                        if ($newItinerary && isset($newItinerary->id)) {
+                            $payloadItineraryIds[] = $newItinerary->id;
+                        }
                     }
                 }
-                // Opsional: Hapus itinerary yang tidak termasuk payload update jika diperlukan
+                // Hapus itinerary yang tidak terdapat pada payload update
+                $this->itinerariesRepository->deleteItinerariesNotIn($trip->id, $payloadItineraryIds);
             }
 
             // Update flight schedules secara parsial
             if (isset($data['flight_schedules'])) {
+                $payloadFlightScheduleIds = [];
                 foreach ($data['flight_schedules'] as $scheduleData) {
                     $scheduleData['trip_id'] = $trip->id;
                     if (isset($scheduleData['id'])) {
                         $this->flightScheduleRepository->updateFlightSchedule($scheduleData['id'], $scheduleData);
+                        $payloadFlightScheduleIds[] = $scheduleData['id'];
                     } else {
-                        $this->flightScheduleRepository->createFlightSchedule($scheduleData);
+                        $newSchedule = $this->flightScheduleRepository->createFlightSchedule($scheduleData);
+                        if ($newSchedule && isset($newSchedule->id)) {
+                            $payloadFlightScheduleIds[] = $newSchedule->id;
+                        }
                     }
                 }
-                // Opsional: Hapus flight schedules yang tidak termasuk payload update jika diperlukan
+                // Hapus flight schedule yang tidak terdapat pada payload update
+                $this->flightScheduleRepository->deleteFlightScheduleNotIn($trip->id, $payloadFlightScheduleIds);
             }
 
             // Update trip durations beserta trip prices secara parsial
             if (isset($data['trip_durations'])) {
+                $payloadTripDurationIds = [];
                 foreach ($data['trip_durations'] as $durationData) {
                     $durationData['trip_id'] = $trip->id;
                     if (isset($durationData['id'])) {
-                        // Update trip duration yang sudah ada
                         $tripDuration = $this->tripDurationRepository->updateTripDuration($durationData['id'], $durationData);
+                        $payloadTripDurationIds[] = $durationData['id'];
                     } else {
-                        // Buat trip duration baru
                         $tripDuration = $this->tripDurationRepository->createTripDuration($durationData);
+                        if ($tripDuration && isset($tripDuration->id)) {
+                            $payloadTripDurationIds[] = $tripDuration->id;
+                        }
                     }
-
                     if (!$tripDuration || !isset($tripDuration->id)) {
                         throw new \Exception("Trip duration update failed: repository returned invalid trip duration object.");
                     }
 
-                    // Update trip prices untuk masing-masing trip duration secara parsial
+                    // Update trip prices untuk masing-masing trip duration
                     if (isset($durationData['prices'])) {
+                        $payloadPriceIds = [];
                         foreach ($durationData['prices'] as $priceData) {
                             $priceData['trip_duration_id'] = $tripDuration->id;
                             if (isset($priceData['id'])) {
                                 $this->tripPricesRepository->updateTripPrices($priceData['id'], $priceData);
+                                $payloadPriceIds[] = $priceData['id'];
                             } else {
-                                $this->tripPricesRepository->createTripPrices($priceData);
+                                $newPrice = $this->tripPricesRepository->createTripPrices($priceData);
+                                if ($newPrice && isset($newPrice->id)) {
+                                    $payloadPriceIds[] = $newPrice->id;
+                                }
                             }
                         }
-                        // Opsional: Hapus trip prices yang tidak ada pada payload update jika diperlukan
+                        // Hapus trip prices yang tidak terdapat dalam payload update
+                        $this->tripPricesRepository->deleteTripPricesNotIn($tripDuration->id, $payloadPriceIds);
                     }
                 }
+                // Hapus trip durations yang tidak terdapat dalam payload update
+                $this->tripDurationRepository->deleteTripDurationNotIn($trip->id, $payloadTripDurationIds);
             }
 
             DB::commit();
