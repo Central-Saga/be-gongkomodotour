@@ -34,6 +34,14 @@ use App\Services\Contracts\TripPricesServiceInterface;
 use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Repositories\Contracts\TripRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Services\Contracts\BoatServiceInterface;
+use App\Services\Implementations\BoatService;
+use App\Repositories\Eloquent\BoatRepository;
+use App\Repositories\Contracts\BoatRepositoryInterface;
+use App\Repositories\Eloquent\CabinRepository;
+use App\Repositories\Contracts\CabinRepositoryInterface;
+use App\Services\Contracts\CabinServiceInterface;
+use App\Services\Implementations\CabinService;
 use App\Repositories\Contracts\PermissionRepositoryInterface;
 use App\Repositories\Contracts\TripPricesRepositoryInterface;
 use App\Repositories\Contracts\TripDurationRepositoryInterface;
@@ -110,6 +118,19 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding HotelOccupanciesServiceInterface to HotelOccupanciesService
         $this->app->bind(HotelOccupanciesServiceInterface::class, HotelOccupanciesService::class);
+
+        // Binding BoatRepositoryInterface to BoatRepository
+        $this->app->bind(BoatRepositoryInterface::class, BoatRepository::class);
+
+        // Binding BoatServiceInterface to BoatService
+        $this->app->bind(BoatServiceInterface::class, BoatService::class);
+
+        // Binding CabinRepositoryInterface to CabinRepository
+        $this->app->bind(CabinRepositoryInterface::class, CabinRepository::class);
+
+        // Binding CabinServiceInterface to CabinService
+        $this->app->bind(CabinServiceInterface::class, CabinService::class);
+
     }
 
     /**
