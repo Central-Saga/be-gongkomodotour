@@ -148,4 +148,15 @@ class TripPricesRepository implements TripPricesRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Menghapus tripprices yang tidak ada di trip duration.
+     *
+     * @param int $trip_duration_id
+     * @return mixed
+     */
+    public function deleteTripPricesNotIn($trip_duration_id, $existing_id)
+    {
+        return $this->tripprices->where('trip_duration_id', $trip_duration_id)->whereNotIn('id', $existing_id)->delete();
+    }
 }

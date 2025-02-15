@@ -150,15 +150,15 @@ class TripDurationRepository implements TripDurationRepositoryInterface
     }
 
     /**
-     * Menghapus tripduration berdasarkan trip_id.
+     * Menghapus tripduration yang tidak ada di trip.
      *
      * @param int $trip_id
      * @return mixed
      */
-    public function deleteTripDurationByTripId($trip_id)
+    public function deleteTripDurationNotIn($trip_id, $existing_id)
     {
         try {
-            return $this->tripduration->where('trip_id', $trip_id)->delete();
+            return $this->tripduration->where('trip_id', $trip_id)->whereNotIn('id', $existing_id)->delete();
         } catch (\Exception $e) {
             Log::error("Failed to delete tripduration with trip_id {$trip_id}: {$e->getMessage()}");
             return false;

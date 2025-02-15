@@ -61,10 +61,10 @@ interface FlightScheduleRepositoryInterface
     public function deleteFlightSchedule($id);
 
     /**
-     * Menghapus flightSchedule berdasarkan trip_id.
+     * Menghapus flightSchedule yang tidak ada di trip.
      *
      * @param int $trip_id
      * @return mixed
      */
-    public function deleteFlightScheduleByTripId($trip_id);
+    public function deleteFlightScheduleNotIn($trip_id, $existing_id);
 }

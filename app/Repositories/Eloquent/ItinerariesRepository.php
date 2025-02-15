@@ -150,15 +150,15 @@ class ItinerariesRepository implements ItinerariesRepositoryInterface
     }
 
     /**
-     * Menghapus itineraries berdasarkan trip_id.
+     * Menghapus itineraries yang tidak ada di trip.
      *
      * @param int $trip_id
      * @return mixed
      */
-    public function deleteItinerariesByTripId($trip_id)
+    public function deleteItinerariesNotIn($trip_id, $existing_id)
     {
         try {
-            return $this->itineraries->where('trip_id', $trip_id)->delete();
+            return $this->itineraries->where('trip_id', $trip_id)->whereNotIn('id', $existing_id)->delete();
         } catch (\Exception $e) {
             Log::error("Failed to delete itineraries with trip_id {$trip_id}: {$e->getMessage()}");
             return false;

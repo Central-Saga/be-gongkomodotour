@@ -59,4 +59,12 @@ interface TripPricesRepositoryInterface
      * @return mixed
      */
     public function deleteTripPrices($id);
+
+    /**
+     * Menghapus tripprices yang tidak ada di trip duration.
+     *
+     * @param int $trip_duration_id
+     * @return mixed
+     */
+    public function deleteTripPricesNotIn($trip_duration_id, $existing_id);
 }
