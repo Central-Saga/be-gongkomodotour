@@ -16,6 +16,7 @@ class Booking extends Model
 
     protected $fillable = [
         'trip_id',
+        'trip_duration_id',
         'customer_id',
         'boat_id',
         'cabin_id',
@@ -29,6 +30,11 @@ class Booking extends Model
     public function trip()
     {
         return $this->belongsTo(Trip::class);
+    }
+
+    public function tripDuration()
+    {
+        return $this->belongsTo(TripDuration::class);
     }
 
     public function customer()

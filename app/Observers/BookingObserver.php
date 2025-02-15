@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Booking;
 use App\Models\Cabin;
 use App\Models\HotelOccupancies;
+use App\Models\TripDuration;
 
 class BookingObserver
 {
@@ -42,7 +43,30 @@ class BookingObserver
             }
         }
 
-        // Hitung total_price: (harga cabin + harga hotel) dikalikan dengan total pax
-        $booking->total_price = ($cabinPrice + $hotelPrice) * $totalPax;
+        // Jika user memilih trip duration, gunakan pilihan tersebut untuk perhitungan harga trip
+        $tripPrice = 0;
+        if ($booking->trip_duration_id) {
+            $tripDuration = TripDuration::with('tripPrices')->find($booking->trip_duration_id);
+            if ($tripDuration && $tripDuration->tripPrices) {
+                foreach ($tripDuration->tripPrices as $price) {
+                    if (
+                        $totalPax >= $price->pax_min &&
+                        $totalPax <= $price->pax_max &&
+                        $price->status === 'Aktif'
+                    ) {
+                        $tripPrice = $price->price_per_pax;
+                        break;
+                    }
+                }
+            }
+        } else {
+            $tripDuration = TripDuration::where('status', 'Aktif')->first();
+            if ($tripDuration && $tripDuration->tripPrices->isNotEmpty()) {
+                $tripPrice = $tripDuration->tripPrices->first()->price_per_pax;
+            }
+        }
+
+        // Hitung total_price dengan menggabungkan harga cabin, hotel, dan trip
+        $booking->total_price = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
     }
 }
