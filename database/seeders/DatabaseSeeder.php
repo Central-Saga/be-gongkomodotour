@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             HotelOccupanciesSeeder::class,
             BoatSeeder::class,
             CabinSeeder::class,
+            AdditionalFeeSeeder::class,
+            SurchargeSeeder::class,
         ]);
     }
 }

@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trip_prices', function (Blueprint $table) {
+        Schema::create('surcharges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('trip_duration_id')->constrained('trip_durations')->onDelete('cascade');
-            $table->integer('pax_min');
-            $table->integer('pax_max');
-            $table->decimal('price_per_pax', 15, 2);
+            $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
+            $table->string('season');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->decimal('surcharge_price', 15, 2);
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trip_prices');
+        Schema::dropIfExists('surcharges');
     }
 };

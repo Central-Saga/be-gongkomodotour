@@ -39,4 +39,14 @@ class Trips extends Model
     {
         return $this->hasMany(TripDuration::class, 'trip_id', 'id');
     }
+
+    public function additionalFees()
+    {
+        return $this->hasMany(AdditionalFee::class, 'trip_id', 'id');
+    }
+
+    public function surcharges()
+    {
+        return $this->hasMany(Surcharge::class, 'trip_id', 'id');
+    }
 }

@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trip_prices', function (Blueprint $table) {
+        Schema::create('additional_fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('trip_duration_id')->constrained('trip_durations')->onDelete('cascade');
+            $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
+            $table->string('fee_category');
+            $table->decimal('price', 15, 2);
+            $table->enum('region', ['Domestic', 'Overseas']);
+            $table->enum('unit', ['per_pax', 'per_5pax', 'per_day', 'per_guide']);
             $table->integer('pax_min');
             $table->integer('pax_max');
-            $table->decimal('price_per_pax', 15, 2);
+            $table->enum('day_type', ['Weekday', 'Weekend']);
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trip_prices');
+        Schema::dropIfExists('additional_fees');
     }
 };
