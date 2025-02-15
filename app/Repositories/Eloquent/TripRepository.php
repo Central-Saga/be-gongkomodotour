@@ -9,18 +9,18 @@ use Illuminate\Support\Facades\Log;
 class TripRepository implements TripRepositoryInterface
 {
     /**
-     * @var Trip
+     * @var Trips
      */
-    protected $trip;
+    protected $trips;
 
     /**
      * Konstruktor TripRepository.
      *
      * @param Trips $trip
      */
-    public function __construct(Trips $trip)
+    public function __construct(Trips $trips)
     {
-        $this->trip = $trip;
+        $this->trips = $trips;
     }
 
     /**
@@ -30,7 +30,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getAllTrips()
     {
-        return $this->trip->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->get();
+        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->get();
     }
 
     /**
@@ -43,7 +43,7 @@ class TripRepository implements TripRepositoryInterface
     {
         try {
             // Mengambil trip berdasarkan ID, handle jika tidak ditemukan
-            return $this->trip->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->findOrFail($id);
+            return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Trip with ID {$id} not found.");
             return null;
@@ -58,7 +58,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByName($name)
     {
-        return $this->trip->where('name', $name)->first();
+        return $this->trips->where('name', $name)->first();
     }
 
     /**
@@ -69,7 +69,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByStatus($status)
     {
-        return $this->trip->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->where('status', $status)->get();
+        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->where('status', $status)->get();
     }
 
     /**
@@ -80,7 +80,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByType($type)
     {
-        return $this->trip->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->where('type', $type)->get();
+        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices')->where('type', $type)->get();
     }
 
     /**
@@ -92,7 +92,7 @@ class TripRepository implements TripRepositoryInterface
     public function createTrip(array $data)
     {
         try {
-            return $this->trip->create($data);
+            return $this->trips->create($data);
         } catch (\Exception $e) {
             Log::error("Failed to create trip: {$e->getMessage()}");
             return null;
@@ -153,7 +153,7 @@ class TripRepository implements TripRepositoryInterface
     protected function findTrip($id)
     {
         try {
-            return $this->trip->findOrFail($id);
+            return $this->trips->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Trip with ID {$id} not found.");
             return null;

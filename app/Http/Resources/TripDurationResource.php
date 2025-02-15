@@ -24,12 +24,11 @@ class TripDurationResource extends JsonResource
 
             // Relasi dengan trip
             'trip' => $this->whenLoaded('trip', function () {
-                return [
-                    'id' => $this->trip->id,
-                    'name' => $this->trip->name,
-                    'type' => $this->trip->type,
-                    'status' => $this->trip->status,
-                ];
+                return TripResource::make($this->trip);
+            }),
+
+            'trip_prices' => $this->whenLoaded('tripPrices', function () {
+                return TripPricesResource::collection($this->tripPrices);
             }),
         ];
     }

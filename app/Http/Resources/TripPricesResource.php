@@ -19,18 +19,14 @@ class TripPricesResource extends JsonResource
             'trip_duration_id' => $this->trip_duration_id,
             'pax_min' => $this->pax_min,
             'pax_max' => $this->pax_max,
-            'price' => $this->price,
+            'price_per_pax' => $this->price_per_pax,
+            'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
 
             // Relasi dengan trip_duration
             'trip_duration' => $this->whenLoaded('tripDuration', function () {
-                return [
-                    'id' => $this->tripDuration->id,
-                    'duration_label' => $this->tripDuration->duration_label,
-                    'duration_days' => $this->tripDuration->duration_days,
-                    'status' => $this->tripDuration->status,
-                ];
+                return TripDurationResource::make($this->tripDuration);
             }),
         ];
     }
