@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             AdditionalFeeSeeder::class,
             SurchargeSeeder::class,
             BookingSeeder::class,
+            BookingFeeSeeder::class,
         ]);
     }
 }

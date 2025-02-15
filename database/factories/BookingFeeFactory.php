@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Booking;
+use App\Models\AdditionalFee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,10 @@ class BookingFeeFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'booking_id' => $this->faker->randomElement(Booking::pluck('id')->toArray()),
+            'additional_fee_id' => $this->faker->randomElement(AdditionalFee::pluck('id')->toArray()),
+            'fee_type' => $this->faker->randomElement(['Open Trip', 'Private Trip']),
+            'total_price' => $this->faker->randomFloat(2, 100, 1000),
         ];
     }
 }
