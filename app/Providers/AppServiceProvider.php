@@ -18,6 +18,14 @@ use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Auth\Notifications\ResetPassword;
 use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\TripPricesRepository;
+use App\Services\Contracts\CustomersServiceInterface;
+use App\Repositories\Contracts\CustomersRepositoryInterface;
+use App\Repositories\Eloquent\CustomersRepository;
+use App\Services\Implementations\CustomersService;
+use App\Repositories\Contracts\HotelOccupanciesRepositoryInterface;
+use App\Services\Contracts\HotelOccupanciesServiceInterface;
+use App\Repositories\Eloquent\HotelOccupanciesRepository;
+use App\Services\Implementations\HotelOccupanciesService;
 use App\Services\Implementations\PermissionService;
 use App\Services\Implementations\TripPricesService;
 use App\Repositories\Eloquent\TripDurationRepository;
@@ -90,6 +98,18 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding FlightScheduleServiceInterface to FlightScheduleService
         $this->app->bind(FlightScheduleServiceInterface::class, FlightScheduleService::class);
+
+        // Binding CustomersRepositoryInterface to CustomersRepository
+        $this->app->bind(CustomersRepositoryInterface::class, CustomersRepository::class);
+
+        // Binding CustomersServiceInterface to CustomersService
+        $this->app->bind(CustomersServiceInterface::class, CustomersService::class);
+
+        // Binding HotelOccupanciesRepositoryInterface to HotelOccupanciesRepository
+        $this->app->bind(HotelOccupanciesRepositoryInterface::class, HotelOccupanciesRepository::class);
+
+        // Binding HotelOccupanciesServiceInterface to HotelOccupanciesService
+        $this->app->bind(HotelOccupanciesServiceInterface::class, HotelOccupanciesService::class);
     }
 
     /**

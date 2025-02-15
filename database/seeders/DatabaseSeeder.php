@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             // TripDurationSeeder::class,
             // TripPricesSeeder::class,
             // FlightScheduleSeeder::class,
+            CustomersSeeder::class,
+            HotelOccupanciesSeeder::class,
         ]);
     }
 }
