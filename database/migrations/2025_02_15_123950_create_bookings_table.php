@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
-            $table->foreignId('boat_id')->constrained('boats')->onDelete('cascade');
-            $table->foreignId('cabin_id')->constrained('cabins')->onDelete('cascade');
+            $table->foreignId('boat_id')->constrained('boat')->onDelete('cascade');
+            $table->foreignId('cabin_id')->constrained('cabin')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('hotel_occupancy_id')->constrained('hotel_occupancies')->onDelete('cascade');
+            $table->foreignId('hotel_occupancy_id')->constrained('hoteloccupancies')->onDelete('cascade');
             $table->decimal('total_price', 15, 2);
             $table->integer('total_pax');
             $table->enum('status', ['Pending', 'Confirmed', 'Cancelled'])->default('Pending');

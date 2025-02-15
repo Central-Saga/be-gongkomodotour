@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Booking;
+use App\Observers\BookingObserver;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use Illuminate\Support\Facades\Schema;
@@ -130,7 +132,6 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding CabinServiceInterface to CabinService
         $this->app->bind(CabinServiceInterface::class, CabinService::class);
-
     }
 
     /**
@@ -141,6 +142,8 @@ class AppServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
             return config('app.frontend_url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
+
+        Booking::observe(BookingObserver::class);
 
         Schema::defaultStringLength(125);
     }
