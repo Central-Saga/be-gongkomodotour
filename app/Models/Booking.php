@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Cabin;
+use App\Models\HotelOccupancy;
 
 class Booking extends Model
 {
@@ -52,5 +54,32 @@ class Booking extends Model
     public function hotelOccupancy()
     {
         return $this->belongsTo(HotelOccupancy::class);
+    }
+
+    // Akses harga cabin berdasarkan jumlah penumpang yang dipesan
+    public function getComputedCabinPriceAttribute()
+    {
+        $cabin = $this->cabin;
+        if (!$cabin) {
+            return 0;
+        }
+        $totalPax = $this->total_pax;
+        $basePrice = $cabin->base_price;
+        $additionalPrice = $cabin->additional_price;
+        $minPax = $cabin->min_pax;
+
+        // Validasi agar total pax tidak melebihi max pax
+        if ($totalPax > $cabin->max_pax) {
+            // Misalnya, Anda dapat memunculkan exception atau mengatur nilai default
+            // throw new \Exception("Jumlah pax melebihi kapasitas maksimum.");
+            $totalPax = $cabin->max_pax;
+        }
+
+        if ($totalPax <= $minPax) {
+            return $basePrice;
+        }
+
+        $extraPax = $totalPax - $minPax;
+        return $basePrice + ($extraPax * $additionalPrice);
     }
 }
