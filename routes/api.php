@@ -9,6 +9,8 @@ use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\HotelOccupanciesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BoatController;
+use App\Http\Controllers\CabinController;
 use App\Http\Controllers\ItinerariesController;
 use App\Http\Controllers\FlightScheduleController;
 use App\Http\Controllers\TripController;
@@ -41,4 +43,8 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     Route::apiResource('customers', CustomersController::class);
     // Hotel Occupancies
     Route::apiResource('hoteloccupancies', HotelOccupanciesController::class);
+    // Boats
+    Route::apiResource('boat', BoatController::class);
+    // Cabins
+    Route::apiResource('cabin', CabinController::class);
 });
