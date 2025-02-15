@@ -62,6 +62,11 @@ class Booking extends Model
         return $this->belongsTo(HotelOccupancy::class);
     }
 
+    public function bookingFees()
+    {
+        return $this->hasMany(BookingFee::class);
+    }
+
     // Akses harga cabin berdasarkan jumlah penumpang yang dipesan
     public function getComputedCabinPriceAttribute()
     {
