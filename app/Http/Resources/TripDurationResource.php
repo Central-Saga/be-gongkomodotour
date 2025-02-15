@@ -19,11 +19,11 @@ class TripDurationResource extends JsonResource
             'duration_label' => $this->duration_label,
             'duration_days' => $this->duration_days,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
+
             // Relasi dengan trip
-            'trip' => $this->whenLoaded('trip', function() {
+            'trip' => $this->whenLoaded('trip', function () {
                 return [
                     'id' => $this->trip->id,
                     'name' => $this->trip->name,

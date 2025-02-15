@@ -17,8 +17,8 @@ class ItinerariesResource extends JsonResource
         return [
             'id' => $this->id,
             'trip_id' => $this->trip_id,
-            'itinerary_label' => $this->itinerary_label,
-            'itinerary_days' => $this->itinerary_days,
+            'day_number' => $this->day_number,
+            'activities' => $this->activities,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 

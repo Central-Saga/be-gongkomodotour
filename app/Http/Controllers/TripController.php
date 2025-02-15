@@ -37,8 +37,6 @@ class TripController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        // Ambil parameter status dari query string
-        $status = $request->query('status');
         $type = $request->query('type');
 
         if ($type) {
@@ -49,10 +47,11 @@ class TripController extends Controller implements HasMiddleware
             } else {
                 return response()->json(['message' => 'Invalid type parameter'], 400);
             }
-        } elseif ($status) {
-            if (strtolower($status) == 1) {
+        } elseif ($request->has('status')) {
+            $status = $request->query('status');
+            if (strtolower($status) == '1') {
                 $trips = $this->tripService->getActiveTrips();
-            } elseif (strtolower($status) == 0) {
+            } elseif (strtolower($status) == '0') {
                 $trips = $this->tripService->getInactiveTrips();
             } else {
                 return response()->json(['message' => 'Invalid status parameter'], 400);

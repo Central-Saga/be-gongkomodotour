@@ -22,11 +22,11 @@ class FlightScheduleResource extends JsonResource
             'eta_text' => $this->eta_text,
             'etd_time' => $this->etd_time,
             'etd_text' => $this->etd_text,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
+
             // Relasi dengan trip
-            'trip' => $this->whenLoaded('trip', function() {
+            'trip' => $this->whenLoaded('trip', function () {
                 return [
                     'id' => $this->trip->id,
                     'name' => $this->trip->name,

@@ -20,11 +20,11 @@ class TripPricesResource extends JsonResource
             'pax_min' => $this->pax_min,
             'pax_max' => $this->pax_max,
             'price' => $this->price,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
+
             // Relasi dengan trip_duration
-            'trip_duration' => $this->whenLoaded('tripDuration', function() {
+            'trip_duration' => $this->whenLoaded('tripDuration', function () {
                 return [
                     'id' => $this->tripDuration->id,
                     'duration_label' => $this->tripDuration->duration_label,

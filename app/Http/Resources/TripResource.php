@@ -26,8 +26,8 @@ class TripResource extends JsonResource
             'meeting_point' => $this->meeting_point,
             'type' => $this->type,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
 
             // Relasi
             'itineraries' => $this->whenLoaded('itineraries', function () {
