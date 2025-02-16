@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('cabin_id')->constrained('cabin')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('hotel_occupancy_id')->constrained('hoteloccupancies')->onDelete('cascade');
-            $table->decimal('total_price', 15, 2);
+            $table->decimal('total_price', 15, 2)->nullable();
             $table->integer('total_pax');
             $table->enum('status', ['Pending', 'Confirmed', 'Cancelled'])->default('Pending');
             $table->timestamps();
