@@ -23,4 +23,9 @@ class BookingFee extends Model
     {
         return $this->belongsTo(Booking::class);
     }
+
+    public function additionalFee()
+    {
+        return $this->belongsTo(AdditionalFee::class);
+    }
 }

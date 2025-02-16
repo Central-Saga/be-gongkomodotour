@@ -20,7 +20,8 @@ return new class extends Migration
             $table->enum('unit', ['per_pax', 'per_5pax', 'per_day', 'per_guide']);
             $table->integer('pax_min');
             $table->integer('pax_max');
-            $table->enum('day_type', ['Weekday', 'Weekend']);
+            $table->enum('day_type', ['Weekday', 'Weekend'])->nullable();
+            $table->boolean('is_required')->default(true);
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });

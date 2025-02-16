@@ -11,8 +11,9 @@ use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use App\Repositories\Contracts\TripDurationRepositoryInterface;
 use App\Repositories\Contracts\TripPricesRepositoryInterface;
+use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
+use App\Repositories\Contracts\SurchargeRepositoryInterface;
 use Illuminate\Support\Arr;
-
 
 class TripService implements TripServiceInterface
 {
@@ -21,6 +22,8 @@ class TripService implements TripServiceInterface
     protected $flightScheduleRepository;
     protected $tripDurationRepository;
     protected $tripPricesRepository;
+    protected $additionalFeeRepository;
+    protected $surchargeRepository;
 
     const TRIPS_ALL_CACHE_KEY = 'trips.all';
     const TRIPS_ACTIVE_CACHE_KEY = 'trips.active';
@@ -34,13 +37,22 @@ class TripService implements TripServiceInterface
      *
      * @param TripRepositoryInterface $tripRepository
      */
-    public function __construct(TripRepositoryInterface $tripRepository, ItinerariesRepositoryInterface $itinerariesRepository, FlightScheduleRepositoryInterface $flightScheduleRepository, TripDurationRepositoryInterface $tripDurationRepository, TripPricesRepositoryInterface $tripPricesRepository)
-    {
+    public function __construct(
+        TripRepositoryInterface $tripRepository,
+        ItinerariesRepositoryInterface $itinerariesRepository,
+        FlightScheduleRepositoryInterface $flightScheduleRepository,
+        TripDurationRepositoryInterface $tripDurationRepository,
+        TripPricesRepositoryInterface $tripPricesRepository,
+        AdditionalFeeRepositoryInterface $additionalFeeRepository,
+        SurchargeRepositoryInterface $surchargeRepository
+    ) {
         $this->tripRepository = $tripRepository;
         $this->itinerariesRepository = $itinerariesRepository;
         $this->flightScheduleRepository = $flightScheduleRepository;
         $this->tripDurationRepository = $tripDurationRepository;
         $this->tripPricesRepository = $tripPricesRepository;
+        $this->additionalFeeRepository = $additionalFeeRepository;
+        $this->surchargeRepository = $surchargeRepository;
     }
 
     /**
@@ -180,7 +192,7 @@ class TripService implements TripServiceInterface
                 }
             }
 
-            // Buat trip durations jika ada
+            // Buat trip durations beserta trip prices jika ada
             if (isset($data['trip_durations'])) {
                 foreach ($data['trip_durations'] as $duration) {
                     $duration['trip_id'] = $trip->id;
@@ -189,13 +201,28 @@ class TripService implements TripServiceInterface
                         throw new \Exception("Trip duration creation failed: repository returned invalid trip duration object.");
                     }
 
-                    // Buat trip prices untuk setiap duration jika ada
                     if (isset($duration['prices'])) {
                         foreach ($duration['prices'] as $price) {
                             $price['trip_duration_id'] = $tripDuration->id;
                             $this->tripPricesRepository->createTripPrices($price);
                         }
                     }
+                }
+            }
+
+            // Jika request memiliki additional fees, buat masing-masing additional fee
+            if (isset($data['additional_fees'])) {
+                foreach ($data['additional_fees'] as $fee) {
+                    $fee['trip_id'] = $trip->id;
+                    $this->additionalFeeRepository->createAdditionalFee($fee);
+                }
+            }
+
+            // Jika request memiliki surcharges, buat masing-masing surcharge
+            if (isset($data['surcharges'])) {
+                foreach ($data['surcharges'] as $surcharge) {
+                    $surcharge['trip_id'] = $trip->id;
+                    $this->surchargeRepository->createSurcharge($surcharge);
                 }
             }
 
@@ -248,18 +275,15 @@ class TripService implements TripServiceInterface
                 foreach ($data['itineraries'] as $itineraryData) {
                     $itineraryData['trip_id'] = $trip->id;
                     if (isset($itineraryData['id'])) {
-                        // Update itinerary yang sudah ada
                         $this->itinerariesRepository->updateItineraries($itineraryData['id'], $itineraryData);
                         $payloadItineraryIds[] = $itineraryData['id'];
                     } else {
-                        // Buat itinerary baru
                         $newItinerary = $this->itinerariesRepository->createItineraries($itineraryData);
                         if ($newItinerary && isset($newItinerary->id)) {
                             $payloadItineraryIds[] = $newItinerary->id;
                         }
                     }
                 }
-                // Hapus itinerary yang tidak terdapat pada payload update
                 $this->itinerariesRepository->deleteItinerariesNotIn($trip->id, $payloadItineraryIds);
             }
 
@@ -278,7 +302,6 @@ class TripService implements TripServiceInterface
                         }
                     }
                 }
-                // Hapus flight schedule yang tidak terdapat pada payload update
                 $this->flightScheduleRepository->deleteFlightScheduleNotIn($trip->id, $payloadFlightScheduleIds);
             }
 
@@ -300,7 +323,6 @@ class TripService implements TripServiceInterface
                         throw new \Exception("Trip duration update failed: repository returned invalid trip duration object.");
                     }
 
-                    // Update trip prices untuk masing-masing trip duration
                     if (isset($durationData['prices'])) {
                         $payloadPriceIds = [];
                         foreach ($durationData['prices'] as $priceData) {
@@ -315,12 +337,46 @@ class TripService implements TripServiceInterface
                                 }
                             }
                         }
-                        // Hapus trip prices yang tidak terdapat dalam payload update
                         $this->tripPricesRepository->deleteTripPricesNotIn($tripDuration->id, $payloadPriceIds);
                     }
                 }
-                // Hapus trip durations yang tidak terdapat dalam payload update
                 $this->tripDurationRepository->deleteTripDurationNotIn($trip->id, $payloadTripDurationIds);
+            }
+
+            // Update additional fees secara parsial jika ada di payload
+            if (isset($data['additional_fees'])) {
+                $payloadAdditionalFeeIds = [];
+                foreach ($data['additional_fees'] as $feeData) {
+                    $feeData['trip_id'] = $trip->id;
+                    if (isset($feeData['id'])) {
+                        $this->additionalFeeRepository->updateAdditionalFee($feeData['id'], $feeData);
+                        $payloadAdditionalFeeIds[] = $feeData['id'];
+                    } else {
+                        $newFee = $this->additionalFeeRepository->createAdditionalFee($feeData);
+                        if ($newFee && isset($newFee->id)) {
+                            $payloadAdditionalFeeIds[] = $newFee->id;
+                        }
+                    }
+                }
+                $this->additionalFeeRepository->deleteAdditionalFeesNotIn($trip->id, $payloadAdditionalFeeIds);
+            }
+
+            // Update surcharges secara parsial jika ada di payload
+            if (isset($data['surcharges'])) {
+                $payloadSurchargeIds = [];
+                foreach ($data['surcharges'] as $surchargeData) {
+                    $surchargeData['trip_id'] = $trip->id;
+                    if (isset($surchargeData['id'])) {
+                        $this->surchargeRepository->updateSurcharge($surchargeData['id'], $surchargeData);
+                        $payloadSurchargeIds[] = $surchargeData['id'];
+                    } else {
+                        $newSurcharge = $this->surchargeRepository->createSurcharge($surchargeData);
+                        if ($newSurcharge && isset($newSurcharge->id)) {
+                            $payloadSurchargeIds[] = $newSurcharge->id;
+                        }
+                    }
+                }
+                $this->surchargeRepository->deleteSurchargesNotIn($trip->id, $payloadSurchargeIds);
             }
 
             DB::commit();
