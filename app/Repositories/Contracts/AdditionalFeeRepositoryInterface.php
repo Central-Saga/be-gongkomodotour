@@ -36,6 +36,14 @@ interface AdditionalFeeRepositoryInterface
     public function getAdditionalFeeByStatus($status);
 
     /**
+     * Mengambil additional fees berdasarkan trip id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function getAdditionalFeesByTripId($trip_id);
+
+    /**
      * Membuat additional fee baru.
      *
      * @param array $data

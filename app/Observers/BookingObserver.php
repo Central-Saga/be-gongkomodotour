@@ -93,49 +93,4 @@ class BookingObserver
         }
         return $tripPrice;
     }
-
-    private function createOrUpdateBookingFees(Booking $booking)
-    {
-        if (!$booking->trip_id) {
-            return;
-        }
-
-        // Buat atau update booking fee untuk fee wajib
-        $mandatoryFees = AdditionalFee::where('trip_id', $booking->trip_id)
-            ->where('status', 'Aktif')
-            ->where('is_required', true)
-            ->get();
-
-        foreach ($mandatoryFees as $fee) {
-            BookingFee::updateOrCreate(
-                [
-                    'booking_id' => $booking->id,
-                    'additional_fee_id' => $fee->id,
-                ],
-                [
-                    'fee_type'    => $fee->fee_category,
-                    'total_price' => $fee->price,
-                ]
-            );
-        }
-
-        // Tangani fee optional jika disediakan melalui properti optional_additional_fees
-        if (isset($booking->optional_additional_fees) && is_array($booking->optional_additional_fees)) {
-            foreach ($booking->optional_additional_fees as $feeId) {
-                $fee = AdditionalFee::find($feeId);
-                if ($fee && !$fee->is_required && $fee->status === 'Aktif') {
-                    BookingFee::updateOrCreate(
-                        [
-                            'booking_id' => $booking->id,
-                            'additional_fee_id' => $fee->id,
-                        ],
-                        [
-                            'fee_type'    => $fee->fee_category,
-                            'total_price' => $fee->price,
-                        ]
-                    );
-                }
-            }
-        }
-    }
 }

@@ -6,6 +6,7 @@ use App\Models\AdditionalFee;
 use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 
 class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
 {
@@ -74,6 +75,17 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
     }
 
     /**
+     * Mengambil additional fees berdasarkan trip id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function getAdditionalFeesByTripId($trip_id)
+    {
+        return $this->additionalFee->where('trip_id', $trip_id)->get();
+    }
+
+    /**
      * Membuat additional fee baru.
      *
      * @param array $data
@@ -82,7 +94,9 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
     public function createAdditionalFee(array $data)
     {
         try {
-            return $this->additionalFee->create($data);
+            $additionalFee = $this->additionalFee->create($data);
+            Cache::forget("additional_fee_trip_{$additionalFee->trip_id}");
+            return $additionalFee;
         } catch (\Exception $e) {
             Log::error("Failed to create additional fee: {$e->getMessage()}");
             return null;
@@ -103,6 +117,7 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
         if ($additionalFee) {
             try {
                 $additionalFee->update($data);
+                Cache::forget("additional_fee_trip_{$additionalFee->trip_id}");
                 return $additionalFee;
             } catch (\Exception $e) {
                 Log::error("Failed to update additional fee with ID {$id}: {$e->getMessage()}");
@@ -124,7 +139,9 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
 
         if ($additionalFee) {
             try {
+                $trip_id = $additionalFee->trip_id;
                 $additionalFee->delete();
+                Cache::forget("additional_fee_trip_{$trip_id}");
                 return true;
             } catch (\Exception $e) {
                 Log::error("Failed to delete additional fee with ID {$id}: {$e->getMessage()}");
