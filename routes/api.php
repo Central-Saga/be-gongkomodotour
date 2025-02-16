@@ -14,6 +14,8 @@ use App\Http\Controllers\CabinController;
 use App\Http\Controllers\EmailBlastController;
 use App\Http\Controllers\EmailBlastRecipientController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\BlogController;
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -49,5 +51,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Blog
     Route::apiResource('blog', BlogController::class);
 
+    // Testimonial
+    Route::apiResource('testimonial', TestimonialController::class);
+
+    // Faq
+    Route::apiResource('faq', FaqController::class);
 
 });

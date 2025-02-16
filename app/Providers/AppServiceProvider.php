@@ -48,6 +48,14 @@ use App\Repositories\Eloquent\SubscriberRepository;
 use App\Repositories\Contracts\SubscriberRepositoryInterface;
 use App\Services\Contracts\SubscriberServiceInterface;
 use App\Services\Implementations\SubscriberService;
+use App\Repositories\Eloquent\FaqRepository;
+use App\Repositories\Contracts\FaqRepositoryInterface;
+use App\Services\Contracts\FaqServiceInterface;
+use App\Services\Implementations\FaqService;
+use App\Repositories\Eloquent\TestimonialRepository;
+use App\Repositories\Contracts\TestimonialRepositoryInterface;
+use App\Services\Contracts\TestimonialServiceInterface;
+use App\Services\Implementations\TestimonialService;
 use App\Repositories\Contracts\PermissionRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -122,6 +130,20 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding SubscriberServiceInterface to SubscriberService
         $this->app->bind(SubscriberServiceInterface::class, SubscriberService::class);
+
+        // Binding FaqRepositoryInterface to FaqRepository
+        $this->app->bind(FaqRepositoryInterface::class, FaqRepository::class);
+
+        // Binding FaqServiceInterface to FaqService
+        $this->app->bind(FaqServiceInterface::class, FaqService::class);
+
+        // Binding TestimonialRepositoryInterface to TestimonialRepository
+        $this->app->bind(TestimonialRepositoryInterface::class, TestimonialRepository::class);
+
+        // Binding TestimonialServiceInterface to TestimonialService
+        $this->app->bind(TestimonialServiceInterface::class, TestimonialService::class);
+
+        
         
     }
 

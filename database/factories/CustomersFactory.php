@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Customers;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,7 +26,7 @@ class CustomersFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => $this->faker->randomDigitNotNull,
+            'user_id'      => User::inRandomOrder()->value('id') ?? User::factory(),
             'alamat' => $this->faker->address(),
             'no_hp' => $this->faker->phoneNumber(),
             'nasionality' => $this->faker->country(),

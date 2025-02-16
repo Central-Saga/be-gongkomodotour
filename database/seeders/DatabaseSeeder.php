@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             EmailBlastRecipientSeeder::class,
             BlogSeeder::class,
             SubscriberSeeder::class,
+            TestimonialSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }
