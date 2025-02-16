@@ -189,7 +189,6 @@ class BookingService implements BookingServiceInterface
                         ->first();
 
                     $data = [
-                        'fee_type'    => $fee->fee_category,
                         'total_price' => $fee->price,
                     ];
 
@@ -214,7 +213,6 @@ class BookingService implements BookingServiceInterface
                         ->first();
 
                     $data = [
-                        'fee_type'    => $fee->fee_category,
                         'total_price' => $fee->price,
                     ];
 

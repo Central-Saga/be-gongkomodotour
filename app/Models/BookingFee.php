@@ -15,7 +15,6 @@ class BookingFee extends Model
     protected $fillable = [
         'booking_id',
         'additional_fee_id',
-        'fee_type',
         'total_price',
     ];
 

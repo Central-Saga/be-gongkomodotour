@@ -21,7 +21,6 @@ class BookingFeeFactory extends Factory
         return [
             'booking_id' => $this->faker->randomElement(Booking::pluck('id')->toArray()),
             'additional_fee_id' => $this->faker->randomElement(AdditionalFee::pluck('id')->toArray()),
-            'fee_type' => $this->faker->randomElement(['Open Trip', 'Private Trip']),
             'total_price' => $this->faker->randomFloat(2, 100, 1000),
         ];
     }

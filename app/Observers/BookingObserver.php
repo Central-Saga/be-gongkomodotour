@@ -18,20 +18,13 @@ class BookingObserver
         $hotelPrice = $this->getHotelPrice($booking);
         $tripPrice  = $this->getTripPrice($booking, $totalPax);
 
-        $booking->total_price = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
-    }
+        // Hitung biaya dasar untuk tiap pax
+        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
 
-    public function created(Booking $booking)
-    {
-        $this->createOrUpdateBookingFees($booking);
-    }
+        // Mengambil total booking fee jika sudah ada (misalnya melalui relasi bookingFees)
+        $totalBookingFee = $booking->bookingFees->sum('total_price');
 
-    public function updated(Booking $booking)
-    {
-        // Jika ada perubahan yang memengaruhi booking fee,
-        // hapus fee lama dan generate ulang yang baru
-        $booking->bookingFees()->delete();
-        $this->createOrUpdateBookingFees($booking);
+        $booking->total_price = $baseTotal + $totalBookingFee;
     }
 
     private function getCabinPrice(Booking $booking, $totalPax)

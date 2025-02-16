@@ -20,7 +20,6 @@ class BookingFeeResource extends JsonResource
             'additional_fee_id' => $this->additional_fee_id,
             'fee_category' => $this->additionalFee->fee_category,
             'unit' => $this->additionalFee->unit,
-            'fee_type' => $this->fee_type,
             'total_price' => $this->total_price,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),

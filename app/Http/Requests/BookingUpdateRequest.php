@@ -35,7 +35,6 @@ class BookingUpdateRequest extends FormRequest
 
             'booking_fees' => 'sometimes|array',
             'booking_fees.*.additional_fee_id' => 'required_with:booking_fees|exists:additional_fees,id',
-            'booking_fees.*.fee_type' => 'required_with:booking_fees|in:Open Trip,Private Trip',
             'booking_fees.*.total_price' => 'required_with:booking_fees|numeric',
         ];
     }

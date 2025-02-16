@@ -93,4 +93,38 @@ class Booking extends Model
         $extraPax = $totalPax - $minPax;
         return $basePrice + ($extraPax * $additionalPrice);
     }
+
+    /**
+     * Menghitung total harga booking yang mencakup harga cabin, hotel, trip, dan booking fee.
+     *
+     * Properti ini tidak tersimpan di database, melainkan dihitung secara dinamis.
+     *
+     * @return float
+     */
+    public function getComputedTotalPriceAttribute()
+    {
+        $totalPax = $this->total_pax;
+
+        // Mengambil harga cabin dari accessor getComputedCabinPriceAttribute()
+        $cabinPrice = $this->computed_cabin_price; // Akses sebagai properti
+
+        // Mengambil harga hotel, jika tersedia
+        $hotelPrice = $this->hotelOccupancy ? $this->hotelOccupancy->price : 0;
+
+        // Mengambil harga trip.
+        // Asumsikan kamu memiliki logika atau relasi untuk mendapatkan harga trip.
+        // Pada contoh berikut, kita gunakan nilai default 0 atau bisa kamu sesuaikan.
+        $tripPrice = 0;
+        if ($this->tripDuration && isset($this->tripDuration->trip_price)) {
+            $tripPrice = $this->tripDuration->trip_price;
+        }
+
+        // Total biaya dasar berdasarkan harga-harga di atas
+        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
+
+        // Menghitung total booking fee yang tersimpan melalui relasi bookingFees.
+        $bookingFeeTotal = $this->bookingFees->sum('total_price');
+
+        return $baseTotal + $bookingFeeTotal;
+    }
 }

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
             $table->foreignId('additional_fee_id')->constrained('additional_fees')->onDelete('cascade');
-            $table->enum('fee_type', ['Open Trip', 'Private Trip']);
             $table->decimal('total_price', 15, 2);
             $table->timestamps();
         });
