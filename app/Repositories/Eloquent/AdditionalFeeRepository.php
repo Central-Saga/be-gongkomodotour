@@ -149,4 +149,21 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Menghapus additional fees yang tidak terdapat dalam trip.
+     *
+     * @param int $trip_id
+     * @param array $existing_id
+     * @return mixed
+     */
+    public function deleteAdditionalFeesNotIn($trip_id, $existing_id)
+    {
+        try {
+            return $this->additionalFee->where('trip_id', $trip_id)->whereNotIn('id', $existing_id)->delete();
+        } catch (\Exception $e) {
+            Log::error("Failed to delete additional fees with trip_id {$trip_id}: {$e->getMessage()}");
+            return false;
+        }
+    }
 }

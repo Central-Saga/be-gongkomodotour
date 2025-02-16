@@ -149,4 +149,21 @@ class SurchargeRepository implements SurchargeRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Menghapus surcharges yang tidak terdapat dalam trip.
+     *
+     * @param int $trip_id
+     * @param array $existing_id
+     * @return mixed
+     */
+    public function deleteSurchargesNotIn($trip_id, $existing_id)
+    {
+        try {
+            return $this->surcharge->where('trip_id', $trip_id)->whereNotIn('id', $existing_id)->delete();
+        } catch (\Exception $e) {
+            Log::error("Failed to delete surcharges with trip_id {$trip_id}: {$e->getMessage()}");
+            return false;
+        }
+    }
 }

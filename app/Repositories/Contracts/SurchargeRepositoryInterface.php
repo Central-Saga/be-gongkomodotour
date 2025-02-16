@@ -59,4 +59,13 @@ interface SurchargeRepositoryInterface
      * @return mixed
      */
     public function deleteSurcharge($id);
+
+    /**
+     * Menghapus surcharges yang tidak terdapat dalam trip.
+     *
+     * @param int $trip_id
+     * @param array $existing_id
+     * @return mixed
+     */
+    public function deleteSurchargesNotIn($trip_id, $existing_id);
 }
