@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Booking;
 use App\Observers\BookingObserver;
+use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use Illuminate\Support\Facades\Schema;
@@ -49,10 +50,15 @@ use App\Repositories\Contracts\TripPricesRepositoryInterface;
 use App\Repositories\Contracts\TripDurationRepositoryInterface;
 use App\Repositories\Eloquent\FlightScheduleRepository;
 use App\Repositories\Eloquent\ItinerariesRepository;
+use App\Repositories\Eloquent\AdditionalFeeRepository;
+use App\Repositories\Eloquent\BookingFeeRepository;
+use App\Repositories\Contracts\BookingFeeRepositoryInterface;
 use App\Services\Contracts\FlightScheduleServiceInterface;
 use App\Services\Contracts\ItinerariesServiceInterface;
 use App\Services\Implementations\FlightScheduleService;
 use App\Services\Implementations\ItinerariesService;
+use App\Services\Implementations\BookingService;
+use App\Repositories\Contracts\BookingServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -132,6 +138,18 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding CabinServiceInterface to CabinService
         $this->app->bind(CabinServiceInterface::class, CabinService::class);
+
+        // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
+        $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
+
+        // Binding BookingFeeRepositoryInterface to BookingFeeRepository
+        $this->app->bind(BookingFeeRepositoryInterface::class, BookingFeeRepository::class);
+
+        // Binding BookingServiceInterface to BookingService
+        $this->app->bind(BookingServiceInterface::class, BookingService::class);
+
+        // Binding BookingRepositoryInterface to BookingRepository
+        $this->app->bind(BookingRepositoryInterface::class, BookingRepository::class);
     }
 
     /**
