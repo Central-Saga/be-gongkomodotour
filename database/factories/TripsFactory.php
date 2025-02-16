@@ -28,7 +28,6 @@ class TripsFactory extends Factory
             'include' => $this->faker->paragraph(),
             'exclude' => $this->faker->paragraph(),
             'note' => $this->faker->sentence(),
-            'duration' => $this->faker->randomElement(['1 day', '2 days', '3 days']),
             'start_time' => $this->faker->time('H:i:s'),
             'end_time' => $this->faker->time('H:i:s'),
             'meeting_point' => $this->faker->address(),
