@@ -36,18 +36,25 @@ interface BookingServiceInterface
     public function getBookingByStatus($status);
 
     /**
-     * Mengambil semua bookings yang aktif.
+     * Mengambil booking berdasarkan status pending.
      *
      * @return mixed
      */
-    public function getActiveBookings();
+    public function getBookingByStatusPending();
 
     /**
-     * Mengambil semua bookings yang tidak aktif.
+     * Mengambil booking berdasarkan status confirmed.
      *
      * @return mixed
      */
-    public function getInactiveBookings();
+    public function getBookingByStatusConfirmed();
+
+    /**
+     * Mengambil booking berdasarkan status cancelled.
+     *
+     * @return mixed
+     */
+    public function getBookingByStatusCancelled();
 
     /**
      * Membuat booking baru.

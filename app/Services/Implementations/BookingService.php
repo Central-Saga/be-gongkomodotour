@@ -17,6 +17,9 @@ class BookingService implements BookingServiceInterface
     const BOOKING_ALL_CACHE_KEY = 'booking.all';
     const BOOKING_ACTIVE_CACHE_KEY = 'booking.active';
     const BOOKING_INACTIVE_CACHE_KEY = 'booking.inactive';
+    const BOOKING_PENDING_CACHE_KEY = 'booking.pending';
+    const BOOKING_CONFIRMED_CACHE_KEY = 'booking.confirmed';
+    const BOOKING_CANCELLED_CACHE_KEY = 'booking.cancelled';
 
     /**
      * Konstruktor BookingService.
@@ -81,26 +84,38 @@ class BookingService implements BookingServiceInterface
     }
 
     /**
-     * Mengambil bookings dengan status aktif.
+     * Mengambil booking berdasarkan status pending.
      *
      * @return mixed
      */
-    public function getActiveBookings()
+    public function getBookingByStatusPending()
     {
-        return Cache::remember(self::BOOKING_ACTIVE_CACHE_KEY, 3600, function () {
-            return $this->bookingRepository->getBookingByStatus('Aktif');
+        return Cache::remember(self::BOOKING_PENDING_CACHE_KEY, 3600, function () {
+            return $this->bookingRepository->getBookingByStatus('Pending');
         });
     }
 
     /**
-     * Mengambil bookings dengan status tidak aktif.
+     * Mengambil booking berdasarkan status confirmed.
      *
      * @return mixed
      */
-    public function getInactiveBookings()
+    public function getBookingByStatusConfirmed()
     {
-        return Cache::remember(self::BOOKING_INACTIVE_CACHE_KEY, 3600, function () {
-            return $this->bookingRepository->getBookingByStatus('Non Aktif');
+        return Cache::remember(self::BOOKING_CONFIRMED_CACHE_KEY, 3600, function () {
+            return $this->bookingRepository->getBookingByStatus('Confirmed');
+        });
+    }
+
+    /**
+     * Mengambil booking berdasarkan status cancelled.
+     *
+     * @return mixed
+     */
+    public function getBookingByStatusCancelled()
+    {
+        return Cache::remember(self::BOOKING_CANCELLED_CACHE_KEY, 3600, function () {
+            return $this->bookingRepository->getBookingByStatus('Cancelled');
         });
     }
 
@@ -119,8 +134,7 @@ class BookingService implements BookingServiceInterface
             $this->createOrUpdateBookingFees($booking);
 
             // Clear cache terkait
-            Cache::forget(self::BOOKING_ALL_CACHE_KEY);
-            Cache::forget(self::BOOKING_ACTIVE_CACHE_KEY);
+            $this->clearBookingCaches();
         }
 
         return $booking;
@@ -141,9 +155,7 @@ class BookingService implements BookingServiceInterface
             // Jika ada perubahan yang memengaruhi fee, regenerasi booking fee
             $this->createOrUpdateBookingFees($booking);
 
-            Cache::forget(self::BOOKING_ALL_CACHE_KEY);
-            Cache::forget(self::BOOKING_ACTIVE_CACHE_KEY);
-            Cache::forget("booking_{$id}_with_roles");
+            $this->clearBookingCaches();
         }
 
         return $booking;
@@ -159,9 +171,7 @@ class BookingService implements BookingServiceInterface
     {
         $result = $this->bookingRepository->deleteBooking($id);
 
-        Cache::forget(self::BOOKING_ALL_CACHE_KEY);
-        Cache::forget(self::BOOKING_ACTIVE_CACHE_KEY);
-
+        $this->clearBookingCaches();
         return $result;
     }
 
@@ -226,5 +236,19 @@ class BookingService implements BookingServiceInterface
                 }
             }
         }
+    }
+
+    /**
+     * Menghapus semua cache booking
+     *
+     * @return void
+     */
+    public function clearBookingCaches()
+    {
+        Cache::forget(self::BOOKING_ALL_CACHE_KEY);
+        Cache::forget(self::BOOKING_ACTIVE_CACHE_KEY);
+        Cache::forget(self::BOOKING_PENDING_CACHE_KEY);
+        Cache::forget(self::BOOKING_CONFIRMED_CACHE_KEY);
+        Cache::forget(self::BOOKING_CANCELLED_CACHE_KEY);
     }
 }
