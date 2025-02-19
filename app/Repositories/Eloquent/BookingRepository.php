@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Bookings;
+use App\Models\Booking;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -10,18 +10,18 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class BookingRepository implements BookingRepositoryInterface
 {
     /**
-     * @var Bookings
+     * @var Booking
      */
-    protected $bookings;
+    protected $booking;
 
     /**
      * Konstruktor BookingRepository.
      *
-     * @param Bookings $booking
+     * @param Booking $booking
      */
-    public function __construct(Bookings $bookings)
+    public function __construct(Booking $booking)
     {
-        $this->bookings = $bookings;
+        $this->booking = $booking;
     }
 
     /**
@@ -31,7 +31,7 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function getAllBookings()
     {
-        return $this->bookings->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFee', 'bookingFee.additionalFee')->get();
+        return $this->booking->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->get();
     }
 
     /**
@@ -44,7 +44,7 @@ class BookingRepository implements BookingRepositoryInterface
     {
         try {
             // Mengambil trip berdasarkan ID, handle jika tidak ditemukan
-            return $this->bookings->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFee', 'bookingFee.additionalFee')->findOrFail($id);
+            return $this->booking->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Booking with ID {$id} not found.");
             return null;
@@ -59,7 +59,7 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function getBookingByName($name)
     {
-        return $this->bookings->where('name', $name)->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFee', 'bookingFee.additionalFee')->first();
+        return $this->booking->where('name', $name)->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->first();
     }
 
     /**
@@ -70,7 +70,7 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function getBookingByStatus($status)
     {
-        return $this->bookings->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFee', 'bookingFee.additionalFee')->where('status', $status)->get();
+        return $this->booking->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->where('status', $status)->get();
     }
 
     /**
@@ -82,7 +82,7 @@ class BookingRepository implements BookingRepositoryInterface
     public function createBooking(array $data)
     {
         try {
-            return $this->bookings->create($data);
+            return $this->booking->create($data);
         } catch (\Exception $e) {
             Log::error("Failed to create booking: {$e->getMessage()}");
             return null;
@@ -143,7 +143,7 @@ class BookingRepository implements BookingRepositoryInterface
     protected function findBooking($id)
     {
         try {
-            return $this->bookings->findOrFail($id);
+            return $this->booking->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Booking with ID {$id} not found.");
             return null;

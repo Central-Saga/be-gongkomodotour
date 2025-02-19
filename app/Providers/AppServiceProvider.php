@@ -59,9 +59,10 @@ use App\Services\Contracts\ItinerariesServiceInterface;
 use App\Services\Implementations\FlightScheduleService;
 use App\Services\Implementations\ItinerariesService;
 use App\Services\Implementations\BookingService;
-use App\Repositories\Contracts\BookingServiceInterface;
 use App\Repositories\Contracts\SurchargeRepositoryInterface;
+use App\Repositories\Eloquent\BookingRepository;
 use App\Repositories\Eloquent\SurchargeRepository;
+use App\Services\Contracts\BookingServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {

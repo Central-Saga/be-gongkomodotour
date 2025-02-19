@@ -3,10 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Trips;
-use App\Models\Itineraries;
-use App\Models\FlightSchedule;
-use App\Models\TripDuration;
+use App\Models\Surcharge;
 use App\Models\TripPrices;
+use App\Models\Itineraries;
+use App\Models\TripDuration;
+use App\Models\AdditionalFee;
+use App\Models\FlightSchedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -58,6 +60,16 @@ class TripsFactory extends Factory
                     'trip_duration_id' => $tripDuration->id,
                 ]);
             });
+
+            // Membuat 2 additional fees untuk trip tersebut
+            AdditionalFee::factory()->count(2)->create([
+                'trip_id' => $trip->id,
+            ]);
+
+            // Membuat 2 surcharges untuk trip tersebut
+            Surcharge::factory()->count(2)->create([
+                'trip_id' => $trip->id,
+            ]);
         });
     }
 }

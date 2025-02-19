@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\BookingResource;
-use App\Services\Contracts\BookingServiceInterface;
 use App\Http\Requests\BookingStoreRequest;
 use App\Http\Requests\BookingUpdateRequest;
+use App\Services\Contracts\BookingServiceInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 class BookingController extends Controller implements HasMiddleware
 {
@@ -26,16 +27,16 @@ class BookingController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $status = $request->query('status');
-        if ($status) {
+        if ($request->has('status')) {
+            $status = $request->query('status');
             if (strtolower($status) == '0') {
-                $bookings = $this->bookingService->getBookingByStatus('Pending');
+                $bookings = $this->bookingService->getBookingByStatusPending();
             } elseif (strtolower($status) == '1') {
-                $bookings = $this->bookingService->getBookingByStatus('Confirmed');
+                $bookings = $this->bookingService->getBookingByStatusConfirmed();
             } elseif (strtolower($status) == '2') {
-                $bookings = $this->bookingService->getBookingByStatus('Cancelled');
+                $bookings = $this->bookingService->getBookingByStatusCancelled();
             } else {
-                return response()->json(['message' => 'Invalid status parameter'], 400);
+                return response()->json(['message' => 'Invalid status parameter'], 404);
             }
         } else {
             $bookings = $this->bookingService->getAllBookings();
@@ -43,11 +44,20 @@ class BookingController extends Controller implements HasMiddleware
         return BookingResource::collection($bookings);
     }
 
+    public function show($id)
+    {
+        $booking = $this->bookingService->getBookingById($id);
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found'], 404);
+        }
+        return new BookingResource($booking);
+    }
+
     public function store(BookingStoreRequest $request)
     {
         $booking = $this->bookingService->createBooking($request->all());
         if (!$booking) {
-            return response()->json(['message' => 'Failed to create booking'], 400);
+            return response()->json(['message' => 'Failed to create booking'], 404);
         }
         return new BookingResource($booking);
     }
@@ -56,7 +66,7 @@ class BookingController extends Controller implements HasMiddleware
     {
         $booking = $this->bookingService->updateBooking($id, $request->all());
         if (!$booking) {
-            return response()->json(['message' => 'Failed to update booking'], 400);
+            return response()->json(['message' => 'Failed to update booking'], 404);
         }
         return new BookingResource($booking);
     }
@@ -65,7 +75,7 @@ class BookingController extends Controller implements HasMiddleware
     {
         $result = $this->bookingService->deleteBooking($id);
         if (!$result) {
-            return response()->json(['message' => 'Failed to delete booking'], 400);
+            return response()->json(['message' => 'Failed to delete booking'], 404);
         }
         return response()->json(['message' => 'Booking deleted successfully']);
     }

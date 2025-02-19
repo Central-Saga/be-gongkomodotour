@@ -29,7 +29,7 @@ class Booking extends Model
 
     public function trip()
     {
-        return $this->belongsTo(Trip::class);
+        return $this->belongsTo(Trips::class);
     }
 
     public function tripDuration()
@@ -39,7 +39,7 @@ class Booking extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customers::class);
     }
 
     public function boat()
@@ -59,7 +59,7 @@ class Booking extends Model
 
     public function hotelOccupancy()
     {
-        return $this->belongsTo(HotelOccupancy::class);
+        return $this->belongsTo(HotelOccupancies::class);
     }
 
     public function bookingFees()
