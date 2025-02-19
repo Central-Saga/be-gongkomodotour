@@ -53,12 +53,15 @@ use App\Repositories\Eloquent\ItinerariesRepository;
 use App\Repositories\Eloquent\AdditionalFeeRepository;
 use App\Repositories\Eloquent\BookingFeeRepository;
 use App\Repositories\Contracts\BookingFeeRepositoryInterface;
+use App\Repositories\Contracts\BookingRepositoryInterface;
 use App\Services\Contracts\FlightScheduleServiceInterface;
 use App\Services\Contracts\ItinerariesServiceInterface;
 use App\Services\Implementations\FlightScheduleService;
 use App\Services\Implementations\ItinerariesService;
 use App\Services\Implementations\BookingService;
 use App\Repositories\Contracts\BookingServiceInterface;
+use App\Repositories\Contracts\SurchargeRepositoryInterface;
+use App\Repositories\Eloquent\SurchargeRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -150,6 +153,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding BookingRepositoryInterface to BookingRepository
         $this->app->bind(BookingRepositoryInterface::class, BookingRepository::class);
+
+        // Binding SurchargeRepositoryInterface to SurchargeRepository
+        $this->app->bind(SurchargeRepositoryInterface::class, SurchargeRepository::class);
     }
 
     /**

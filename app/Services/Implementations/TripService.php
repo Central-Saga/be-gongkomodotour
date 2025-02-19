@@ -231,7 +231,7 @@ class TripService implements TripServiceInterface
             // Clear all related caches
             $this->clearTripCaches();
 
-            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices']);
+            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Failed to create trip: {$e->getMessage()}");
@@ -384,7 +384,7 @@ class TripService implements TripServiceInterface
             // Clear cache yang terkait
             $this->clearTripCaches($id);
 
-            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices']);
+            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices',]);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating trip: ' . $e->getMessage());
