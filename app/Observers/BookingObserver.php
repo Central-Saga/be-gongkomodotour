@@ -27,6 +27,20 @@ class BookingObserver
         $booking->total_price = $baseTotal + $totalBookingFee;
     }
 
+    public function updating(Booking $booking)
+    {
+        $totalPax = $booking->total_pax;
+        $cabinPrice = $this->getCabinPrice($booking, $totalPax);
+        $hotelPrice = $this->getHotelPrice($booking);
+        $tripPrice  = $this->getTripPrice($booking, $totalPax);
+
+        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
+
+        $totalBookingFee = $booking->bookingFees->sum('total_price');
+
+        $booking->total_price = $baseTotal + $totalBookingFee;
+    }
+
     private function getCabinPrice(Booking $booking, $totalPax)
     {
         $cabin = Cabin::find($booking->cabin_id);

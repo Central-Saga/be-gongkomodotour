@@ -127,14 +127,22 @@ class BookingService implements BookingServiceInterface
      */
     public function createBooking(array $data)
     {
+        // Jika perlu, lakukan mapping data seperti memindahkan booking_fees ke optional_additional_fees
+        if (isset($data['booking_fees'])) {
+            $data['optional_additional_fees'] = array_map(function ($fee) {
+                return $fee['additional_fee_id'];
+            }, $data['booking_fees']);
+            unset($data['booking_fees']);
+        }
+
         $booking = $this->bookingRepository->createBooking($data);
 
         if ($booking) {
             // Setelah booking dibuat, buat atau perbarui booking fee
-            $this->createOrUpdateBookingFees($booking);
-
+            $this->createOrUpdateBookingFees($booking, $data);
             // Clear cache terkait
             $this->clearBookingCaches();
+            $booking->refresh();
         }
 
         return $booking;
@@ -149,13 +157,22 @@ class BookingService implements BookingServiceInterface
      */
     public function updateBooking($id, array $data)
     {
+        // Jika perlu, lakukan mapping data seperti memindahkan booking_fees ke optional_additional_fees
+        if (isset($data['booking_fees'])) {
+            $data['optional_additional_fees'] = array_map(function ($fee) {
+                return $fee['additional_fee_id'];
+            }, $data['booking_fees']);
+            unset($data['booking_fees']);
+        }
+
         $booking = $this->bookingRepository->updateBooking($id, $data);
 
         if ($booking) {
             // Jika ada perubahan yang memengaruhi fee, regenerasi booking fee
-            $this->createOrUpdateBookingFees($booking);
+            $this->createOrUpdateBookingFees($booking, $data);
 
             $this->clearBookingCaches();
+            $booking->refresh();
         }
 
         return $booking;
@@ -179,59 +196,56 @@ class BookingService implements BookingServiceInterface
      * Membuat atau memperbarui booking fee berdasarkan additional fee.
      * @param mixed $booking
      */
-    public function createOrUpdateBookingFees($booking)
+    protected function createOrUpdateBookingFees($booking, array $data)
     {
-        if (!$booking->trip_id) {
-            return;
-        }
-
         // Proses fee wajib (is_required true)
-        $cacheKey = 'additional_fee_trip_' . $booking->trip_id;
-        $additionalFees = Cache::remember($cacheKey, 3600, function () use ($booking) {
-            return $this->additionalFeeRepository->getAdditionalFeesByTripId($booking->trip_id);
-        });
-        if ($additionalFees) {
-            foreach ($additionalFees as $fee) {
-                if ($fee->is_required && $fee->status === 'Aktif') {
-                    // Cek apakah booking fee sudah ada untuk kombinasi booking_id dan additional_fee_id
-                    $existingBookingFee = $booking->bookingFees()
-                        ->where('additional_fee_id', $fee->id)
-                        ->first();
+        if ($booking->trip_id) {
+            $cacheKey = 'additional_fee_trip_' . $booking->trip_id;
+            $additionalFees = Cache::remember($cacheKey, 3600, function () use ($booking) {
+                return $this->additionalFeeRepository->getAdditionalFeesByTripId($booking->trip_id);
+            });
+            if ($additionalFees) {
+                foreach ($additionalFees as $fee) {
+                    if ($fee->is_required && $fee->status === 'Aktif') {
+                        $existingBookingFee = $booking->bookingFees()
+                            ->where('additional_fee_id', $fee->id)
+                            ->first();
 
-                    $data = [
-                        'total_price' => $fee->price,
-                    ];
+                        $dataFee = [
+                            'total_price' => $fee->price,
+                        ];
 
-                    if ($existingBookingFee) {
-                        $this->bookingFeeRepository->updateBookingFee($existingBookingFee->id, $data);
-                    } else {
-                        $data['booking_id'] = $booking->id;
-                        $data['additional_fee_id'] = $fee->id;
-                        $this->bookingFeeRepository->createBookingFee($data);
+                        if ($existingBookingFee) {
+                            $this->bookingFeeRepository->updateBookingFee($existingBookingFee->id, $dataFee);
+                        } else {
+                            $dataFee['booking_id'] = $booking->id;
+                            $dataFee['additional_fee_id'] = $fee->id;
+                            $this->bookingFeeRepository->createBookingFee($dataFee);
+                        }
                     }
                 }
             }
         }
 
-        // Proses fee optional, jika user memilih untuk menambahkannya
-        if (isset($booking->optional_additional_fees) && is_array($booking->optional_additional_fees)) {
-            foreach ($booking->optional_additional_fees as $feeId) {
+        // Proses fee optional, jika ada pada input (telah dipetakan ke optional_additional_fees)
+        if (isset($data['optional_additional_fees']) && is_array($data['optional_additional_fees'])) {
+            foreach ($data['optional_additional_fees'] as $feeId) {
                 $fee = $this->additionalFeeRepository->getAdditionalFeeById($feeId);
                 if ($fee && !$fee->is_required && $fee->status === 'Aktif') {
                     $existingBookingFee = $booking->bookingFees()
                         ->where('additional_fee_id', $fee->id)
                         ->first();
 
-                    $data = [
+                    $dataFee = [
                         'total_price' => $fee->price,
                     ];
 
                     if ($existingBookingFee) {
-                        $this->bookingFeeRepository->updateBookingFee($existingBookingFee->id, $data);
+                        $this->bookingFeeRepository->updateBookingFee($existingBookingFee->id, $dataFee);
                     } else {
-                        $data['booking_id'] = $booking->id;
-                        $data['additional_fee_id'] = $fee->id;
-                        $this->bookingFeeRepository->createBookingFee($data);
+                        $dataFee['booking_id'] = $booking->id;
+                        $dataFee['additional_fee_id'] = $fee->id;
+                        $this->bookingFeeRepository->createBookingFee($dataFee);
                     }
                 }
             }
