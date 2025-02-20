@@ -31,7 +31,17 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function getAllBookings()
     {
-        return $this->booking->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->get();
+        return $this->booking->with([
+            'trip',
+            'tripDuration',
+            'tripDuration.tripPrices',
+            'customer',
+            'boat',
+            'cabin',
+            'user',
+            'hotelOccupancy',
+            'additionalFees'
+        ])->get();
     }
 
     /**
@@ -43,8 +53,17 @@ class BookingRepository implements BookingRepositoryInterface
     public function getBookingById($id)
     {
         try {
-            // Mengambil trip berdasarkan ID, handle jika tidak ditemukan
-            return $this->booking->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->findOrFail($id);
+            return $this->booking->with([
+                'trip',
+                'tripDuration',
+                'tripDuration.tripPrices',
+                'customer',
+                'boat',
+                'cabin',
+                'user',
+                'hotelOccupancy',
+                'additionalFees'
+            ])->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Booking with ID {$id} not found.");
             return null;
@@ -59,7 +78,18 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function getBookingByName($name)
     {
-        return $this->booking->where('name', $name)->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->first();
+        return $this->booking->where('name', $name)
+            ->with([
+                'trip',
+                'tripDuration',
+                'tripDuration.tripPrices',
+                'customer',
+                'boat',
+                'cabin',
+                'user',
+                'hotelOccupancy',
+                'additionalFees'
+            ])->first();
     }
 
     /**
@@ -70,7 +100,17 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function getBookingByStatus($status)
     {
-        return $this->booking->with('trip', 'tripDuration', 'tripDuration.tripPrices', 'customer', 'boat', 'cabin', 'user', 'hotelOccupancy', 'bookingFees', 'bookingFees.additionalFee')->where('status', $status)->get();
+        return $this->booking->with([
+            'trip',
+            'tripDuration',
+            'tripDuration.tripPrices',
+            'customer',
+            'boat',
+            'cabin',
+            'user',
+            'hotelOccupancy',
+            'additionalFees'
+        ])->where('status', $status)->get();
     }
 
     /**
@@ -82,7 +122,34 @@ class BookingRepository implements BookingRepositoryInterface
     public function createBooking(array $data)
     {
         try {
-            return $this->booking->create($data);
+            // Buat booking utama
+            $booking = $this->booking->create($data);
+
+            // Jika terdapat data untuk relasi many-to-many, contohnya:
+            if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
+                // Misalnya, data hanya berupa array ID cabin
+                $booking->cabin()->sync($data['cabin_ids']);
+            }
+
+            if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
+                $booking->boat()->sync($data['boat_ids']);
+            }
+
+            if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
+                // Jika data additional fee berupa array ID atau array dengan data pivot
+                $additionalFeesData = [];
+                foreach ($data['additional_fee_ids'] as $fee) {
+                    if (is_array($fee)) {
+                        // Contoh: ['additional_fee_id' => 1, 'total_price' => 100]
+                        $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $fee['total_price']];
+                    } else {
+                        $additionalFeesData[$fee] = ['total_price' => 0];
+                    }
+                }
+                $booking->additionalFees()->sync($additionalFeesData);
+            }
+
+            return $booking;
         } catch (\Exception $e) {
             Log::error("Failed to create booking: {$e->getMessage()}");
             return null;
@@ -103,6 +170,28 @@ class BookingRepository implements BookingRepositoryInterface
         if ($booking) {
             try {
                 $booking->update($data);
+
+                // Perbarui relasi pivot jika data tersedia
+                if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
+                    $booking->cabin()->sync($data['cabin_ids']);
+                }
+
+                if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
+                    $booking->boat()->sync($data['boat_ids']);
+                }
+
+                if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
+                    $additionalFeesData = [];
+                    foreach ($data['additional_fee_ids'] as $fee) {
+                        if (is_array($fee)) {
+                            $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $fee['total_price']];
+                        } else {
+                            $additionalFeesData[$fee] = ['total_price' => 0];
+                        }
+                    }
+                    $booking->additionalFees()->sync($additionalFeesData);
+                }
+
                 return $booking;
             } catch (\Exception $e) {
                 Log::error("Failed to update booking with ID {$id}: {$e->getMessage()}");

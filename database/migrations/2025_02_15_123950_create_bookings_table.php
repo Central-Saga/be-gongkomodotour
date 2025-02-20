@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
             $table->foreignId('trip_duration_id')->constrained('trip_durations')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
-            $table->foreignId('boat_id')->constrained('boat')->onDelete('cascade');
-            $table->foreignId('cabin_id')->constrained('cabin')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('hotel_occupancy_id')->constrained('hoteloccupancies')->onDelete('cascade');
             $table->decimal('total_price', 15, 2)->nullable();

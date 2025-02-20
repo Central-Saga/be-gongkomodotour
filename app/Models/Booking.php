@@ -18,14 +18,16 @@ class Booking extends Model
         'trip_id',
         'trip_duration_id',
         'customer_id',
-        'boat_id',
-        'cabin_id',
         'user_id',
         'hotel_occupancy_id',
         'total_price',
         'total_pax',
         'status',
+        'start_date',
+        'end_date',
     ];
+
+    protected $appends = ['computed_cabin_price', 'computed_total_price'];
 
     public function trip()
     {
@@ -44,12 +46,15 @@ class Booking extends Model
 
     public function boat()
     {
-        return $this->belongsTo(Boat::class);
+        return $this->belongsToMany(Boat::class, 'booking_boat')
+            ->withTimestamps();
     }
 
     public function cabin()
     {
-        return $this->belongsTo(Cabin::class);
+        return $this->belongsToMany(Cabin::class, 'booking_cabin')
+            ->withPivot('total_pax', 'total_price')
+            ->withTimestamps();
     }
 
     public function user()
@@ -62,36 +67,34 @@ class Booking extends Model
         return $this->belongsTo(HotelOccupancies::class);
     }
 
-    public function bookingFees()
+    public function additionalFees()
     {
-        return $this->hasMany(BookingFee::class);
+        return $this->belongsToMany(AdditionalFee::class, 'booking_fees')
+            ->withPivot('total_price')
+            ->withTimestamps();
     }
 
     // Akses harga cabin berdasarkan jumlah penumpang yang dipesan
     public function getComputedCabinPriceAttribute()
     {
-        $cabin = $this->cabin;
-        if (!$cabin) {
-            return 0;
-        }
-        $totalPax = $this->total_pax;
-        $basePrice = $cabin->base_price;
-        $additionalPrice = $cabin->additional_price;
-        $minPax = $cabin->min_pax;
+        return $this->cabin->sum(function ($cabin) {
+            // Misalnya, jika data jumlah pax untuk cabin tersimpan pada pivot,
+            // kalau tidak, fallback menggunakan $this->total_pax
+            $pivotTotalPax = $cabin->pivot->total_pax ?? $this->total_pax;
+            $basePrice = $cabin->base_price;
+            $additionalPrice = $cabin->additional_price;
+            $minPax = $cabin->min_pax;
+            $maxPax = $cabin->max_pax;
 
-        // Validasi agar total pax tidak melebihi max pax
-        if ($totalPax > $cabin->max_pax) {
-            // Misalnya, Anda dapat memunculkan exception atau mengatur nilai default
-            // throw new \Exception("Jumlah pax melebihi kapasitas maksimum.");
-            $totalPax = $cabin->max_pax;
-        }
-
-        if ($totalPax <= $minPax) {
-            return $basePrice;
-        }
-
-        $extraPax = $totalPax - $minPax;
-        return $basePrice + ($extraPax * $additionalPrice);
+            if ($pivotTotalPax > $maxPax) {
+                $pivotTotalPax = $maxPax;
+            }
+            if ($pivotTotalPax <= $minPax) {
+                return $basePrice;
+            }
+            $extraPax = $pivotTotalPax - $minPax;
+            return $basePrice + ($extraPax * $additionalPrice);
+        });
     }
 
     /**
@@ -106,24 +109,24 @@ class Booking extends Model
         $totalPax = $this->total_pax;
 
         // Mengambil harga cabin dari accessor getComputedCabinPriceAttribute()
-        $cabinPrice = $this->computed_cabin_price; // Akses sebagai properti
+        $cabinPrice = $this->computed_cabin_price;
 
-        // Mengambil harga hotel, jika tersedia
+        // Mengambil harga hotel jika tersedia
         $hotelPrice = $this->hotelOccupancy ? $this->hotelOccupancy->price : 0;
 
-        // Mengambil harga trip.
-        // Asumsikan kamu memiliki logika atau relasi untuk mendapatkan harga trip.
-        // Pada contoh berikut, kita gunakan nilai default 0 atau bisa kamu sesuaikan.
+        // Mengambil harga trip jika tersedia
         $tripPrice = 0;
         if ($this->tripDuration && isset($this->tripDuration->trip_price)) {
             $tripPrice = $this->tripDuration->trip_price;
         }
 
-        // Total biaya dasar berdasarkan harga-harga di atas
+        // Total biaya dasar (asumsi harga yang dihitung adalah per orang)
         $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
 
-        // Menghitung total booking fee yang tersimpan melalui relasi bookingFees.
-        $bookingFeeTotal = $this->bookingFees->sum('total_price');
+        // Menghitung total fee tambahan dengan mengakses nilai total_price dari pivot pada relasi additionalFees
+        $bookingFeeTotal = $this->additionalFees->sum(function ($fee) {
+            return $fee->pivot->total_price;
+        });
 
         return $baseTotal + $bookingFeeTotal;
     }

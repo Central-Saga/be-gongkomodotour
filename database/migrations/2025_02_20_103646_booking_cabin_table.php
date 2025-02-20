@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('booking_cabin', function (Blueprint $table) {
+        Schema::create('booking_cabin', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('booking_id')->nullable()->constrained('bookings')->onDelete('cascade');
             $table->foreignId('cabin_id')->nullable()->constrained('cabin')->onDelete('cascade');
             $table->integer('total_pax');
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('booking_cabin');
     }
 };

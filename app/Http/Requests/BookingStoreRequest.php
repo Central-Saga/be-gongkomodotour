@@ -25,15 +25,20 @@ class BookingStoreRequest extends FormRequest
             'trip_id' => 'required|exists:trips,id',
             'trip_duration_id' => 'required|exists:trip_durations,id',
             'customer_id' => 'required|exists:customers,id',
-            'boat_id' => 'required|exists:boat,id',
-            'cabin_id' => 'required|exists:cabin,id',
             'user_id' => 'required|exists:users,id',
             'hotel_occupancy_id' => 'required|exists:hoteloccupancies,id',
             'total_pax' => 'required|integer',
             'status' => 'required|in:Pending,Confirmed,Cancelled',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
 
-            'booking_fees' => 'sometimes|array',
-            'booking_fees.*.additional_fee_id' => 'required_with:booking_fees|exists:additional_fees,id',
+            'cabin_ids' => 'sometimes|array',
+            'cabin_ids.*' => 'integer|exists:cabin,id',
+            'boat_ids' => 'sometimes|array',
+            'boat_ids.*' => 'integer|exists:boat,id',
+
+            'additional_fee_ids' => 'sometimes|array',
+            'additional_fee_ids.*.additional_fee_id' => 'required_with:additional_fee_ids|exists:additional_fees,id',
         ];
     }
 }
