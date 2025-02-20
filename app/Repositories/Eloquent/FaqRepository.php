@@ -1,5 +1,4 @@
 <?php
-// filepath: /c:/laragon/www/be-gongkomodotour/app/Repositories/Eloquent/FaqRepository.php
 
 namespace App\Repositories\Eloquent;
 
@@ -10,6 +9,13 @@ use Illuminate\Support\Facades\Log;
 
 class FaqRepository implements FaqRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Faq $faq)
+    {
+        $this->model = $faq;
+    }
+
     /**
      * Mengambil semua FAQ.
      *
@@ -17,7 +23,7 @@ class FaqRepository implements FaqRepositoryInterface
      */
     public function getAllFaq()
     {
-        return Faq::all();
+        return $this->model->all();
     }
 
     /**
@@ -28,7 +34,7 @@ class FaqRepository implements FaqRepositoryInterface
      */
     public function getFaqById($id)
     {
-        return Faq::findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     /**
@@ -39,7 +45,7 @@ class FaqRepository implements FaqRepositoryInterface
      */
     public function createFaq(array $data)
     {
-        return Faq::create($data);
+        return $this->model->create($data);
     }
 
     /**
@@ -81,7 +87,7 @@ class FaqRepository implements FaqRepositoryInterface
      */
     public function getFaqByName($name)
     {
-        return Faq::where('question', 'like', '%' . $name . '%')->first();
+        return $this->model->where('question', 'like', '%' . $name . '%')->first();
     }
 
     /**
@@ -92,7 +98,7 @@ class FaqRepository implements FaqRepositoryInterface
      */
     public function getFaqByStatus($status)
     {
-        return Faq::where('status', $status)->get();
+        return $this->model->where('status', $status)->get();
     }
 
     /**
@@ -104,7 +110,7 @@ class FaqRepository implements FaqRepositoryInterface
     public function findFaq($id)
     {
         try {
-            return Faq::findOrFail($id);
+            return $this->model->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("FAQ dengan ID {$id} tidak ditemukan.");
             return null;

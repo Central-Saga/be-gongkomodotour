@@ -9,19 +9,26 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CabinRepository implements CabinRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Cabin $cabin)
+    {
+        $this->model = $cabin;
+    }
+
     public function getAllCabin()
     {
-        return Cabin::all();
+        return $this->model->all();
     }
 
     public function getCabinById($id)
     {
-        return Cabin::findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     public function createCabin(array $data)
     {
-        return Cabin::create($data);
+        return $this->model->create($data);
     }
 
     public function updateCabin($id, array $data)
@@ -48,27 +55,21 @@ class CabinRepository implements CabinRepositoryInterface
 
     public function getCabinByName($name)
     {
-        return Cabin::where('name', $name)->first();
+        return $this->model->where('name', $name)->first();
     }
 
     public function getCabinByStatus($status)
     {
-        return Cabin::where('status', $status)->get();
+        return $this->model->where('status', $status)->get();
     }
     
-    /**
-     * Mencari cabin berdasarkan kriteria tertentu (helper berdasarkan ID).
-     *
-     * @param int $id
-     * @return Cabin|null
-     */
-     public function findCabin($id)
-     {
-         try {
-             return Cabin::findOrFail($id);
-         } catch (ModelNotFoundException $e) {
-             Log::error("Cabin with ID {$id} not found.");
-             return null;
-         }
-     }
+    public function findCabin($id)
+    {
+        try {
+            return $this->model->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            Log::error("Cabin with ID {$id} not found.");
+            return null;
+        }
+    }
 }

@@ -9,15 +9,22 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EmailBlastRepository implements EmailBlastRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(EmailBlast $emailBlast)
+    {
+        $this->model = $emailBlast;
+    }
+
     public function getAllEmailBlast()
     {
-        return EmailBlast::all();
+        return $this->model->all();
     }
 
     public function getEmailBlastById($id)
     {
         try {
-            return EmailBlast::findOrFail($id);
+            return $this->model->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("EmailBlast with ID {$id} not found.");
             return null;
@@ -26,7 +33,7 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
     public function createEmailBlast(array $data)
     {
-        return EmailBlast::create($data);
+        return $this->model->create($data);
     }
 
     public function updateEmailBlast($id, array $data)
@@ -53,12 +60,12 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
     public function getEmailBlastByName($name)
     {
-        return EmailBlast::where('subject', $name)->first();
+        return $this->model->where('subject', $name)->first();
     }
 
     public function getEmailBlastByStatus($status)
     {
-        return EmailBlast::where('status', $status)->get();
+        return $this->model->where('status', $status)->get();
     }
 
     public function findEmailBlast($id)
