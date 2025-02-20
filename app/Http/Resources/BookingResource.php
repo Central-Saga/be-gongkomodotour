@@ -19,8 +19,6 @@ class BookingResource extends JsonResource
             'trip_id' => $this->trip_id,
             'trip_duration_id' => $this->trip_duration_id,
             'customer_id' => $this->customer_id,
-            'boat_id' => $this->boat_id,
-            'cabin_id' => $this->cabin_id,
             'user_id' => $this->user_id,
             'hotel_occupancy_id' => $this->hotel_occupancy_id,
             'total_price' => $this->total_price,
@@ -42,11 +40,11 @@ class BookingResource extends JsonResource
             }),
 
             'boat' => $this->whenLoaded('boat', function () {
-                return BoatResource::make($this->boat);
+                return BoatResource::collection($this->boat);
             }),
 
             'cabin' => $this->whenLoaded('cabin', function () {
-                return CabinResource::make($this->cabin);
+                return CabinResource::collection($this->cabin);
             }),
 
             'user' => $this->whenLoaded('user', function () {
@@ -57,8 +55,8 @@ class BookingResource extends JsonResource
                 return HotelOccupancyResource::make($this->hotelOccupancy);
             }),
 
-            'booking_fees' => $this->whenLoaded('bookingFees', function () {
-                return BookingFeeResource::collection($this->bookingFees);
+            'additional_fees' => $this->whenLoaded('additionalFees', function () {
+                return AdditionalFeeResource::collection($this->additionalFees);
             }),
         ];
     }

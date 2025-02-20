@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
 
 class BookingRepository implements BookingRepositoryInterface
 {
@@ -15,13 +16,20 @@ class BookingRepository implements BookingRepositoryInterface
     protected $booking;
 
     /**
+     * @var AdditionalFeeRepositoryInterface
+     */
+    protected $additionalFeeRepository;
+
+    /**
      * Konstruktor BookingRepository.
      *
      * @param Booking $booking
+     * @param AdditionalFeeRepositoryInterface $additionalFeeRepository
      */
-    public function __construct(Booking $booking)
+    public function __construct(Booking $booking, AdditionalFeeRepositoryInterface $additionalFeeRepository)
     {
         $this->booking = $booking;
+        $this->additionalFeeRepository = $additionalFeeRepository;
     }
 
     /**
@@ -127,8 +135,11 @@ class BookingRepository implements BookingRepositoryInterface
 
             // Jika terdapat data untuk relasi many-to-many, contohnya:
             if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
-                // Misalnya, data hanya berupa array ID cabin
-                $booking->cabin()->sync($data['cabin_ids']);
+                $cabinPivotData = [];
+                foreach ($data['cabin_ids'] as $cabinId) {
+                    $cabinPivotData[$cabinId] = ['total_pax' => $data['total_pax'], 'total_price' => 0];
+                }
+                $booking->cabin()->sync($cabinPivotData);
             }
 
             if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
@@ -136,14 +147,18 @@ class BookingRepository implements BookingRepositoryInterface
             }
 
             if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
-                // Jika data additional fee berupa array ID atau array dengan data pivot
                 $additionalFeesData = [];
                 foreach ($data['additional_fee_ids'] as $fee) {
                     if (is_array($fee)) {
-                        // Contoh: ['additional_fee_id' => 1, 'total_price' => 100]
-                        $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $fee['total_price']];
+                        // Ambil data additional fee berdasarkan id
+                        $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee['additional_fee_id']);
+                        // Jika total_price tidak didefinisikan, gunakan harga dari feeObj atau default 0 jika objek tidak ditemukan
+                        $totalPrice = $fee['total_price'] ?? ($feeObj ? $feeObj->price : 0);
+                        $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $totalPrice];
                     } else {
-                        $additionalFeesData[$fee] = ['total_price' => 0];
+                        $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee);
+                        $totalPrice = $feeObj ? $feeObj->price : 0;
+                        $additionalFeesData[$fee] = ['total_price' => $totalPrice];
                     }
                 }
                 $booking->additionalFees()->sync($additionalFeesData);
@@ -173,7 +188,11 @@ class BookingRepository implements BookingRepositoryInterface
 
                 // Perbarui relasi pivot jika data tersedia
                 if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
-                    $booking->cabin()->sync($data['cabin_ids']);
+                    $cabinPivotData = [];
+                    foreach ($data['cabin_ids'] as $cabinId) {
+                        $cabinPivotData[$cabinId] = ['total_pax' => $data['total_pax'], 'total_price' => 0];
+                    }
+                    $booking->cabin()->sync($cabinPivotData);
                 }
 
                 if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
@@ -184,9 +203,15 @@ class BookingRepository implements BookingRepositoryInterface
                     $additionalFeesData = [];
                     foreach ($data['additional_fee_ids'] as $fee) {
                         if (is_array($fee)) {
-                            $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $fee['total_price']];
+                            // Ambil data additional fee berdasarkan id
+                            $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee['additional_fee_id']);
+                            // Jika total_price tidak didefinisikan, gunakan harga dari feeObj atau default 0 jika objek tidak ditemukan
+                            $totalPrice = $fee['total_price'] ?? ($feeObj ? $feeObj->price : 0);
+                            $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $totalPrice];
                         } else {
-                            $additionalFeesData[$fee] = ['total_price' => 0];
+                            $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee);
+                            $totalPrice = $feeObj ? $feeObj->price : 0;
+                            $additionalFeesData[$fee] = ['total_price' => $totalPrice];
                         }
                     }
                     $booking->additionalFees()->sync($additionalFeesData);

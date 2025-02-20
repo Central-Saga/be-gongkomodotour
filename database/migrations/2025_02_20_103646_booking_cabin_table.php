@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('booking_id')->nullable()->constrained('bookings')->onDelete('cascade');
             $table->foreignId('cabin_id')->nullable()->constrained('cabin')->onDelete('cascade');
-            $table->integer('total_pax');
-            $table->decimal('total_price', 15, 2);
+            $table->integer('total_pax')->default(1);
+            $table->decimal('total_price', 15, 2)->default(0);
             $table->timestamps();
         });
     }
