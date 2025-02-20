@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('hotel_occupancy_id')->constrained('hoteloccupancies')->onDelete('cascade');
             $table->decimal('total_price', 15, 2)->nullable();
             $table->integer('total_pax');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->enum('status', ['Pending', 'Confirmed', 'Cancelled'])->default('Pending');
             $table->timestamps();
         });

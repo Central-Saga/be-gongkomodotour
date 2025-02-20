@@ -25,6 +25,16 @@ class BookingObserver
         $totalBookingFee = $booking->bookingFees->sum('total_price');
 
         $booking->total_price = $baseTotal + $totalBookingFee;
+
+        // Hitung end_date berdasarkan start_date yang dipilih dan trip duration
+        // Misalnya, trip duration menyimpan property 'duration' (jumlah hari)
+        if ($booking->start_date && $booking->tripDuration && $booking->tripDuration->duration_days) {
+            $duration = $booking->tripDuration->duration_days;
+            // Misalnya, end_date = start_date + (duration - 1) hari
+            $booking->end_date = Carbon::parse($booking->start_date)
+                ->addDays($duration - 1)
+                ->format('Y-m-d');
+        }
     }
 
     public function updating(Booking $booking)
@@ -39,6 +49,14 @@ class BookingObserver
         $totalBookingFee = $booking->bookingFees->sum('total_price');
 
         $booking->total_price = $baseTotal + $totalBookingFee;
+
+        // Hitung ulang end_date jika start_date atau tripDuration berubah
+        if ($booking->start_date && $booking->tripDuration && $booking->tripDuration->duration_days) {
+            $duration = $booking->tripDuration->duration_days;
+            $booking->end_date = Carbon::parse($booking->start_date)
+                ->addDays($duration - 1)
+                ->format('Y-m-d');
+        }
     }
 
     private function getCabinPrice(Booking $booking, $totalPax)
