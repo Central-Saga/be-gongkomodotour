@@ -28,4 +28,28 @@ class AdditionalFee extends Model
     {
         return $this->belongsTo(Trip::class);
     }
+
+    /**
+     * Menghitung fee tambahan berdasarkan unit.
+     *
+     * @param int $totalPax Jumlah penumpang
+     * @param int $tripDurationDays Durasi trip (dalam hari)
+     * @return float
+     */
+    public function calculateFee($totalPax, $tripDurationDays)
+    {
+        switch ($this->unit) {
+            case 'per_pax':
+                return $this->price * $totalPax;
+            case 'per_5pax':
+                $groupCount = ceil($totalPax / 5);
+                return $this->price * $groupCount;
+            case 'per_day':
+                return $this->price * $tripDurationDays;
+            case 'per_day_guide':
+                return $this->price * $tripDurationDays;
+            default:
+                return 0;
+        }
+    }
 }
