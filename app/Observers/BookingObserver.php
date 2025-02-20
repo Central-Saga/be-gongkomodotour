@@ -11,25 +11,32 @@ class BookingObserver
 {
     public function creating(Booking $booking)
     {
-        $totalPax = $booking->total_pax;
+        // Hanya set end_date
+        $this->setEndDate($booking);
+    }
 
-        // Menggunakan computed attribute dari model Booking yang sudah menangani relasi many-to-many cabin
-        $cabinPrice = $booking->computed_cabin_price;
+    public function created(Booking $booking)
+    {
+        // Refresh untuk memastikan semua relasi tersinkronisasi
+        $booking->refresh();
+        $this->calculateTotalPrice($booking);
+    }
 
-        $hotelPrice = $this->getHotelPrice($booking);
-        $tripPrice  = $this->getTripPrice($booking, $totalPax);
+    public function updating(Booking $booking)
+    {
+        // Hanya set end_date
+        $this->setEndDate($booking);
+    }
 
-        // Asumsikan computed_cabin_price sudah menjumlahkan harga untuk seluruh cabin yang dipesan
-        $baseTotal = $cabinPrice + $hotelPrice + $tripPrice;
+    public function updated(Booking $booking)
+    {
+        // Refresh untuk memastikan semua relasi tersinkronisasi
+        $booking->refresh();
+        $this->calculateTotalPrice($booking);
+    }
 
-        // Menghitung total fee tambahan memakai relasi additionalFees dan nilai dari pivot
-        $totalBookingFee = $booking->additionalFees->sum(function ($fee) {
-            return $fee->pivot->total_price;
-        });
-
-        $booking->total_price = $baseTotal + $totalBookingFee;
-
-        // Hitung end_date berdasarkan start_date dan trip duration
+    private function setEndDate(Booking $booking)
+    {
         if ($booking->start_date && $booking->tripDuration && $booking->tripDuration->duration_days) {
             $duration = $booking->tripDuration->duration_days;
             $booking->end_date = Carbon::parse($booking->start_date)
@@ -38,30 +45,30 @@ class BookingObserver
         }
     }
 
-    public function updating(Booking $booking)
+    private function calculateTotalPrice(Booking $booking)
     {
         $totalPax = $booking->total_pax;
 
-        // Menggunakan computed attribute untuk menghitung harga cabin dari relasi many-to-many
+        // Hitung harga cabin
         $cabinPrice = $booking->computed_cabin_price;
 
+        // Hitung harga hotel
         $hotelPrice = $this->getHotelPrice($booking);
-        $tripPrice  = $this->getTripPrice($booking, $totalPax);
 
-        $baseTotal = $cabinPrice + $hotelPrice + $tripPrice;
+        // Hitung harga trip
+        $tripPrice = $this->getTripPrice($booking, $totalPax);
 
+        // Hitung total dasar
+        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $totalPax;
+
+        // Hitung total booking fee
         $totalBookingFee = $booking->additionalFees->sum(function ($fee) {
             return $fee->pivot->total_price;
         });
 
+        // Update total price
         $booking->total_price = $baseTotal + $totalBookingFee;
-
-        if ($booking->start_date && $booking->tripDuration && $booking->tripDuration->duration_days) {
-            $duration = $booking->tripDuration->duration_days;
-            $booking->end_date = Carbon::parse($booking->start_date)
-                ->addDays($duration - 1)
-                ->format('Y-m-d');
-        }
+        $booking->saveQuietly();
     }
 
     private function getHotelPrice(Booking $booking)

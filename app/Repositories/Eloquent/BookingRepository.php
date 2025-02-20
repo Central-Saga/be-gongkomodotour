@@ -133,7 +133,7 @@ class BookingRepository implements BookingRepositoryInterface
             // Buat booking utama
             $booking = $this->booking->create($data);
 
-            // Jika terdapat data untuk relasi many-to-many, contohnya:
+            // Sync cabin dan boat seperti sebelumnya
             if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
                 $cabinPivotData = [];
                 foreach ($data['cabin_ids'] as $cabinId) {
@@ -146,23 +146,8 @@ class BookingRepository implements BookingRepositoryInterface
                 $booking->boat()->sync($data['boat_ids']);
             }
 
-            if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
-                $additionalFeesData = [];
-                foreach ($data['additional_fee_ids'] as $fee) {
-                    if (is_array($fee)) {
-                        // Ambil data additional fee berdasarkan id
-                        $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee['additional_fee_id']);
-                        // Jika total_price tidak didefinisikan, gunakan harga dari feeObj atau default 0 jika objek tidak ditemukan
-                        $totalPrice = $fee['total_price'] ?? ($feeObj ? $feeObj->price : 0);
-                        $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $totalPrice];
-                    } else {
-                        $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee);
-                        $totalPrice = $feeObj ? $feeObj->price : 0;
-                        $additionalFeesData[$fee] = ['total_price' => $totalPrice];
-                    }
-                }
-                $booking->additionalFees()->sync($additionalFeesData);
-            }
+            // Gunakan method syncAdditionalFees yang sama dengan update
+            $this->syncAdditionalFees($booking, $data);
 
             return $booking;
         } catch (\Exception $e) {
@@ -261,6 +246,53 @@ class BookingRepository implements BookingRepositoryInterface
         } catch (ModelNotFoundException $e) {
             Log::error("Booking with ID {$id} not found.");
             return null;
+        }
+    }
+
+    /**
+     * Method untuk menambahkan atau memperbarui additional fees.
+     *
+     * @param Booking $booking
+     * @param array $data
+     * @return void
+     */
+    protected function syncAdditionalFees($booking, $data)
+    {
+        $syncFees = [];
+
+        // Tambahkan fee wajib berdasar trip_id booking
+        if ($booking->trip_id) {
+            $requiredFees = $this->additionalFeeRepository->getAdditionalFeesByTripId($booking->trip_id);
+
+            if ($requiredFees) {
+                foreach ($requiredFees as $fee) {
+                    if ($fee->is_required && $fee->status === 'Aktif') {
+                        $syncFees[$fee->id] = ['total_price' => $fee->price];
+                    }
+                }
+            }
+        }
+
+        // Proses optional fee dari input
+        if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
+            foreach ($data['additional_fee_ids'] as $fee) {
+                if (is_array($fee)) {
+                    $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee['additional_fee_id']);
+                    if ($feeObj && !$feeObj->is_required && $feeObj->status === 'Aktif') {
+                        $totalPrice = $fee['total_price'] ?? $feeObj->price;
+                        $syncFees[$feeObj->id] = ['total_price' => $totalPrice];
+                    }
+                } else {
+                    $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee);
+                    if ($feeObj && !$feeObj->is_required && $feeObj->status === 'Aktif') {
+                        $syncFees[$feeObj->id] = ['total_price' => $feeObj->price];
+                    }
+                }
+            }
+        }
+
+        if (!empty($syncFees)) {
+            $booking->additionalFees()->sync($syncFees);
         }
     }
 }

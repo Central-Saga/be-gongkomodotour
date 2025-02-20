@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
             $table->string('duration_label');
             $table->integer('duration_days');
+            $table->integer('duration_nights');
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });

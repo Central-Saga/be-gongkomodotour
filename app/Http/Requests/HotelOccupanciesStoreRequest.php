@@ -24,7 +24,7 @@ class HotelOccupanciesstoreRequest extends FormRequest
         return [
             'hotel_name' => 'required|string|max:255',
             'hotel_type' => 'required|string|max:50',
-            'occupancy' => 'required|integer',
+            'occupancy' => 'required|string|in:Single Occupancy, Double Occupancy',
             'price' => 'required|numeric',
             'status' => 'required|string|in:Aktif, Non Aktif',
         ];

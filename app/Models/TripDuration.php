@@ -16,6 +16,7 @@ class TripDuration extends Model
         'trip_id',
         'duration_label',
         'duration_days',
+        'duration_nights',
         'status',
     ];
 

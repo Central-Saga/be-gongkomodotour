@@ -50,6 +50,7 @@ class TripStoreRequest extends FormRequest
             'trip_durations' => 'sometimes|array',
             'trip_durations.*.duration_label' => 'required_with:trip_durations|string',
             'trip_durations.*.duration_days' => 'required_with:trip_durations|integer',
+            'trip_durations.*.duration_nights' => 'required_with:trip_durations|integer',
             'trip_durations.*.status' => 'required_with:trip_durations|in:Aktif,Non Aktif',
 
             // Validasi untuk trip prices dalam setiap trip durations
