@@ -178,7 +178,7 @@ class BookingService implements BookingServiceInterface
     {
         $syncFees = [];
 
-        // Tambahkan fee wajib berdasar trip_id booking
+        // Proses fee wajib berdasarkan trip_id booking
         if ($booking->trip_id) {
             $cacheKey = 'additional_fee_trip_' . $booking->trip_id;
             $requiredFees = Cache::remember($cacheKey, 3600, function () use ($booking) {
@@ -188,29 +188,30 @@ class BookingService implements BookingServiceInterface
             if ($requiredFees) {
                 foreach ($requiredFees as $fee) {
                     if ($fee->is_required && $fee->status === 'Aktif') {
-                        $syncFees[$fee->id] = ['total_price' => $fee->price];
+                        $totalPax = $booking->total_pax;
+                        $tripDurationDays = $booking->tripDuration ? $booking->tripDuration->duration_days : 1;
+                        $syncFees[$fee->id] = ['total_price' => $fee->calculateFee($totalPax, $tripDurationDays)];
                     }
                 }
             }
         }
 
-        // Proses optional fee dari input, misalnya:
-        // "additional_fee_ids": [
-        //     { "additional_fee_id": 4, "total_price": 100 },
-        //     { "additional_fee_id": 5, "total_price": 50 }
-        // ]
+        // Proses fee optional dari input
         if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
             foreach ($data['additional_fee_ids'] as $feeData) {
                 if (is_array($feeData)) {
                     $fee = $this->additionalFeeRepository->getAdditionalFeeById($feeData['additional_fee_id']);
                     if ($fee && !$fee->is_required && $fee->status === 'Aktif') {
-                        $syncFees[$fee->id] = ['total_price' => $feeData['total_price'] ?? $fee->price];
+                        $totalPax = $booking->total_pax;
+                        $tripDurationDays = $booking->tripDuration ? $booking->tripDuration->duration_days : 1;
+                        $syncFees[$fee->id] = ['total_price' => $fee->calculateFee($totalPax, $tripDurationDays)];
                     }
                 } else {
-                    // Jika hanya berupa ID
                     $fee = $this->additionalFeeRepository->getAdditionalFeeById($feeData);
                     if ($fee && !$fee->is_required && $fee->status === 'Aktif') {
-                        $syncFees[$fee->id] = ['total_price' => $fee->price];
+                        $totalPax = $booking->total_pax;
+                        $tripDurationDays = $booking->tripDuration ? $booking->tripDuration->duration_days : 1;
+                        $syncFees[$fee->id] = ['total_price' => $fee->calculateFee($totalPax, $tripDurationDays)];
                     }
                 }
             }

@@ -74,10 +74,13 @@ class BookingObserver
     private function getHotelPrice(Booking $booking)
     {
         $hotelPrice = 0;
-        if ($booking->hotel_occupancy_id) {
+        if ($booking->hotel_occupancy_id && $booking->tripDuration) {
             $hotel = HotelOccupancies::find($booking->hotel_occupancy_id);
             if ($hotel) {
-                $hotelPrice = $hotel->price;
+                // Mengambil jumlah malam dari tripDuration:
+                // Jika field duration_nights tersedia, gunakan itu; jika tidak, gunakan (duration_days - 1)
+                $nights = $booking->tripDuration->duration_nights ?? ($booking->tripDuration->duration_days - 1);
+                $hotelPrice = $hotel->calculateHotelFee($booking->total_pax, $nights);
             }
         }
         return $hotelPrice;
