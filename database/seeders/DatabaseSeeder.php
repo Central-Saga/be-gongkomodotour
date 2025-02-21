@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\EmailBlastRecipient;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,6 +26,8 @@ class DatabaseSeeder extends Seeder
             HotelOccupanciesSeeder::class,
             BoatSeeder::class,
             CabinSeeder::class,
+            EmailBlastSeeder::class,
+            EmailBlastRecipientSeeder::class,
             AdditionalFeeSeeder::class,
             SurchargeSeeder::class,
             // BookingSeeder::class,
