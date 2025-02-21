@@ -2,16 +2,25 @@
 
 namespace App\Providers;
 
+use App\Models\Booking;
+use App\Observers\BookingObserver;
+use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
+use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
+use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Eloquent\RoleRepository;
+use App\Repositories\Eloquent\TripRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Services\Implementations\RoleService;
+use App\Services\Implementations\TripService;
 use App\Services\Implementations\UserService;
 use App\Services\Contracts\RoleServiceInterface;
+use App\Services\Contracts\TripServiceInterface;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Auth\Notifications\ResetPassword;
 use App\Repositories\Eloquent\PermissionRepository;
+use App\Repositories\Eloquent\TripPricesRepository;
 use App\Services\Contracts\CustomersServiceInterface;
 use App\Repositories\Contracts\CustomersRepositoryInterface;
 use App\Repositories\Eloquent\CustomersRepository;
@@ -21,8 +30,12 @@ use App\Services\Contracts\HotelOccupanciesServiceInterface;
 use App\Repositories\Eloquent\HotelOccupanciesRepository;
 use App\Services\Implementations\HotelOccupanciesService;
 use App\Services\Implementations\PermissionService;
+use App\Services\Implementations\TripPricesService;
+use App\Repositories\Eloquent\TripDurationRepository;
 use App\Services\Contracts\PermissionServiceInterface;
+use App\Services\Contracts\TripPricesServiceInterface;
 use App\Repositories\Contracts\RoleRepositoryInterface;
+use App\Repositories\Contracts\TripRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Contracts\BoatServiceInterface;
 use App\Services\Implementations\BoatService;
@@ -41,6 +54,23 @@ use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
 use App\Services\Contracts\EmailBlastRecipientServiceInterface;
 use App\Services\Implementations\EmailBlastRecipientService;
 use App\Repositories\Contracts\PermissionRepositoryInterface;
+use App\Repositories\Contracts\TripPricesRepositoryInterface;
+use App\Repositories\Contracts\TripDurationRepositoryInterface;
+use App\Repositories\Eloquent\FlightScheduleRepository;
+use App\Repositories\Eloquent\ItinerariesRepository;
+use App\Repositories\Eloquent\AdditionalFeeRepository;
+use App\Repositories\Eloquent\BookingFeeRepository;
+use App\Repositories\Contracts\BookingFeeRepositoryInterface;
+use App\Repositories\Contracts\BookingRepositoryInterface;
+use App\Services\Contracts\FlightScheduleServiceInterface;
+use App\Services\Contracts\ItinerariesServiceInterface;
+use App\Services\Implementations\FlightScheduleService;
+use App\Services\Implementations\ItinerariesService;
+use App\Services\Implementations\BookingService;
+use App\Repositories\Contracts\SurchargeRepositoryInterface;
+use App\Repositories\Eloquent\BookingRepository;
+use App\Repositories\Eloquent\SurchargeRepository;
+use App\Services\Contracts\BookingServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -67,6 +97,35 @@ class AppServiceProvider extends ServiceProvider
         // Binding UserServiceInterface to UserService
         $this->app->bind(UserServiceInterface::class, UserService::class);
 
+        // Binding TripRepositoryInterface to TripRepository
+        $this->app->bind(TripRepositoryInterface::class, TripRepository::class);
+
+        // Binding TripServiceInterface to TripService
+        $this->app->bind(TripServiceInterface::class, TripService::class);
+
+        // Binding TripPricesRepositoryInterface to TripPricesRepository
+        $this->app->bind(TripPricesRepositoryInterface::class, TripPricesRepository::class);
+
+        // Binding TripPricesServiceInterface to TripPricesService
+        $this->app->bind(TripPricesServiceInterface::class, TripPricesService::class);
+
+        // Binding TripDurationRepositoryInterface to TripDurationRepository
+        $this->app->bind(TripDurationRepositoryInterface::class, TripDurationRepository::class);
+
+        // Binding TripDurationServiceInterface to TripDurationService
+        $this->app->bind(TripDurationServiceInterface::class, TripDurationService::class);
+
+        // Binding ItinerariesRepositoryInterface to ItinerariesRepository
+        $this->app->bind(ItinerariesRepositoryInterface::class, ItinerariesRepository::class);
+
+        // Binding ItinerariesServiceInterface to ItinerariesService
+        $this->app->bind(ItinerariesServiceInterface::class, ItinerariesService::class);
+
+        // Binding FlightScheduleRepositoryInterface to FlightScheduleRepository
+        $this->app->bind(FlightScheduleRepositoryInterface::class, FlightScheduleRepository::class);
+
+        // Binding FlightScheduleServiceInterface to FlightScheduleService
+        $this->app->bind(FlightScheduleServiceInterface::class, FlightScheduleService::class);
 
         // Binding CustomersRepositoryInterface to CustomersRepository
         $this->app->bind(CustomersRepositoryInterface::class, CustomersRepository::class);
@@ -104,7 +163,20 @@ class AppServiceProvider extends ServiceProvider
         // Binding EmailBlastRecipientServiceInterface to EmailBlastRecipientService
         $this->app->bind(EmailBlastRecipientServiceInterface::class, EmailBlastRecipientService::class);
         
+        // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
+        $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
 
+        // Binding BookingFeeRepositoryInterface to BookingFeeRepository
+        $this->app->bind(BookingFeeRepositoryInterface::class, BookingFeeRepository::class);
+
+        // Binding BookingServiceInterface to BookingService
+        $this->app->bind(BookingServiceInterface::class, BookingService::class);
+
+        // Binding BookingRepositoryInterface to BookingRepository
+        $this->app->bind(BookingRepositoryInterface::class, BookingRepository::class);
+
+        // Binding SurchargeRepositoryInterface to SurchargeRepository
+        $this->app->bind(SurchargeRepositoryInterface::class, SurchargeRepository::class);
     }
 
     /**
@@ -115,6 +187,8 @@ class AppServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
             return config('app.frontend_url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
+
+        Booking::observe(BookingObserver::class);
 
         Schema::defaultStringLength(125);
     }

@@ -13,19 +13,25 @@ use App\Http\Controllers\BoatController;
 use App\Http\Controllers\CabinController;
 use App\Http\Controllers\EmailBlastController;
 use App\Http\Controllers\EmailBlastRecipientController;
+use App\Http\Controllers\TripController;
+use App\Http\Controllers\BookingController;
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/logout', [AuthenticatedSessionController::class, 
-'destroy'])->middleware('auth:sanctum');
+Route::post('/logout', [
+    AuthenticatedSessionController::class,
+    'destroy'
+])->middleware('auth:sanctum');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // Permissions
     Route::apiResource('permissions', PermissionController::class);
     // Roles
     Route::apiResource('roles', RoleController::class);
     // Users
     Route::apiResource('users', UserController::class);
+    // Trips
+    Route::apiResource('trips', TripController::class);
     // Customers
     Route::apiResource('customers', CustomersController::class);
     // Hotel Occupancies
@@ -34,12 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('boat', BoatController::class);
     // Cabins
     Route::apiResource('cabin', CabinController::class);
-
     // EmailBlast
-    Route::apiResource('email_blast', EmailBlastController::class);
-    
+    Route::apiResource('email_blast', EmailBlastController::class);   
     // EmailBlastRecipient
     Route::apiResource('email_blast_recipient', EmailBlastRecipientController::class);
-
-
+    // Bookings
+    Route::apiResource('bookings', BookingController::class);
 });

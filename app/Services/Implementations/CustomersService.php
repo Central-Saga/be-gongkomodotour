@@ -104,8 +104,7 @@ class CustomersService implements CustomersServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->customerRepository->createCustomer($data);
-        Cache::forget(self::CUSTOMERS_ALL_CACHE_KEY);
-        Cache::forget(self::CUSTOMERS_ACTIVE_CACHE_KEY);
+        $this->clearCustomerCaches();
         return $result;
     }
 
@@ -120,8 +119,7 @@ class CustomersService implements CustomersServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->customerRepository->updateCustomer($id, $data);
-        Cache::forget(self::CUSTOMERS_ALL_CACHE_KEY);
-        Cache::forget(self::CUSTOMERS_ACTIVE_CACHE_KEY);
+        $this->clearCustomerCaches();
         return $result;
     }
 
@@ -134,9 +132,20 @@ class CustomersService implements CustomersServiceInterface
     public function deleteCustomer($id)
     {
         $result = $this->customerRepository->deleteCustomer($id);
-        Cache::forget(self::CUSTOMERS_ALL_CACHE_KEY);
-        Cache::forget(self::CUSTOMERS_ACTIVE_CACHE_KEY);
+        $this->clearCustomerCaches();
 
         return $result;
+    }
+
+    /**
+     * Menghapus semua cache customer
+     *
+     * @return void
+     */
+    public function clearCustomerCaches()
+    {
+        Cache::forget(self::CUSTOMERS_ALL_CACHE_KEY);
+        Cache::forget(self::CUSTOMERS_ACTIVE_CACHE_KEY);
+        Cache::forget(self::CUSTOMERS_INACTIVE_CACHE_KEY);
     }
 }
