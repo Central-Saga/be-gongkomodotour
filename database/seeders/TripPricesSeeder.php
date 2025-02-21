@@ -74,6 +74,6 @@ class TripPricesSeeder extends Seeder
             TripPrices::create($tripPrice);
         }
 
-        TripPrices::factory()->count(10)->create();
+        // TripPrices::factory()->count(10)->create();
     }
 }

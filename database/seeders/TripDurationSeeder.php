@@ -43,6 +43,6 @@ class TripDurationSeeder extends Seeder
             TripDuration::create($tripDuration);
         }
 
-        TripDuration::factory()->count(10)->create();
+        // TripDuration::factory()->count(10)->create();
     }
 }

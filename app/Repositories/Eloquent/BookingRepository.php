@@ -3,10 +3,12 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Booking;
+use App\Models\Cabin;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 
 class BookingRepository implements BookingRepositoryInterface
 {
@@ -118,7 +120,9 @@ class BookingRepository implements BookingRepositoryInterface
             'user',
             'hotelOccupancy',
             'additionalFees'
-        ])->where('status', $status)->get();
+        ])
+            ->where('status', $status)
+            ->get();
     }
 
     /**
@@ -133,25 +137,54 @@ class BookingRepository implements BookingRepositoryInterface
             // Buat booking utama
             $booking = $this->booking->create($data);
 
-            // Sync cabin dan boat seperti sebelumnya
-            if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
+            // Sinkronisasi relasi cabin
+            if (isset($data['cabins']) && is_array($data['cabins'])) {
                 $cabinPivotData = [];
-                foreach ($data['cabin_ids'] as $cabinId) {
-                    $cabinPivotData[$cabinId] = ['total_pax' => $data['total_pax'], 'total_price' => 0];
+                foreach ($data['cabins'] as $cabinData) {
+                    $cabin = Cabin::find($cabinData['cabin_id']);
+                    if ($cabin) {
+                        $totalPax = $cabinData['total_pax'];
+                        $basePrice = $cabin->base_price;
+                        $additionalPrice = $cabin->additional_price;
+                        $minPax = $cabin->min_pax;
+                        $maxPax = $cabin->max_pax;
+
+                        if ($totalPax > $maxPax) {
+                            $totalPax = $maxPax;
+                        }
+                        if ($totalPax <= $minPax) {
+                            $price = $basePrice;
+                        } else {
+                            $extraPax = $totalPax - $minPax;
+                            $price = $basePrice + ($extraPax * $additionalPrice);
+                        }
+
+                        $cabinPivotData[$cabin->id] = [
+                            'total_pax' => $totalPax,
+                            'total_price' => $price
+                        ];
+                    }
                 }
                 $booking->cabin()->sync($cabinPivotData);
             }
 
+            // Sinkronisasi relasi boat
             if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
                 $booking->boat()->sync($data['boat_ids']);
             }
 
-            // Gunakan method syncAdditionalFees yang sama dengan update
+            // Sinkronisasi additional fees
             $this->syncAdditionalFees($booking, $data);
+
+            // Refresh booking dan hitung total price menggunakan calculateBookingPrices
+            $booking->refresh();
+            $finalTotalPrice = $this->calculateBookingPrices($booking);
+            $booking->total_price = $finalTotalPrice;
+            $booking->saveQuietly();
 
             return $booking;
         } catch (\Exception $e) {
-            Log::error("Failed to create booking: {$e->getMessage()}");
+            Log::error("Failed to create booking: " . $e->getMessage());
             return null;
         }
     }
@@ -165,50 +198,62 @@ class BookingRepository implements BookingRepositoryInterface
      */
     public function updateBooking($id, array $data)
     {
-        $booking = $this->findBooking($id);
-
-        if ($booking) {
-            try {
-                $booking->update($data);
-
-                // Perbarui relasi pivot jika data tersedia
-                if (isset($data['cabin_ids']) && is_array($data['cabin_ids'])) {
-                    $cabinPivotData = [];
-                    foreach ($data['cabin_ids'] as $cabinId) {
-                        $cabinPivotData[$cabinId] = ['total_pax' => $data['total_pax'], 'total_price' => 0];
-                    }
-                    $booking->cabin()->sync($cabinPivotData);
-                }
-
-                if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
-                    $booking->boat()->sync($data['boat_ids']);
-                }
-
-                if (isset($data['additional_fee_ids']) && is_array($data['additional_fee_ids'])) {
-                    $additionalFeesData = [];
-                    foreach ($data['additional_fee_ids'] as $fee) {
-                        if (is_array($fee)) {
-                            // Ambil data additional fee berdasarkan id
-                            $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee['additional_fee_id']);
-                            // Jika total_price tidak didefinisikan, gunakan harga dari feeObj atau default 0 jika objek tidak ditemukan
-                            $totalPrice = $fee['total_price'] ?? ($feeObj ? $feeObj->price : 0);
-                            $additionalFeesData[$fee['additional_fee_id']] = ['total_price' => $totalPrice];
-                        } else {
-                            $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee);
-                            $totalPrice = $feeObj ? $feeObj->price : 0;
-                            $additionalFeesData[$fee] = ['total_price' => $totalPrice];
-                        }
-                    }
-                    $booking->additionalFees()->sync($additionalFeesData);
-                }
-
-                return $booking;
-            } catch (\Exception $e) {
-                Log::error("Failed to update booking with ID {$id}: {$e->getMessage()}");
+        try {
+            $booking = $this->findBooking($id);
+            if (!$booking) {
                 return null;
             }
+
+            $booking->update($data);
+
+            // Sinkronisasi relasi cabin jika ada
+            if (isset($data['cabins']) && is_array($data['cabins'])) {
+                $cabinPivotData = [];
+                foreach ($data['cabins'] as $cabinData) {
+                    $cabin = Cabin::find($cabinData['cabin_id']);
+                    if ($cabin) {
+                        $totalPax = $cabinData['total_pax'];
+                        $basePrice = $cabin->base_price;
+                        $additionalPrice = $cabin->additional_price;
+                        $minPax = $cabin->min_pax;
+                        $maxPax = $cabin->max_pax;
+                        if ($totalPax > $maxPax) {
+                            $totalPax = $maxPax;
+                        }
+                        if ($totalPax <= $minPax) {
+                            $price = $basePrice;
+                        } else {
+                            $extraPax = $totalPax - $minPax;
+                            $price = $basePrice + ($extraPax * $additionalPrice);
+                        }
+                        $cabinPivotData[$cabin->id] = [
+                            'total_pax' => $totalPax,
+                            'total_price' => $price
+                        ];
+                    }
+                }
+                $booking->cabin()->sync($cabinPivotData);
+            }
+
+            // Sinkronisasi relasi boat
+            if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
+                $booking->boat()->sync($data['boat_ids']);
+            }
+
+            // Sinkronisasi additional fees
+            $this->syncAdditionalFees($booking, $data);
+
+            // Refresh booking dan hitung total price menggunakan calculateBookingPrices
+            $booking->refresh();
+            $finalTotalPrice = $this->calculateBookingPrices($booking);
+            $booking->total_price = $finalTotalPrice;
+            $booking->saveQuietly();
+
+            return $booking;
+        } catch (\Exception $e) {
+            Log::error("Failed to update booking: " . $e->getMessage());
+            return null;
         }
-        return null;
     }
 
     /**
@@ -294,5 +339,67 @@ class BookingRepository implements BookingRepositoryInterface
         if (!empty($syncFees)) {
             $booking->additionalFees()->sync($syncFees);
         }
+    }
+
+    private function calculateBookingPrices(Booking $booking)
+    {
+        // Load relasi yang dibutuhkan
+        $booking->load(['cabin', 'hotelOccupancy', 'tripDuration', 'additionalFees']);
+
+        // Hitung harga cabin (ini akan memicu log perhitungan cabin)
+        $cabinPrice = $booking->computed_cabin_price;
+
+        // Hitung harga hotel
+        $hotelPrice = 0;
+        if ($booking->hotelOccupancy && $booking->tripDuration) {
+            $nights = $booking->tripDuration->duration_nights ?? ($booking->tripDuration->duration_days - 1);
+            $hotelPrice = $booking->hotelOccupancy->calculateHotelFee($booking->total_pax, $nights);
+        }
+
+        // Hitung harga trip
+        $tripPrice = 0;
+        if ($booking->tripDuration) {
+            // Cek trip prices yang sesuai dengan trip duration ini
+            $tripPrices = $booking->tripDuration->tripPrices()
+                ->where('status', 'Aktif')
+                ->where('pax_min', '<=', $booking->total_pax)
+                ->where('pax_max', '>=', $booking->total_pax)
+                ->first();
+
+            if ($tripPrices) {
+                $tripPrice = $tripPrices->price_per_pax;
+            }
+
+            // Log untuk debugging
+            Log::info('Trip Price Calculation', [
+                'trip_duration_id' => $booking->trip_duration_id,
+                'total_pax' => $booking->total_pax,
+                'found_price' => $tripPrice,
+                'trip_prices' => $tripPrices
+            ]);
+        }
+
+        // Hitung total dasar
+        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $booking->total_pax;
+
+        // Hitung booking fee
+        $bookingFeeTotal = $booking->additionalFees->sum(function ($fee) {
+            return $fee->pivot->total_price;
+        });
+
+        $finalTotalPrice = $baseTotal + $bookingFeeTotal;
+
+        // Log hasil perhitungan
+        Log::info('Hasil perhitungan total price booking', [
+            'total_pax' => $booking->total_pax,
+            'cabin_price' => $cabinPrice,
+            'hotel_price' => $hotelPrice,
+            'trip_price' => $tripPrice,
+            'base_total' => $baseTotal,
+            'booking_fee_total' => $bookingFeeTotal,
+            'final_total_price' => $finalTotalPrice,
+        ]);
+
+        return $finalTotalPrice;
     }
 }

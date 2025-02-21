@@ -77,24 +77,38 @@ class Booking extends Model
     // Akses harga cabin berdasarkan jumlah penumpang yang dipesan
     public function getComputedCabinPriceAttribute()
     {
-        return $this->cabin->sum(function ($cabin) {
-            // Misalnya, jika data jumlah pax untuk cabin tersimpan pada pivot,
-            // kalau tidak, fallback menggunakan $this->total_pax
+        $totalCabinPrice = 0;
+        foreach ($this->cabin as $cabin) {
+            // Ambil total_pax dari pivot atau fallback ke booking total_pax
             $pivotTotalPax = $cabin->pivot->total_pax ?? $this->total_pax;
             $basePrice = $cabin->base_price;
             $additionalPrice = $cabin->additional_price;
             $minPax = $cabin->min_pax;
             $maxPax = $cabin->max_pax;
 
+            // Logging untuk debugging per hitungan
+            \Log::info('Perhitungan Cabin', [
+                'cabin_id'         => $cabin->id,
+                'pivotTotalPax'    => $pivotTotalPax,
+                'base_price'       => $basePrice,
+                'additional_price' => $additionalPrice,
+                'min_pax'          => $minPax,
+                'max_pax'          => $maxPax,
+            ]);
+
+            // Sesuaikan total pax jika melebihi max dan hitung harga
             if ($pivotTotalPax > $maxPax) {
                 $pivotTotalPax = $maxPax;
             }
             if ($pivotTotalPax <= $minPax) {
-                return $basePrice;
+                $price = $basePrice;
+            } else {
+                $extraPax = $pivotTotalPax - $minPax;
+                $price = $basePrice + ($extraPax * $additionalPrice);
             }
-            $extraPax = $pivotTotalPax - $minPax;
-            return $basePrice + ($extraPax * $additionalPrice);
-        });
+            $totalCabinPrice += $price;
+        }
+        return $totalCabinPrice;
     }
 
     /**
@@ -111,8 +125,12 @@ class Booking extends Model
         // Mengambil harga cabin dari accessor getComputedCabinPriceAttribute()
         $cabinPrice = $this->computed_cabin_price;
 
-        // Mengambil harga hotel jika tersedia
-        $hotelPrice = $this->hotelOccupancy ? $this->hotelOccupancy->price : 0;
+        // Menghitung harga hotel secara dinamis berdasarkan jumlah malam
+        $hotelPrice = 0;
+        if ($this->hotelOccupancy && $this->tripDuration) {
+            $nights = $this->tripDuration->duration_nights ?? ($this->tripDuration->duration_days - 1);
+            $hotelPrice = $this->hotelOccupancy->calculateHotelFee($totalPax, $nights);
+        }
 
         // Mengambil harga trip jika tersedia
         $tripPrice = 0;

@@ -32,8 +32,10 @@ class BookingStoreRequest extends FormRequest
             'start_date' => 'required|date',
             'end_date' => 'required|date',
 
-            'cabin_ids' => 'sometimes|array',
-            'cabin_ids.*' => 'integer|exists:cabin,id',
+            'cabins' => 'sometimes|array',
+            'cabins.*.cabin_id' => 'required|exists:cabin,id',
+            'cabins.*.total_pax' => 'required|integer|min:1',
+
             'boat_ids' => 'sometimes|array',
             'boat_ids.*' => 'integer|exists:boat,id',
 
