@@ -16,11 +16,12 @@ return new class extends Migration
             $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
             $table->string('fee_category');
             $table->decimal('price', 15, 2);
-            $table->enum('region', ['Domestic', 'Overseas']);
-            $table->enum('unit', ['per_pax', 'per_5pax', 'per_day', 'per_guide']);
+            $table->enum('region', ['Domestic', 'Overseas', 'Domestic & Overseas']);
+            $table->enum('unit', ['per_pax', 'per_5pax', 'per_day', 'per_day_guide']);
             $table->integer('pax_min');
             $table->integer('pax_max');
-            $table->enum('day_type', ['Weekday', 'Weekend']);
+            $table->enum('day_type', ['Weekday', 'Weekend'])->nullable();
+            $table->boolean('is_required')->default(true);
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });

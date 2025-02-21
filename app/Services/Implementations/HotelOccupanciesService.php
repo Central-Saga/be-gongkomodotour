@@ -105,8 +105,7 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
     {
         Log::info('Creating HotelOccupancies with data: ' . json_encode($data));
         $result = $this->hotelOccupanciesRepository->createHotelOccupancies($data);
-        Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
-        Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);
+        $this->clearHotelOccupanciesCaches();
         return $result;
     }
 
@@ -120,8 +119,7 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
     public function updateHotelOccupancies($id, array $data)
     {
         $result = $this->hotelOccupanciesRepository->updateHotelOccupancies($id, $data);
-        Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
-        Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);
+        $this->clearHotelOccupanciesCaches();
         return $result;
     }
 
@@ -134,9 +132,20 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
     public function deleteHotelOccupancies($id)
     {
         $result = $this->hotelOccupanciesRepository->deleteHotelOccupancies($id);
-        Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
-        Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);
+        $this->clearHotelOccupanciesCaches();
 
         return $result;
+    }
+
+    /**
+     * Menghapus semua cache hotelOccupancies
+     *
+     * @return void
+     */
+    public function clearHotelOccupanciesCaches()
+    {
+        Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
+        Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);
+        Cache::forget(self::HOTELOCCUPANCIESS_INACTIVE_CACHE_KEY);
     }
 }

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->text('include');
             $table->text('exclude');
             $table->text('note');
-            $table->string('duration');
             $table->time('start_time');
             $table->time('end_time');
             $table->string('meeting_point');

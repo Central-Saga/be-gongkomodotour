@@ -22,11 +22,12 @@ class AdditionalFeeFactory extends Factory
             'fee_category' => $this->faker->randomElement(['Parkir', 'Transfer', 'Tiket Masuk']),
             'price' => $this->faker->randomFloat(2, 0, 100),
             'region' => $this->faker->randomElement(['Domestic', 'Overseas']),
-            'unit' => $this->faker->randomElement(['per_pax', 'per_5pax', 'per_day', 'per_guide']),
+            'unit' => $this->faker->randomElement(['per_pax', 'per_5pax', 'per_day', 'per_day_guide']),
             'pax_min' => $this->faker->numberBetween(1, 10),
             'pax_max' => $this->faker->numberBetween(1, 10),
             'day_type' => $this->faker->randomElement(['Weekday', 'Weekend']),
             'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
+            'is_required' => $this->faker->boolean(),
         ];
     }
 }

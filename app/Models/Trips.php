@@ -17,7 +17,6 @@ class Trips extends Model
         'include',
         'exclude',
         'note',
-        'duration',
         'start_time',
         'end_time',
         'meeting_point',

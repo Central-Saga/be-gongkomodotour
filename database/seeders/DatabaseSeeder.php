@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TripsSeeder::class,
             // ItinerariesSeeder::class,
-            // TripDurationSeeder::class,
-            // TripPricesSeeder::class,
+            TripDurationSeeder::class,
+            TripPricesSeeder::class,
             // FlightScheduleSeeder::class,
             CustomersSeeder::class,
             HotelOccupanciesSeeder::class,
@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
             CabinSeeder::class,
             AdditionalFeeSeeder::class,
             SurchargeSeeder::class,
+            // BookingSeeder::class,
+            // BookingFeeSeeder::class,
         ]);
     }
 }

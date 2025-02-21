@@ -104,8 +104,7 @@ class CabinService implements CabinServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->cabinRepository->createCabin($data);
-        Cache::forget(self::CABIN_ALL_CACHE_KEY);
-        Cache::forget(self::CABIN_ACTIVE_CACHE_KEY);
+        $this->clearCabinCaches();
         return $result;
     }
 
@@ -120,8 +119,7 @@ class CabinService implements CabinServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->cabinRepository->updateCabin($id, $data);
-        Cache::forget(self::CABIN_ALL_CACHE_KEY);
-        Cache::forget(self::CABIN_ACTIVE_CACHE_KEY);
+        $this->clearCabinCaches();
         return $result;
     }
 
@@ -134,9 +132,20 @@ class CabinService implements CabinServiceInterface
     public function deleteCabin($id)
     {
         $result = $this->cabinRepository->deleteCabin($id);
-        Cache::forget(self::CABIN_ALL_CACHE_KEY);
-        Cache::forget(self::CABIN_ACTIVE_CACHE_KEY);
+        $this->clearCabinCaches();
 
         return $result;
+    }
+
+    /**
+     * Menghapus semua cache cabin
+     *
+     * @return void
+     */
+    public function clearCabinCaches()
+    {
+        Cache::forget(self::CABIN_ALL_CACHE_KEY);
+        Cache::forget(self::CABIN_ACTIVE_CACHE_KEY);
+        Cache::forget(self::CABIN_INACTIVE_CACHE_KEY);
     }
 }

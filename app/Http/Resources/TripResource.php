@@ -45,6 +45,14 @@ class TripResource extends JsonResource
             'trip_prices' => $this->whenLoaded('tripDuration.tripPrices', function () {
                 return TripPricesResource::collection($this->tripDuration->tripPrices);
             }),
+
+            'additional_fees' => $this->whenLoaded('additionalFees', function () {
+                return AdditionalFeeResource::collection($this->additionalFees);
+            }),
+
+            'surcharges' => $this->whenLoaded('surcharges', function () {
+                return SurchargeResource::collection($this->surcharges);
+            }),
         ];
     }
 }
