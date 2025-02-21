@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('detail_transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('transaction_id')->constrained('transactions');
+            $table->morphs('reference');
+            $table->enum('type', ['Surcharge', 'Additional Fee']);
+            $table->decimal('amount', 15, 2);
             $table->timestamps();
         });
     }
