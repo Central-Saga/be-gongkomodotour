@@ -25,4 +25,9 @@ class Surcharge extends Model
     {
         return $this->belongsTo(Trip::class);
     }
+
+    public function detailTransactions()
+    {
+        return $this->morphMany(DetailTransaction::class, 'reference');
+    }
 }
