@@ -102,7 +102,6 @@ class BoatService implements BoatServiceInterface
      */
     public function createBoat(array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->boatRepository->createBoat($data);
         $this->clearBoatCaches();
         return $result;
@@ -117,7 +116,6 @@ class BoatService implements BoatServiceInterface
      */
     public function updateBoat($id, array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->boatRepository->updateBoat($id, $data);
         $this->clearBoatCaches();
         return $result;
