@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Booking;
 use App\Observers\BookingObserver;
 use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
+use App\Repositories\Contracts\BankAccountRepositoryInterface;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use Illuminate\Support\Facades\Schema;
@@ -68,9 +69,12 @@ use App\Services\Implementations\FlightScheduleService;
 use App\Services\Implementations\ItinerariesService;
 use App\Services\Implementations\BookingService;
 use App\Repositories\Contracts\SurchargeRepositoryInterface;
+use App\Repositories\Eloquent\BankAccountRepository;
 use App\Repositories\Eloquent\BookingRepository;
 use App\Repositories\Eloquent\SurchargeRepository;
+use App\Services\Contracts\BankAccountServiceInterface;
 use App\Services\Contracts\BookingServiceInterface;
+use App\Services\Implementation\BankAccountService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -162,7 +166,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding EmailBlastRecipientServiceInterface to EmailBlastRecipientService
         $this->app->bind(EmailBlastRecipientServiceInterface::class, EmailBlastRecipientService::class);
-        
+
         // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
         $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
 
@@ -177,6 +181,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding SurchargeRepositoryInterface to SurchargeRepository
         $this->app->bind(SurchargeRepositoryInterface::class, SurchargeRepository::class);
+
+        // Binding BankAccountRepositoryInterface to BankAccountRepository
+        $this->app->bind(BankAccountRepositoryInterface::class, BankAccountRepository::class);
+
+        // Binding BankAccountServiceInterface to BankAccountService
+        $this->app->bind(BankAccountServiceInterface::class, BankAccountService::class);
     }
 
     /**
