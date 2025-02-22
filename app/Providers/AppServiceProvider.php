@@ -69,12 +69,16 @@ use App\Services\Implementations\FlightScheduleService;
 use App\Services\Implementations\ItinerariesService;
 use App\Services\Implementations\BookingService;
 use App\Repositories\Contracts\SurchargeRepositoryInterface;
+use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Repositories\Eloquent\BankAccountRepository;
 use App\Repositories\Eloquent\BookingRepository;
 use App\Repositories\Eloquent\SurchargeRepository;
+use App\Repositories\Eloquent\TransactionRepository;
 use App\Services\Contracts\BankAccountServiceInterface;
 use App\Services\Contracts\BookingServiceInterface;
+use App\Services\Contracts\TransactionServiceInterface;
 use App\Services\Implementation\BankAccountService;
+use App\Services\Implementation\TransactionService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -187,6 +191,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding BankAccountServiceInterface to BankAccountService
         $this->app->bind(BankAccountServiceInterface::class, BankAccountService::class);
+
+        // Binding TransactionRepositoryInterface to TransactionRepository
+        $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
+
+        // Binding TransactionServiceInterface to TransactionService
+        $this->app->bind(TransactionServiceInterface::class, TransactionService::class);
     }
 
     /**
