@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('transaction_id')->constrained('transactions');
             $table->foreignId('user_id')->constrained('users');
             $table->string('confirmed_note');
-            $table->string('requested_hotel_name');
+            $table->enum('requested_hotel_name', ['Ayana Komodo Resort', 'Meruorah Hotel']);
             $table->enum('request_status', ['Menunggu Konfirmasi', 'Diterima', 'Ditolak']);
             $table->decimal('confirmed_price', 15, 2);
             $table->timestamps();

@@ -16,6 +16,7 @@ class DetailTransaction extends Model
         'transaction_id',
         'type',
         'amount',
+        'description',
     ];
 
     public function transaction()

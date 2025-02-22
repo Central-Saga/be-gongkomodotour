@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\BankAccount;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class BankAccountSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class BankAccountSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        BankAccount::factory()->count(10)->create();
     }
 }

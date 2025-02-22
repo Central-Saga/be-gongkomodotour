@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('transaction_id')->constrained('transactions');
             $table->morphs('reference');
+            $table->text('description')->nullable();
             $table->enum('type', ['Surcharge', 'Additional Fee']);
             $table->decimal('amount', 15, 2);
             $table->timestamps();

@@ -28,4 +28,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(BankAccount::class, 'bank_account_id', 'id');
     }
+
+    public function details()
+    {
+        return $this->hasMany(DetailTransaction::class, 'transaction_id', 'id');
+    }
 }

@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\HotelRequest;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class HotelRequestSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class HotelRequestSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        HotelRequest::factory()->count(10)->create();
     }
 }

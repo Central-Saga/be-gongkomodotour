@@ -17,7 +17,11 @@ class BankAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'bank_name' => $this->faker->randomElement(array: ['BRI', 'BCA', 'Mandiri']),
+            'account_name' => $this->faker->name,
+            'account_number' => $this->faker->bankAccountNumber,
+            'swift_code' => $this->faker->randomElement(array: ['BRI', 'BCA', 'Mandiri']),
+            'status' => $this->faker->randomElement(array: ['Aktif', 'Non Aktif']),
         ];
     }
 }
