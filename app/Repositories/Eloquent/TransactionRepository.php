@@ -68,7 +68,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByStatus($status)
     {
-        return $this->model->with('details')->where('status', $status)->get();
+        return $this->model->with('details')->where('payment_status', $status)->get();
     }
 
     /**

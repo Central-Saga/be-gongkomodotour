@@ -123,12 +123,26 @@ class TransactionService implements TransactionServiceInterface
             // Membuat detail transaksi untuk Hotel Request jika data tersedia
             if (isset($data['hotel_request_details']) && is_array($data['hotel_request_details'])) {
                 foreach ($data['hotel_request_details'] as $detail) {
+                    // Jika hotel_request_id tidak ada pada payload, maka buat HotelRequest baru
+                    if (!isset($detail['hotel_request_id'])) {
+                        $hotelRequest = HotelRequest::create([
+                            'transaction_id'       => $transaction->id,
+                            'user_id'              => auth()->id(), // sesuaikan dengan logika otentikasi yang digunakan
+                            'confirmed_note'       => $detail['confirmed_note'] ?? '',
+                            'requested_hotel_name' => $detail['requested_hotel_name'] ?? '',
+                            'request_status'       => 'Menunggu Konfirmasi',
+                            'confirmed_price'      => $detail['confirmed_price'] ?? 0,
+                        ]);
+                        // Tetapkan id hotel_request yang baru saja dibuat ke detail
+                        $detail['hotel_request_id'] = $hotelRequest->id;
+                    }
+
                     $transaction->details()->create([
-                        'amount' => $detail['amount'] ?? 0,
-                        'description' => $detail['description'] ?? 'Payment for Hotel Request',
-                        'reference_id' => $detail['hotel_request_id'],
+                        'amount'         => $detail['amount'] ?? 0,
+                        'description'    => $detail['description'] ?? 'Payment for Hotel Request',
+                        'reference_id'   => $detail['hotel_request_id'],
                         'reference_type' => \App\Models\HotelRequest::class,
-                        'type' => 'Additional Fee'
+                        'type'           => 'Additional Fee'
                     ]);
                 }
             }
@@ -142,11 +156,11 @@ class TransactionService implements TransactionServiceInterface
 
                 if ($matchingSurcharge) {
                     $transaction->details()->create([
-                        'amount' => $matchingSurcharge->amount, // atau bisa disesuaikan perhitungan yang diinginkan
-                        'description' => 'Automatically added surcharge based on booking dates',
-                        'reference_id' => $matchingSurcharge->id,
+                        'amount'         => $matchingSurcharge->amount,
+                        'description'    => 'Automatically added surcharge based on booking dates',
+                        'reference_id'   => $matchingSurcharge->id,
                         'reference_type' => \App\Models\Surcharge::class,
-                        'type' => 'Surcharge'
+                        'type'           => 'Surcharge'
                     ]);
                 }
             }
@@ -155,11 +169,11 @@ class TransactionService implements TransactionServiceInterface
             if (isset($data['surcharge_details']) && is_array($data['surcharge_details'])) {
                 foreach ($data['surcharge_details'] as $detail) {
                     $transaction->details()->create([
-                        'amount' => $detail['amount'] ?? 0,
-                        'description' => $detail['description'] ?? 'Payment for Surcharge',
-                        'reference_id' => $detail['surcharge_id'],
+                        'amount'         => $detail['amount'] ?? 0,
+                        'description'    => $detail['description'] ?? 'Payment for Surcharge',
+                        'reference_id'   => $detail['surcharge_id'],
                         'reference_type' => \App\Models\Surcharge::class,
-                        'type' => 'Surcharge'
+                        'type'           => 'Surcharge'
                     ]);
                 }
             }
