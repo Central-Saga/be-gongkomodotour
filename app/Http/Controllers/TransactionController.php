@@ -16,7 +16,7 @@ class TransactionController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            'permission:mengelola transaksi',
+            'permission:mengelola transactions',
         ];
     }
 

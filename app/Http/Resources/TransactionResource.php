@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\BookingResource;
+use App\Http\Resources\DetailTransactionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
@@ -32,7 +34,7 @@ class TransactionResource extends JsonResource
             }),
 
             'details' => $this->whenLoaded('details', function () {
-                return TransactionDetailResource::collection($this->details);
+                return DetailTransactionResource::collection($this->details);
             }),
         ];
     }

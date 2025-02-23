@@ -77,8 +77,8 @@ use App\Repositories\Eloquent\TransactionRepository;
 use App\Services\Contracts\BankAccountServiceInterface;
 use App\Services\Contracts\BookingServiceInterface;
 use App\Services\Contracts\TransactionServiceInterface;
-use App\Services\Implementation\BankAccountService;
-use App\Services\Implementation\TransactionService;
+use App\Services\Implementations\BankAccountService;
+use App\Services\Implementations\TransactionService;
 
 class AppServiceProvider extends ServiceProvider
 {

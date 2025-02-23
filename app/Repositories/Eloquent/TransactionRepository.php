@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Models\Transaction;
+use Illuminate\Support\Facades\Log;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 
 class TransactionRepository implements TransactionRepositoryInterface
@@ -28,7 +30,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getAllTransactions()
     {
-        return $this->model->all();
+        return $this->model->with('details')->get();
     }
 
     /**
@@ -40,7 +42,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function getTransactionById($id)
     {
         try {
-            return $this->model->findOrFail($id);
+            return $this->model->with('details')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Transaction with ID {$id} not found.");
             return null;
@@ -55,7 +57,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByName($name)
     {
-        return $this->model->where('name', $name)->first();
+        return $this->model->with('details')->where('name', $name)->first();
     }
 
     /**
@@ -66,7 +68,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByStatus($status)
     {
-        return $this->model->where('status', $status)->get();
+        return $this->model->with('details')->where('status', $status)->get();
     }
 
     /**
