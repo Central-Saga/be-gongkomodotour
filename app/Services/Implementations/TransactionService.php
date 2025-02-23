@@ -179,7 +179,8 @@ class TransactionService implements TransactionServiceInterface
             }
 
             $this->clearTransactionCaches();
-            return true;
+            // Muat relasi 'details' sebelum mengembalikannya
+            return $transaction->load('details');
         }
         return false;
     }
@@ -197,23 +198,35 @@ class TransactionService implements TransactionServiceInterface
         if ($transaction) {
             $this->repository->updateTransaction($id, $data);
 
-            // Sinkronisasi detail transaksi: hapus semua detail lama terlebih dahulu
+            // Hapus semua detail transaksi lama terlebih dahulu
             $transaction->details()->delete();
 
             // Buat kembali detail transaksi untuk Hotel Request jika data tersedia
             if (isset($data['hotel_request_details']) && is_array($data['hotel_request_details'])) {
                 foreach ($data['hotel_request_details'] as $detail) {
+                    // Cek apakah hotel_request_id tersedia, jika tidak, buat HotelRequest baru
+                    if (!isset($detail['hotel_request_id'])) {
+                        $hotelRequest = HotelRequest::create([
+                            'transaction_id'       => $transaction->id,
+                            'user_id'              => auth()->id(), // sesuaikan dengan logika otentikasi yang digunakan
+                            'confirmed_note'       => $detail['confirmed_note'] ?? '',
+                            'requested_hotel_name' => $detail['requested_hotel_name'] ?? '',
+                            'request_status'       => 'Menunggu Konfirmasi',
+                            'confirmed_price'      => $detail['confirmed_price'] ?? 0,
+                        ]);
+                        $detail['hotel_request_id'] = $hotelRequest->id;
+                    }
                     $transaction->details()->create([
-                        'amount' => $detail['amount'] ?? 0,
-                        'description' => $detail['description'] ?? 'Payment for Hotel Request',
-                        'reference_id' => $detail['hotel_request_id'],
+                        'amount'         => $detail['amount'] ?? 0,
+                        'description'    => $detail['description'] ?? 'Payment for Hotel Request',
+                        'reference_id'   => $detail['hotel_request_id'],
                         'reference_type' => \App\Models\HotelRequest::class,
-                        'type' => 'Additional Fee'
+                        'type'           => 'Additional Fee'
                     ]);
                 }
             }
 
-            // Pengecekan otomatis surcharge berdasarkan tanggal booking
+            // Proses otomatis surcharge berdasarkan tanggal booking
             $booking = Booking::find($data['booking_id']);
             if ($booking) {
                 $matchingSurcharge = Surcharge::where('start_date', $booking->start_date)
@@ -222,30 +235,31 @@ class TransactionService implements TransactionServiceInterface
 
                 if ($matchingSurcharge) {
                     $transaction->details()->create([
-                        'amount' => $matchingSurcharge->amount,
-                        'description' => 'Automatically added surcharge based on booking dates',
-                        'reference_id' => $matchingSurcharge->id,
+                        'amount'         => $matchingSurcharge->amount,
+                        'description'    => 'Automatically added surcharge based on booking dates',
+                        'reference_id'   => $matchingSurcharge->id,
                         'reference_type' => \App\Models\Surcharge::class,
-                        'type' => 'Surcharge'
+                        'type'           => 'Surcharge'
                     ]);
                 }
             }
 
-            // Jika masih ada data surcharge_details yang dikirim secara manual, proses juga
+            // Proses surcharge_details jika disediakan secara manual
             if (isset($data['surcharge_details']) && is_array($data['surcharge_details'])) {
                 foreach ($data['surcharge_details'] as $detail) {
                     $transaction->details()->create([
-                        'amount' => $detail['amount'] ?? 0,
-                        'description' => $detail['description'] ?? 'Payment for Surcharge',
-                        'reference_id' => $detail['surcharge_id'],
+                        'amount'         => $detail['amount'] ?? 0,
+                        'description'    => $detail['description'] ?? 'Payment for Surcharge',
+                        'reference_id'   => $detail['surcharge_id'],
                         'reference_type' => \App\Models\Surcharge::class,
-                        'type' => 'Surcharge'
+                        'type'           => 'Surcharge'
                     ]);
                 }
             }
 
             $this->clearTransactionCaches();
-            return true;
+            // Muat relasi 'details' sebelum mengembalikannya
+            return $transaction->load('details');
         }
         return false;
     }

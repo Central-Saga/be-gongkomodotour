@@ -14,6 +14,8 @@ class DetailTransaction extends Model
 
     protected $fillable = [
         'transaction_id',
+        'reference_id',
+        'reference_type',
         'type',
         'amount',
         'description',

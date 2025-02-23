@@ -28,9 +28,11 @@ class TransactionUpdateRequest extends FormRequest
             'payment_status' => 'required|in:Menunggu Pembayaran,Lunas,Ditolak',
 
             'hotel_request_details' => 'nullable|array',
-            'hotel_request_details.*.hotel_request_id' => 'required_with:hotel_request_details|exists:hotel_requests,id',
             'hotel_request_details.*.amount' => 'required_with:hotel_request_details|numeric',
             'hotel_request_details.*.description' => 'nullable|string',
+            'hotel_request_details.*.confirmed_note' => 'nullable|string',
+            'hotel_request_details.*.requested_hotel_name' => 'nullable|string',
+            'hotel_request_details.*.confirmed_price' => 'nullable|numeric',
         ];
     }
 }
