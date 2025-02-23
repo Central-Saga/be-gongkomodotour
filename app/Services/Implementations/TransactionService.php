@@ -4,6 +4,8 @@ namespace App\Services\Implementation;
 
 use App\Services\Contracts\TransactionServiceInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
+use App\Models\Booking;
+use App\Models\Surcharge;
 
 class TransactionService implements TransactionServiceInterface
 {
@@ -116,6 +118,50 @@ class TransactionService implements TransactionServiceInterface
     {
         $transaction = $this->repository->createTransaction($data);
         if ($transaction) {
+            // Membuat detail transaksi untuk Hotel Request jika data tersedia
+            if (isset($data['hotel_request_details']) && is_array($data['hotel_request_details'])) {
+                foreach ($data['hotel_request_details'] as $detail) {
+                    $transaction->details()->create([
+                        'amount' => $detail['amount'] ?? 0,
+                        'description' => $detail['description'] ?? 'Payment for Hotel Request',
+                        'reference_id' => $detail['hotel_request_id'],
+                        'reference_type' => \App\Models\HotelRequest::class,
+                        'type' => 'Additional Fee'
+                    ]);
+                }
+            }
+
+            // Pengecekan otomatis surcharge berdasarkan tanggal booking
+            $booking = Booking::find($data['booking_id']);
+            if ($booking) {
+                $matchingSurcharge = Surcharge::where('start_date', $booking->start_date)
+                    ->where('end_date', $booking->end_date)
+                    ->first();
+
+                if ($matchingSurcharge) {
+                    $transaction->details()->create([
+                        'amount' => $matchingSurcharge->amount, // atau bisa disesuaikan perhitungan yang diinginkan
+                        'description' => 'Automatically added surcharge based on booking dates',
+                        'reference_id' => $matchingSurcharge->id,
+                        'reference_type' => \App\Models\Surcharge::class,
+                        'type' => 'Surcharge'
+                    ]);
+                }
+            }
+
+            // Jika masih ada data surcharge_details yang dikirim secara manual, proses juga
+            if (isset($data['surcharge_details']) && is_array($data['surcharge_details'])) {
+                foreach ($data['surcharge_details'] as $detail) {
+                    $transaction->details()->create([
+                        'amount' => $detail['amount'] ?? 0,
+                        'description' => $detail['description'] ?? 'Payment for Surcharge',
+                        'reference_id' => $detail['surcharge_id'],
+                        'reference_type' => \App\Models\Surcharge::class,
+                        'type' => 'Surcharge'
+                    ]);
+                }
+            }
+
             $this->clearTransactionCaches();
             return true;
         }
@@ -134,6 +180,54 @@ class TransactionService implements TransactionServiceInterface
         $transaction = $this->repository->getTransactionById($id);
         if ($transaction) {
             $this->repository->updateTransaction($id, $data);
+
+            // Sinkronisasi detail transaksi: hapus semua detail lama terlebih dahulu
+            $transaction->details()->delete();
+
+            // Buat kembali detail transaksi untuk Hotel Request jika data tersedia
+            if (isset($data['hotel_request_details']) && is_array($data['hotel_request_details'])) {
+                foreach ($data['hotel_request_details'] as $detail) {
+                    $transaction->details()->create([
+                        'amount' => $detail['amount'] ?? 0,
+                        'description' => $detail['description'] ?? 'Payment for Hotel Request',
+                        'reference_id' => $detail['hotel_request_id'],
+                        'reference_type' => \App\Models\HotelRequest::class,
+                        'type' => 'Additional Fee'
+                    ]);
+                }
+            }
+
+            // Pengecekan otomatis surcharge berdasarkan tanggal booking
+            $booking = Booking::find($data['booking_id']);
+            if ($booking) {
+                $matchingSurcharge = Surcharge::where('start_date', $booking->start_date)
+                    ->where('end_date', $booking->end_date)
+                    ->first();
+
+                if ($matchingSurcharge) {
+                    $transaction->details()->create([
+                        'amount' => $matchingSurcharge->amount,
+                        'description' => 'Automatically added surcharge based on booking dates',
+                        'reference_id' => $matchingSurcharge->id,
+                        'reference_type' => \App\Models\Surcharge::class,
+                        'type' => 'Surcharge'
+                    ]);
+                }
+            }
+
+            // Jika masih ada data surcharge_details yang dikirim secara manual, proses juga
+            if (isset($data['surcharge_details']) && is_array($data['surcharge_details'])) {
+                foreach ($data['surcharge_details'] as $detail) {
+                    $transaction->details()->create([
+                        'amount' => $detail['amount'] ?? 0,
+                        'description' => $detail['description'] ?? 'Payment for Surcharge',
+                        'reference_id' => $detail['surcharge_id'],
+                        'reference_type' => \App\Models\Surcharge::class,
+                        'type' => 'Surcharge'
+                    ]);
+                }
+            }
+
             $this->clearTransactionCaches();
             return true;
         }
