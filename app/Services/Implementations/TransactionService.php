@@ -180,7 +180,7 @@ class TransactionService implements TransactionServiceInterface
 
             $this->clearTransactionCaches();
             // Muat relasi 'details' sebelum mengembalikannya
-            return $transaction->load('details');
+            return $transaction->load('details', 'booking', 'bankAccount');
         }
         return false;
     }
@@ -259,7 +259,7 @@ class TransactionService implements TransactionServiceInterface
 
             $this->clearTransactionCaches();
             // Muat relasi 'details' sebelum mengembalikannya
-            return $transaction->load('details');
+            return $transaction->load('details', 'booking', 'bankAccount');
         }
         return false;
     }
