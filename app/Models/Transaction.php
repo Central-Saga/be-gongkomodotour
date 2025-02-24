@@ -33,4 +33,9 @@ class Transaction extends Model
     {
         return $this->hasMany(DetailTransaction::class, 'transaction_id', 'id');
     }
+
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'assetable');
+    }
 }

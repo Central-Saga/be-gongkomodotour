@@ -4,26 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
-class Blog extends Model
+class Gallery extends Model
 {
+    /** @use HasFactory<\Database\Factories\GalleryFactory> */
     use HasFactory;
 
-    protected $table = 'blog';
+    protected $table = 'galleries';
 
     protected $fillable = [
-        'author_id',
         'title',
-        'slug',
-        'content',
+        'description',
+        'category',
         'status',
     ];
-
-    public function author()
-    {
-        return $this->belongsTo(User::class, 'author_id');
-    }
 
     public function assets()
     {

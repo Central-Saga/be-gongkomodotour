@@ -21,4 +21,9 @@ class Cabin extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'assetable');
+    }
 }
