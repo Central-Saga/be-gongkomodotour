@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Models\BankAccount;
+use Illuminate\Support\Facades\Log;
 use App\Repositories\Contracts\BankAccountRepositoryInterface;
 
 class BankAccountRepository implements BankAccountRepositoryInterface

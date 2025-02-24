@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Middleware\HasMiddleware;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\BankAccountResource;
 use App\Http\Requests\BankAccountStoreRequest;
 use App\Http\Requests\BankAccountUpdateRequest;
 use App\Services\Contracts\BankAccountServiceInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 class BankAccountController extends Controller implements HasMiddleware
 {

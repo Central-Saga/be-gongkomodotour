@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Implementation;
+namespace App\Services\Implementations;
 
+use Illuminate\Support\Facades\Cache;
 use App\Services\Contracts\BankAccountServiceInterface;
 use App\Repositories\Contracts\BankAccountRepositoryInterface;
 
