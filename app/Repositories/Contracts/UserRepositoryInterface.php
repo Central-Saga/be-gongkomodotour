@@ -59,4 +59,13 @@ interface UserRepositoryInterface
      * @return mixed
      */
     public function deleteUser($id);
+
+    /**
+     * Mengupdate user status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateUserStatus($id, $status);
 }

@@ -6,10 +6,12 @@ use App\Models\Cabin;
 use App\Models\Boat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CabinFactory extends Factory {
+class CabinFactory extends Factory
+{
     protected $model = Cabin::class;
 
-    public function definition() {
+    public function definition()
+    {
         return [
             'boat_id' => Boat::factory(),
             'cabin_name' => 'Cabin ' . $this->faker->word,
@@ -18,7 +20,7 @@ class CabinFactory extends Factory {
             'max_pax' => $this->faker->numberBetween(2, 6),
             'base_price' => $this->faker->randomFloat(2, 100, 2000),
             'additional_price' => $this->faker->randomFloat(2, 50, 500),
-            'status' => $this->faker->randomElement(['available','booked']),
+            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
         ];
     }
 }

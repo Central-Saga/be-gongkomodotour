@@ -21,4 +21,16 @@ class HotelOccupancies extends Model
         'price',
         'status'
     ];
+
+    /**
+     * Menghitung biaya hotel berdasarkan harga per malam per pax.
+     *
+     * @param int $totalPax Jumlah penumpang
+     * @param int $nights Jumlah malam
+     * @return float
+     */
+    public function calculateHotelFee(int $totalPax, int $nights): float
+    {
+        return $this->price * $totalPax * $nights;
+    }
 }

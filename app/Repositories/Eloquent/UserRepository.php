@@ -148,4 +148,23 @@ class UserRepository implements UserRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate user status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateUserStatus($id, $status)
+    {
+        $user = $this->findUser($id);
+
+        if ($user) {
+            $user->status = $status;
+            $user->save();
+            return $user;
+        }
+        return null;
+    }
 }

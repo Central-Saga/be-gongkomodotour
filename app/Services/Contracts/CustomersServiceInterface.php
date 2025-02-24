@@ -59,7 +59,7 @@ interface CustomersServiceInterface
      * @return mixed
      */
     public function getCustomerByStatus($status);
-    
+
     /**
      * Mengambil semua customers yang aktif.
      *
@@ -73,4 +73,13 @@ interface CustomersServiceInterface
      * @return mixed
      */
     public function getInactiveCustomers();
+
+    /**
+     * Mengupdate status customer.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateCustomerStatus($id, $status);
 }

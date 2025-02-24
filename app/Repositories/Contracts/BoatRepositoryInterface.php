@@ -67,4 +67,13 @@ interface BoatRepositoryInterface
      * @return mixed
      */
     public function findBoat($id);
+
+    /**
+     * Mengupdate boat status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBoatStatus($id, $status);
 }

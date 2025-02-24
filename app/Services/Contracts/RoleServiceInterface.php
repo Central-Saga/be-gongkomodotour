@@ -73,4 +73,13 @@ interface RoleServiceInterface
      * @return mixed
      */
     public function deleteRole($id);
+
+    /**
+     * Mengupdate status role.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateRoleStatus($id, $status);
 }

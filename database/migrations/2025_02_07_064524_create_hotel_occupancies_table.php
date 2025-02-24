@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('hotel_name');
             $table->string('hotel_type');
-            $table->integer('occupancy');
+            $table->enum('occupancy', ['Single Occupancy', 'Double Occupancy']);
             $table->decimal('price', 20, 2);
-            $table->enum('status', allowed: ['Aktif', 'Non Aktif'])->default('Aktif');
+            $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
     }

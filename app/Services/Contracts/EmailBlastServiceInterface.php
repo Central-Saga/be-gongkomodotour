@@ -59,7 +59,7 @@ interface EmailBlastServiceInterface
      * @return mixed
      */
     public function getEmailBlastByStatus($status);
-    
+
     /**
      * Mengambil semua emailBlast yang aktif.
      *
@@ -87,4 +87,13 @@ interface EmailBlastServiceInterface
      * @return mixed
      */
     public function getFailedEmailBlast();
+
+    /**
+     * Mengupdate status emailBlast.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateEmailBlastStatus($id, $status);
 }

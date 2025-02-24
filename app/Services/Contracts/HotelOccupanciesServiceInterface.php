@@ -73,4 +73,13 @@ interface HotelOccupanciesServiceInterface
      * @return mixed
      */
     public function deleteHotelOccupancies($id);
+
+    /**
+     * Mengupdate status hotelOcupancies.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateHotelOccupanciesStatus($id, $status);
 }

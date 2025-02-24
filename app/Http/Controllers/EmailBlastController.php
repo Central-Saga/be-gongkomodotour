@@ -37,10 +37,10 @@ class EmailBlastController extends Controller
             $emailBlast = $this->emailblastService->getAllEmailBlast();
         } else {
             // Bandingkan status secara case-insensitive
-            $status = strtolower($status);
-            if ($status === 1) {
+            $status = (int) $request->query('status');
+            if ($status === 0) {
                 $emailBlast = $this->emailblastService->getDraftEmailBlast();
-            } elseif ($status === 0) {
+            } elseif ($status === 1) {
                 $emailBlast = $this->emailblastService->getSentEmailBlast();
             } elseif ($status === 2) {
                 $emailBlast = $this->emailblastService->getScheduledEmailBlast();
@@ -96,5 +96,22 @@ class EmailBlastController extends Controller
             return response()->json(['message' => 'EmailBlast not found'], 404);
         }
         return response()->json(['message' => 'EmailBlast deleted successfully'], 200);
+    }
+
+    /**
+     * Update Status EmailBlast.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:draft,scheduled,sent,failed',
+        ]);
+
+        $emailBlast = $this->emailblastService->updateEmailBlastStatus($id, $request->validated());
+
+        if (!$emailBlast) {
+            return response()->json(['message' => 'Failed to update email blast status'], 404);
+        }
+        return new EmailBlastResource($emailBlast);
     }
 }
