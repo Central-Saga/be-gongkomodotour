@@ -137,6 +137,19 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
         return $result;
     }
 
+    public function updateHotelOccupanciesStatus($id, $status)
+    {
+        $hotelOccupancies = $this->getHotelOccupanciesById($id);
+
+        if ($hotelOccupancies) {
+            $result = $this->hotelOccupanciesRepository->updateHotelOccupanciesStatus($id, $status);
+
+            $this->clearHotelOccupanciesCaches($id);
+
+            return $result;
+        }
+    }
+
     /**
      * Menghapus semua cache hotelOccupancies
      *

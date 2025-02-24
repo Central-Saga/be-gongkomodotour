@@ -80,4 +80,13 @@ interface TransactionServiceInterface
      * @return mixed
      */
     public function deleteTransaction($id);
+
+    /**
+     * Mengupdate status transaksi.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTransactionStatus($id, $status);
 }

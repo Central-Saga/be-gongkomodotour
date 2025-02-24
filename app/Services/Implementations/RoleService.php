@@ -162,6 +162,21 @@ class RoleService implements RoleServiceInterface
         return $result;
     }
 
+    public function updateRoleStatus($id, $status)
+    {
+        $role = $this->getRoleById($id);
+
+        if ($role) {
+            $result = $this->roleRepository->updateRoleStatus($id, $status);
+
+            $this->clearRoleCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     /**
      * Menghapus semua cache role
      *

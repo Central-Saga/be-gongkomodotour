@@ -145,4 +145,15 @@ class BoatService implements BoatServiceInterface
         Cache::forget(self::BOAT_ACTIVE_CACHE_KEY);
         Cache::forget(self::BOAT_INACTIVE_CACHE_KEY);
     }
+
+    public function updateBoatStatus($id, $status)
+    {
+        $boat = $this->getBoatById($id);
+
+        if ($boat) {
+            $result = $this->boatRepository->updateBoatStatus($id, $status);
+
+            $this->clearBoatCaches($id);
+        }
+    }
 }

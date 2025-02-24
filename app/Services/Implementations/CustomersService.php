@@ -102,7 +102,6 @@ class CustomersService implements CustomersServiceInterface
      */
     public function createCustomer(array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->customerRepository->createCustomer($data);
         $this->clearCustomerCaches();
         return $result;
@@ -117,7 +116,6 @@ class CustomersService implements CustomersServiceInterface
      */
     public function updateCustomer($id, array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->customerRepository->updateCustomer($id, $data);
         $this->clearCustomerCaches();
         return $result;
@@ -135,6 +133,21 @@ class CustomersService implements CustomersServiceInterface
         $this->clearCustomerCaches();
 
         return $result;
+    }
+
+    public function updateCustomerStatus($id, $status)
+    {
+        $customer = $this->getCustomerById($id);
+
+        if ($customer) {
+            $result = $this->customerRepository->updateCustomerStatus($id, $status);
+
+            $this->clearCustomerCaches($id);
+
+            return $result;
+        }
+
+        return null;
     }
 
     /**

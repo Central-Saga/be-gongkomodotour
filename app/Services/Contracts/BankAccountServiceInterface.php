@@ -73,4 +73,13 @@ interface BankAccountServiceInterface
      * @return mixed
      */
     public function deleteBankAccount($id);
+
+    /**
+     * Mengupdate status bank account.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBankAccountStatus($id, $status);
 }

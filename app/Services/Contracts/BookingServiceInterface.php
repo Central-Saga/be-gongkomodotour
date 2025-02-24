@@ -80,4 +80,13 @@ interface BookingServiceInterface
      * @return mixed
      */
     public function deleteBooking($id);
+
+    /**
+     * Mengupdate booking status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBookingStatus($id, $status);
 }

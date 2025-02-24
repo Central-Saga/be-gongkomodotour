@@ -160,6 +160,21 @@ class UserService implements UserServiceInterface
         return $result;
     }
 
+    public function updateUserStatus($id, $status)
+    {
+        $user = $this->getUserById($id);
+
+        if ($user) {
+            $result = $this->userRepository->updateUserStatus($id, $status);
+
+            $this->clearUserCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     /**
      * Menghapus semua cache user
      *

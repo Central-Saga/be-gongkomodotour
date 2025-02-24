@@ -59,7 +59,7 @@ interface BoatServiceInterface
      * @return mixed
      */
     public function getBoatByStatus($status);
-    
+
     /**
      * Mengambil semua boat yang aktif.
      *
@@ -73,4 +73,13 @@ interface BoatServiceInterface
      * @return mixed
      */
     public function getInactiveBoat();
+
+    /**
+     * Mengupdate status boat.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBoatStatus($id, $status);
 }

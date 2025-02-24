@@ -281,6 +281,21 @@ class TransactionService implements TransactionServiceInterface
         return false;
     }
 
+    public function updateTransactionStatus($id, $status)
+    {
+        $transaction = $this->getTransactionById($id);
+
+        if ($transaction) {
+            $result = $this->repository->updateTransactionStatus($id, $status);
+
+            $this->clearTransactionCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     /**
      * Menghapus semua cache transaksi
      *

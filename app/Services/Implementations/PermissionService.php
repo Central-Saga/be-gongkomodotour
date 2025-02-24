@@ -137,6 +137,19 @@ class PermissionService implements PermissionServiceInterface
         return $result;
     }
 
+    public function updatePermissionStatus($id, $status)
+    {
+        $permission = $this->getPermissionById($id);
+
+        if ($permission) {
+            $result = $this->permissionRepository->updatePermissionStatus($id, $status);
+
+            $this->clearPermissionCaches($id);
+
+            return $result;
+        }
+    }
+
     /**
      * Menghapus semua cache permission
      *

@@ -59,7 +59,7 @@ interface EmailBlastRecipientServiceInterface
      * @return mixed
      */
     public function getEmailBlastRecipientByStatus($status);
-    
+
     /**
      * Mengambil semua emailBlastRecipient yang aktif.
      *
@@ -73,11 +73,20 @@ interface EmailBlastRecipientServiceInterface
      * @return mixed
      */
     public function getSentEmailBlastRecipient();
-    
+
     /**
      * Mengambil semua emailBlastRecipient yang tidak aktif.
      *
      * @return mixed
      */
     public function getFailedEmailBlastRecipient();
+
+    /**
+     * Mengupdate status emailBlastRecipient.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateEmailBlastRecipientStatus($id, $status);
 }

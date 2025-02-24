@@ -424,6 +424,21 @@ class TripService implements TripServiceInterface
         }
     }
 
+    public function updateTripStatus($id, $status)
+    {
+        $trip = $this->getTripById($id);
+
+        if ($trip) {
+            $result = $this->tripRepository->updateTripStatus($id, $status);
+
+            $this->clearTripCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     /**
      * Clear all related trip caches
      *

@@ -137,6 +137,21 @@ class CabinService implements CabinServiceInterface
         return $result;
     }
 
+    public function updateCabinStatus($id, $status)
+    {
+        $cabin = $this->getCabinById($id);
+
+        if ($cabin) {
+            $result = $this->cabinRepository->updateCabinStatus($id, $status);
+
+            $this->clearCabinCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     /**
      * Menghapus semua cache cabin
      *

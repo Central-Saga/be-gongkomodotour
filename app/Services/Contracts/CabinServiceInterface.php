@@ -59,7 +59,7 @@ interface CabinServiceInterface
      * @return mixed
      */
     public function getCabinByStatus($status);
-    
+
     /**
      * Mengambil semua cabin yang aktif.
      *
@@ -73,4 +73,13 @@ interface CabinServiceInterface
      * @return mixed
      */
     public function getInactiveCabin();
+
+    /**
+     * Mengupdate status cabin.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateCabinStatus($id, $status);
 }

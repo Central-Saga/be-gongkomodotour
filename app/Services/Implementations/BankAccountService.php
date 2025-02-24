@@ -87,6 +87,21 @@ class BankAccountService implements BankAccountServiceInterface
         return $result;
     }
 
+    public function updateBankAccountStatus($id, $status)
+    {
+        $bankAccount = $this->getBankAccountById($id);
+
+        if ($bankAccount) {
+            $result = $this->repository->updateBankAccountStatus($id, $status);
+
+            $this->clearBankAccountCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     public function clearBankAccountCaches()
     {
         Cache::forget(self::BANK_ACCOUNTS_ALL_CACHE_KEY);
