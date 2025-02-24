@@ -77,8 +77,10 @@ use App\Repositories\Eloquent\TransactionRepository;
 use App\Services\Contracts\BankAccountServiceInterface;
 use App\Services\Contracts\BookingServiceInterface;
 use App\Services\Contracts\TransactionServiceInterface;
+use App\Services\Contracts\TripDurationServiceInterface;
 use App\Services\Implementations\BankAccountService;
 use App\Services\Implementations\TransactionService;
+use App\Services\Implementations\TripDurationService;
 
 class AppServiceProvider extends ServiceProvider
 {

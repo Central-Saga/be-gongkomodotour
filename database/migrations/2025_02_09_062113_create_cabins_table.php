@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->integer('max_pax');
             $table->decimal('base_price', 10, 2);
             $table->decimal('additional_price', 10, 2)->nullable();
-            $table->enum('status', allowed: ['available', 'booked'])->default('available');
+            $table->enum('status', allowed: ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
     }
