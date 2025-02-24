@@ -54,6 +54,14 @@ use App\Repositories\Eloquent\EmailBlastRecipientRepository;
 use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
 use App\Services\Contracts\EmailBlastRecipientServiceInterface;
 use App\Services\Implementations\EmailBlastRecipientService;
+use App\Repositories\Eloquent\BlogRepository;
+use App\Repositories\Contracts\BlogRepositoryInterface;
+use App\Services\Contracts\BlogServiceInterface;
+use App\Services\Implementations\BlogService;
+use App\Repositories\Eloquent\SubscriberRepository;
+use App\Repositories\Contracts\SubscriberRepositoryInterface;
+use App\Services\Contracts\SubscriberServiceInterface;
+use App\Services\Implementations\SubscriberService;
 use App\Repositories\Contracts\PermissionRepositoryInterface;
 use App\Repositories\Contracts\TripPricesRepositoryInterface;
 use App\Repositories\Contracts\TripDurationRepositoryInterface;
@@ -173,6 +181,18 @@ class AppServiceProvider extends ServiceProvider
         // Binding EmailBlastRecipientServiceInterface to EmailBlastRecipientService
         $this->app->bind(EmailBlastRecipientServiceInterface::class, EmailBlastRecipientService::class);
 
+        // Binding BlogRepositoryInterface to BlogRepository
+        $this->app->bind(BlogRepositoryInterface::class, BlogRepository::class);
+
+        // Binding BlogServiceInterface to BlogService
+        $this->app->bind(BlogServiceInterface::class, BlogService::class);
+
+        // Binding SubscriberRepositoryInterface to SubscriberRepository    
+        $this->app->bind(SubscriberRepositoryInterface::class, SubscriberRepository::class);
+
+        // Binding SubscriberServiceInterface to SubscriberService
+        $this->app->bind(SubscriberServiceInterface::class, SubscriberService::class);
+        
         // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
         $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
 
@@ -199,6 +219,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding TransactionServiceInterface to TransactionService
         $this->app->bind(TransactionServiceInterface::class, TransactionService::class);
+
     }
 
     /**

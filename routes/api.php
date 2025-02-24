@@ -16,6 +16,8 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\HotelOccupanciesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EmailBlastRecipientController;
+use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -56,6 +58,10 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // EmailBlastRecipient
     Route::apiResource('email_blast_recipient', EmailBlastRecipientController::class);
     Route::patch('email_blast_recipient/{id}/status', [EmailBlastRecipientController::class, 'updateStatus']);
+    // Subscribers
+    Route::apiResource('subscriber', SubscriberController::class);
+    // Blog
+    Route::apiResource('blog', BlogController::class);
     // Bookings
     Route::apiResource('bookings', BookingController::class);
     Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
