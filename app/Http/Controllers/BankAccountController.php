@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BankAccountResource;
 use App\Http\Requests\BankAccountStoreRequest;
 use App\Http\Requests\BankAccountUpdateRequest;
-use App\Services\Contracts\BankAccountServiceInterface;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use App\Services\Contracts\BankAccountServiceInterface;
 
 class BankAccountController extends Controller implements HasMiddleware
 {
@@ -17,7 +18,7 @@ class BankAccountController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            'permission:mengelola bank_accounts',
+            // 'permission:mengelola bank_accounts',
         ];
     }
 
@@ -28,11 +29,11 @@ class BankAccountController extends Controller implements HasMiddleware
 
     public function updateStatus(string $id, Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'status' => 'required|in:Aktif,Non Aktif',
         ]);
 
-        $bankAccount = $this->bankAccountService->updateBankAccountStatus($id, $request->validated());
+        $bankAccount = $this->bankAccountService->updateBankAccountStatus($id, $validatedData['status']);
 
         if (!$bankAccount) {
             return response()->json(['message' => 'Failed to update bank account status'], 404);

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detail_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_id')->constrained('transactions');
+            $table->foreignId('transaction_id')->constrained('transactions')->onDelete('cascade');
             $table->morphs('reference');
             $table->text('description')->nullable();
             $table->enum('type', ['Surcharge', 'Additional Fee']);

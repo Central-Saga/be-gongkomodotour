@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('hotel_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_id')->constrained('transactions');
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('confirmed_note');
+            $table->foreignId('transaction_id')->constrained('transactions')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('confirmed_note')->nullable();
             $table->enum('requested_hotel_name', ['Ayana Komodo Resort', 'Meruorah Hotel']);
             $table->enum('request_status', ['Menunggu Konfirmasi', 'Diterima', 'Ditolak'])->default('Menunggu Konfirmasi');
-            $table->decimal('confirmed_price', 15, 2);
+            $table->decimal('confirmed_price', 15, 2)->nullable();
             $table->timestamps();
         });
     }
