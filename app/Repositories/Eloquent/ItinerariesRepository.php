@@ -164,4 +164,23 @@ class ItinerariesRepository implements ItinerariesRepositoryInterface
             return false;
         }
     }
+
+    /**
+     * Mengupdate itineraries status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateItinerariesStatus($id, $status)
+    {
+        $itineraries = $this->findItineraries($id);
+
+        if ($itineraries) {
+            $itineraries->status = $status;
+            $itineraries->save();
+            return $itineraries;
+        }
+        return null;
+    }
 }

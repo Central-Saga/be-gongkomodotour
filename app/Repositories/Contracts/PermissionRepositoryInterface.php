@@ -59,4 +59,13 @@ interface PermissionRepositoryInterface
      * @return mixed
      */
     public function deletePermission($id);
+
+    /**
+     * Mengupdate permission status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updatePermissionStatus($id, $status);
 }

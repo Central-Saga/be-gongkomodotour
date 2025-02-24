@@ -97,4 +97,21 @@ class EmailBlastController extends Controller
         }
         return response()->json(['message' => 'EmailBlast deleted successfully'], 200);
     }
+
+    /**
+     * Update Status EmailBlast.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:draft,scheduled,sent,failed',
+        ]);
+
+        $emailBlast = $this->emailblastService->updateEmailBlastStatus($id, $request->validated());
+
+        if (!$emailBlast) {
+            return response()->json(['message' => 'Failed to update email blast status'], 404);
+        }
+        return new EmailBlastResource($emailBlast);
+    }
 }

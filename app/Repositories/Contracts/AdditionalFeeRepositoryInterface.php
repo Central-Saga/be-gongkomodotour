@@ -76,4 +76,13 @@ interface AdditionalFeeRepositoryInterface
      * @return mixed
      */
     public function deleteAdditionalFeesNotIn($trip_id, $existing_id);
+
+    /**
+     * Mengupdate additional fee status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateAdditionalFeeStatus($id, $status);
 }

@@ -150,4 +150,23 @@ class HotelOccupanciesRepository implements HotelOccupanciesRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate hotelOccupancies status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateHotelOccupanciesStatus($id, $status)
+    {
+        $hotelOccupancies = $this->findHotelOccupancies($id);
+
+        if ($hotelOccupancies) {
+            $hotelOccupancies->status = $status;
+            $hotelOccupancies->save();
+            return $hotelOccupancies;
+        }
+        return null;
+    }
 }

@@ -73,4 +73,13 @@ interface PermissionServiceInterface
      * @return mixed
      */
     public function deletePermission($id);
+
+    /**
+     * Mengupdate status permission.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updatePermissionStatus($id, $status);
 }

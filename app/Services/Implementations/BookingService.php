@@ -222,6 +222,21 @@ class BookingService implements BookingServiceInterface
         }
     }
 
+    public function updateBookingStatus($id, $status)
+    {
+        $booking = $this->getBookingById($id);
+
+        if ($booking) {
+            $result = $this->bookingRepository->updateBookingStatus($id, $status);
+
+            $this->clearBookingCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
     /**
      * Menghapus semua cache booking
      *

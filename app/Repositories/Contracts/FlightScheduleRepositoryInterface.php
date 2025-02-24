@@ -67,4 +67,13 @@ interface FlightScheduleRepositoryInterface
      * @return mixed
      */
     public function deleteFlightScheduleNotIn($trip_id, $existing_id);
+
+    /**
+     * Mengupdate flightSchedule status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateFlightScheduleStatus($id, $status);
 }

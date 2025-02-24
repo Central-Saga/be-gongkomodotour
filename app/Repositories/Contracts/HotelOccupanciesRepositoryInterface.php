@@ -59,4 +59,13 @@ interface HotelOccupanciesRepositoryInterface
      * @return mixed
      */
     public function deleteHotelOccupancies($id);
+
+    /**
+     * Mengupdate hotelOccupancies status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateHotelOccupanciesStatus($id, $status);
 }

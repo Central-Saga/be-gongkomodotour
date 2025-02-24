@@ -129,11 +129,7 @@ class EmailBlastService implements EmailBlastServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->emailblastrepository->createEmailBlast($data);
-        Cache::forget(self::EMAILBLAST_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_DRAFT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
+        $this->clearEmailBlastCaches();
         return $result;
     }
 
@@ -148,11 +144,7 @@ class EmailBlastService implements EmailBlastServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->emailblastrepository->updateEmailBlast($id, $data);
-        Cache::forget(self::EMAILBLAST_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_DRAFT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
+        $this->clearEmailBlastCaches();
         return $result;
     }
 
@@ -165,11 +157,31 @@ class EmailBlastService implements EmailBlastServiceInterface
     public function deleteEmailBlast($id)
     {
         $result = $this->emailblastrepository->deleteEmailBlast($id);
+        $this->clearEmailBlastCaches();
+        return $result;
+    }
+
+    public function updateEmailBlastStatus($id, $status)
+    {
+        $emailBlast = $this->getEmailBlastById($id);
+
+        if ($emailBlast) {
+            $result = $this->emailblastrepository->updateEmailBlastStatus($id, $status);
+
+            $this->clearEmailBlastCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function clearEmailBlastCaches()
+    {
         Cache::forget(self::EMAILBLAST_ALL_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_DRAFT_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
-        return $result;
     }
 }

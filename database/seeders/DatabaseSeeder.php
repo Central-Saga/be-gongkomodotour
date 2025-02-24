@@ -30,8 +30,11 @@ class DatabaseSeeder extends Seeder
             EmailBlastRecipientSeeder::class,
             AdditionalFeeSeeder::class,
             SurchargeSeeder::class,
-            // BookingSeeder::class,
-            // BookingFeeSeeder::class,
+            BookingSeeder::class,
+            BankAccountSeeder::class,
+            HotelRequestSeeder::class,
+            TransactionSeeder::class,
+            // DetailTransactionSeeder::class,
         ]);
     }
 }

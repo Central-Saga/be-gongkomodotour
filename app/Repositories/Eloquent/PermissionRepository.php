@@ -149,4 +149,23 @@ class PermissionRepository implements PermissionRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate permission status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updatePermissionStatus($id, $status)
+    {
+        $permission = $this->findPermission($id);
+
+        if ($permission) {
+            $permission->status = $status;
+            $permission->save();
+            return $permission;
+        }
+        return null;
+    }
 }

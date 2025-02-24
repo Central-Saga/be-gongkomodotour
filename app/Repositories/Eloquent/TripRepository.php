@@ -159,4 +159,23 @@ class TripRepository implements TripRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate trip status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTripStatus($id, $status)
+    {
+        $trip = $this->findTrip($id);
+
+        if ($trip) {
+            $trip->status = $status;
+            $trip->save();
+            return $trip;
+        }
+        return null;
+    }
 }

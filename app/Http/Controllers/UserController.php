@@ -112,4 +112,21 @@ class UserController extends Controller implements HasMiddleware
         }
         return response()->json(['message' => 'User berhasil dihapus']);
     }
+
+    /**
+     * Update Status User.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $user = $this->userService->updateUserStatus($id, $request->validated());
+
+        if (!$user) {
+            return response()->json(['message' => 'Failed to update user status'], 404);
+        }
+        return new UserResource($user);
+    }
 }

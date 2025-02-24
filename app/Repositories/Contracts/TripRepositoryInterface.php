@@ -67,4 +67,13 @@ interface TripRepositoryInterface
      * @return mixed
      */
     public function deleteTrip($id);
+
+    /**
+     * Mengupdate trip status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTripStatus($id, $status);
 }

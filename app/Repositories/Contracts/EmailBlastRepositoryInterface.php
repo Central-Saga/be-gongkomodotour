@@ -67,4 +67,13 @@ interface EmailBlastRepositoryInterface
      * @return mixed
      */
     public function findEmailBlast($id);
+
+    /**
+     * Mengupdate emailBlast status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateEmailBlastStatus($id, $status);
 }

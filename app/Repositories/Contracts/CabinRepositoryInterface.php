@@ -67,4 +67,13 @@ interface CabinRepositoryInterface
      * @return mixed
      */
     public function findCabin($id);
+
+    /**
+     * Mengupdate cabin status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateCabinStatus($id, $status);
 }

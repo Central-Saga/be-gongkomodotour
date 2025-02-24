@@ -68,4 +68,13 @@ interface SurchargeRepositoryInterface
      * @return mixed
      */
     public function deleteSurchargesNotIn($trip_id, $existing_id);
+
+    /**
+     * Mengupdate surcharge status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateSurchargeStatus($id, $status);
 }

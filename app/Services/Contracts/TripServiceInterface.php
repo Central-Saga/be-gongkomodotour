@@ -87,4 +87,13 @@ interface TripServiceInterface
      * @return mixed
      */
     public function deleteTrip($id);
+
+    /**
+     * Mengupdate status trip.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTripStatus($id, $status);
 }

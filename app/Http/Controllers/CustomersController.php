@@ -105,4 +105,21 @@ class CustomersController extends Controller
         // $customers = Customer::where('status', 'Aktif')->get();
         return CustomerResource::collection($customers);
     }
+
+    /**
+     * Update Status Customer.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $customer = $this->customersService->updateCustomerStatus($id, $request->validated());
+
+        if (!$customer) {
+            return response()->json(['message' => 'Failed to update customer status'], 404);
+        }
+        return new CustomerResource($customer);
+    }
 }

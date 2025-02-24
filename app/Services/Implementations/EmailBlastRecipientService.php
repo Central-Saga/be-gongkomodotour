@@ -62,13 +62,10 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
             $data['status'] = ucfirst(strtolower($data['status']));
         }
         $result = $this->emailblastrecipientrepository->createEmailBlastRecipient($data);
-        Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
+        $this->clearEmailBlastRecipientCaches();
         return $result;
     }
-    
+
     /**
      * Memperbarui emailBlastRecipient berdasarkan ID.
      *
@@ -83,13 +80,10 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
             $data['status'] = ucfirst(strtolower($data['status']));
         }
         $result = $this->emailblastrecipientrepository->updateEmailBlastRecipient($id, $data);
-        Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
+        $this->clearEmailBlastRecipientCaches($id);
         return $result;
     }
-    
+
     /**
      * Menghapus emailBlastRecipient berdasarkan ID.
      *
@@ -99,13 +93,10 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
     public function deleteEmailBlastRecipient($id)
     {
         $result = $this->emailblastrecipientrepository->deleteEmailBlastRecipient($id);
-        Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
-        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
+        $this->clearEmailBlastRecipientCaches();
         return $result;
     }
-    
+
     /**
      * Mengambil emailBlastRecipient berdasarkan nama.
      *
@@ -116,7 +107,7 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
     {
         return $this->emailblastrecipientrepository->getEmailBlastRecipientByName($name);
     }
-    
+
     /**
      * Mengambil emailBlastRecipient berdasarkan status.
      *
@@ -127,7 +118,7 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
     {
         return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus($status);
     }
-    
+
     /**
      * Mengambil emailBlastRecipient dengan status Pending.
      *
@@ -139,7 +130,7 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
             return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Pending');
         });
     }
-    
+
     /**
      * Mengambil emailBlastRecipient dengan status Sent.
      *
@@ -151,7 +142,7 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
             return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Sent');
         });
     }
-    
+
     /**
      * Mengambil emailBlastRecipient dengan status Failed.
      *
@@ -162,5 +153,26 @@ class EmailBlastRecipientService implements EmailBlastRecipientServiceInterface
         return Cache::remember(self::EMAILBLAST_FAILED_CACHE_KEY, 3600, function () {
             return $this->emailblastrecipientrepository->getEmailBlastRecipientByStatus('Failed');
         });
+    }
+
+    public function updateEmailBlastRecipientStatus($id, $status)
+    {
+        $emailBlastRecipient = $this->getEmailBlastRecipientById($id);
+
+        if ($emailBlastRecipient) {
+            $result = $this->emailblastrecipientrepository->updateEmailBlastRecipientStatus($id, $status);
+
+            $this->clearEmailBlastRecipientCaches($id);
+
+            return $result;
+        }
+    }
+
+    public function clearEmailBlastRecipientCaches()
+    {
+        Cache::forget(self::EMAILBLASTRECIPIENT_ALL_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_PENDING_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
+        Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
     }
 }

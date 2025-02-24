@@ -105,4 +105,20 @@ class BoatController extends Controller
         // $boat = Boat::where('status', 'Aktif')->get();
         return BoatResource::collection($boat);
     }
+
+    /**
+     * Update Status Boat.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $boat = $this->boatService->updateBoatStatus($id, $request->validated());
+        if (!$boat) {
+            return response()->json(['message' => 'Boat not found'], 404);
+        }
+        return new BoatResource($boat);
+    }
 }

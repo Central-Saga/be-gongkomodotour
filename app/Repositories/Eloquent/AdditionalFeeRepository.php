@@ -183,4 +183,23 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
             return false;
         }
     }
+
+    /**
+     * Mengupdate additional fee status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateAdditionalFeeStatus($id, $status)
+    {
+        $additionalFee = $this->findAdditionalFee($id);
+
+        if ($additionalFee) {
+            $additionalFee->status = $status;
+            $additionalFee->save();
+            return $additionalFee;
+        }
+        return null;
+    }
 }
