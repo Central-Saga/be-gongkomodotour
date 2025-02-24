@@ -67,4 +67,13 @@ interface TripPricesRepositoryInterface
      * @return mixed
      */
     public function deleteTripPricesNotIn($trip_duration_id, $existing_id);
+
+    /**
+     * Mengupdate tripprices status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTripPricesStatus($id, $status);
 }

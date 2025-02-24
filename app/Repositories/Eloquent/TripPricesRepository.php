@@ -159,4 +159,23 @@ class TripPricesRepository implements TripPricesRepositoryInterface
     {
         return $this->tripprices->where('trip_duration_id', $trip_duration_id)->whereNotIn('id', $existing_id)->delete();
     }
+
+    /**
+     * Mengupdate tripprices status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTripPricesStatus($id, $status)
+    {
+        $tripprices = $this->findTripPrices($id);
+
+        if ($tripprices) {
+            $tripprices->status = $status;
+            $tripprices->save();
+            return $tripprices;
+        }
+        return null;
+    }
 }

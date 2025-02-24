@@ -67,4 +67,13 @@ interface CustomersRepositoryInterface
      * @return mixed
      */
     public function findCustomer($id);
+
+    /**
+     * Mengupdate customer status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateCustomerStatus($id, $status);
 }

@@ -145,4 +145,23 @@ class TransactionRepository implements TransactionRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate transaksi status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTransactionStatus($id, $status)
+    {
+        $transaction = $this->findTransaction($id);
+
+        if ($transaction) {
+            $transaction->status = $status;
+            $transaction->save();
+            return $transaction;
+        }
+        return null;
+    }
 }

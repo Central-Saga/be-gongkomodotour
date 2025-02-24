@@ -55,20 +55,39 @@ class CabinRepository implements CabinRepositoryInterface
     {
         return Cabin::where('status', $status)->get();
     }
-    
+
     /**
      * Mencari cabin berdasarkan kriteria tertentu (helper berdasarkan ID).
      *
      * @param int $id
      * @return Cabin|null
      */
-     public function findCabin($id)
-     {
-         try {
-             return Cabin::findOrFail($id);
-         } catch (ModelNotFoundException $e) {
-             Log::error("Cabin with ID {$id} not found.");
-             return null;
-         }
-     }
+    public function findCabin($id)
+    {
+        try {
+            return Cabin::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            Log::error("Cabin with ID {$id} not found.");
+            return null;
+        }
+    }
+
+    /**
+     * Mengupdate cabin status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateCabinStatus($id, $status)
+    {
+        $cabin = $this->findCabin($id);
+
+        if ($cabin) {
+            $cabin->status = $status;
+            $cabin->save();
+            return $cabin;
+        }
+        return null;
+    }
 }

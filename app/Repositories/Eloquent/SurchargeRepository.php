@@ -166,4 +166,23 @@ class SurchargeRepository implements SurchargeRepositoryInterface
             return false;
         }
     }
+
+    /**
+     * Mengupdate surcharge status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateSurchargeStatus($id, $status)
+    {
+        $surcharge = $this->findSurcharge($id);
+
+        if ($surcharge) {
+            $surcharge->status = $status;
+            $surcharge->save();
+            return $surcharge;
+        }
+        return null;
+    }
 }

@@ -142,4 +142,23 @@ class DetailTransactionRepository implements DetailTransactionRepositoryInterfac
             return null;
         }
     }
+
+    /**
+     * Mengupdate detail transaksi status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateDetailTransactionStatus($id, $status)
+    {
+        $detailTransaction = $this->findDetailTransaction($id);
+
+        if ($detailTransaction) {
+            $detailTransaction->status = $status;
+            $detailTransaction->save();
+            return $detailTransaction;
+        }
+        return null;
+    }
 }

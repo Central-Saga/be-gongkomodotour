@@ -59,4 +59,13 @@ interface HotelRequestRepositoryInterface
      * @return mixed
      */
     public function deleteHotelRequest($id);
+
+    /**
+     * Mengupdate permintaan hotel status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateHotelRequestStatus($id, $status);
 }

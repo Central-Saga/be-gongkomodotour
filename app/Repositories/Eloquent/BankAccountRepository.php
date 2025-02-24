@@ -145,4 +145,23 @@ class BankAccountRepository implements BankAccountRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate bank account status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBankAccountStatus($id, $status)
+    {
+        $bankAccount = $this->findBankAccount($id);
+
+        if ($bankAccount) {
+            $bankAccount->status = $status;
+            $bankAccount->save();
+            return $bankAccount;
+        }
+        return null;
+    }
 }

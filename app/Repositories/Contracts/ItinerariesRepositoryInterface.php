@@ -67,4 +67,13 @@ interface ItinerariesRepositoryInterface
      * @return mixed
      */
     public function deleteItinerariesNotIn($trip_id, $existing_id);
+
+    /**
+     * Mengupdate itineraries status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateItinerariesStatus($id, $status);
 }

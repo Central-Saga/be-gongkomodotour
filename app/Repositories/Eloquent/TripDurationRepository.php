@@ -164,4 +164,23 @@ class TripDurationRepository implements TripDurationRepositoryInterface
             return false;
         }
     }
+
+    /**
+     * Mengupdate tripduration status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateTripDurationStatus($id, $status)
+    {
+        $tripduration = $this->findTripDuration($id);
+
+        if ($tripduration) {
+            $tripduration->status = $status;
+            $tripduration->save();
+            return $tripduration;
+        }
+        return null;
+    }
 }

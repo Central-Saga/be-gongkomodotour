@@ -97,4 +97,23 @@ class HotelRequestRepository implements HotelRequestRepositoryInterface
     {
         return $this->model->find($id)->delete();
     }
+
+    /**
+     * Mengupdate permintaan hotel status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateHotelRequestStatus($id, $status)
+    {
+        $hotelRequest = $this->findHotelRequest($id);
+
+        if ($hotelRequest) {
+            $hotelRequest->status = $status;
+            $hotelRequest->save();
+            return $hotelRequest;
+        }
+        return null;
+    }
 }

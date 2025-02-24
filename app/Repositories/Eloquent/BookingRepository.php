@@ -402,4 +402,23 @@ class BookingRepository implements BookingRepositoryInterface
 
         return $finalTotalPrice;
     }
+
+    /**
+     * Mengupdate booking status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBookingStatus($id, $status)
+    {
+        $booking = $this->findBooking($id);
+
+        if ($booking) {
+            $booking->status = $status;
+            $booking->save();
+            return $booking;
+        }
+        return null;
+    }
 }

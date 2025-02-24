@@ -164,4 +164,23 @@ class FlightScheduleRepository implements FlightScheduleRepositoryInterface
             return false;
         }
     }
+
+    /**
+     * Mengupdate flight schedule status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateFlightScheduleStatus($id, $status)
+    {
+        $flightschedule = $this->findFlightSchedule($id);
+
+        if ($flightschedule) {
+            $flightschedule->status = $status;
+            $flightschedule->save();
+            return $flightschedule;
+        }
+        return null;
+    }
 }

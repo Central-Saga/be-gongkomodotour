@@ -149,4 +149,23 @@ class RoleRepository implements RoleRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Mengupdate role status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateRoleStatus($id, $status)
+    {
+        $role = $this->findRole($id);
+
+        if ($role) {
+            $role->status = $status;
+            $role->save();
+            return $role;
+        }
+        return null;
+    }
 }

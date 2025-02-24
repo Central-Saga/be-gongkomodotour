@@ -55,20 +55,39 @@ class BoatRepository implements BoatRepositoryInterface
     {
         return Boat::where('status', $status)->get();
     }
-    
+
     /**
      * Mencari Boat berdasarkan kriteria tertentu (helper berdasarkan ID).
      *
      * @param int $id
      * @return Boat|null
      */
-     public function findBoat($id)
-     {
-         try {
-             return Boat::findOrFail($id);
-         } catch (ModelNotFoundException $e) {
-             Log::error("Boat with ID {$id} not found.");
-             return null;
-         }
-     }
+    public function findBoat($id)
+    {
+        try {
+            return Boat::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            Log::error("Boat with ID {$id} not found.");
+            return null;
+        }
+    }
+
+    /**
+     * Mengupdate boat status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBoatStatus($id, $status)
+    {
+        $boat = $this->findBoat($id);
+
+        if ($boat) {
+            $boat->status = $status;
+            $boat->save();
+            return $boat;
+        }
+        return null;
+    }
 }

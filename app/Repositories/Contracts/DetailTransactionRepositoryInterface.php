@@ -59,4 +59,13 @@ interface DetailTransactionRepositoryInterface
      * @return mixed
      */
     public function deleteDetailTransaction($id);
+
+    /**
+     * Mengupdate detail transaksi status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateDetailTransactionStatus($id, $status);
 }

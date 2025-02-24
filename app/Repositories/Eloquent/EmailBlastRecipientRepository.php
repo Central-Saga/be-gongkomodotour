@@ -65,4 +65,23 @@ class EmailBlastRecipientRepository implements EmailBlastRecipientRepositoryInte
     {
         return $this->getEmailBlastRecipientById($id);
     }
+
+    /**
+     * Mengupdate email blast recipient status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateEmailBlastRecipientStatus($id, $status)
+    {
+        $emailBlastRecipient = $this->findEmailBlastRecipient($id);
+
+        if ($emailBlastRecipient) {
+            $emailBlastRecipient->status = $status;
+            $emailBlastRecipient->save();
+            return $emailBlastRecipient;
+        }
+        return null;
+    }
 }
