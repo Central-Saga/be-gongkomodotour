@@ -113,4 +113,21 @@ class RoleController extends Controller implements HasMiddleware
 
         return response()->json(['message' => 'Role berhasil dihapus'], 200);
     }
+
+    /**
+     * Update Status Role.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $role = $this->roleService->updateRoleStatus($id, $request->validated());
+
+        if (!$role) {
+            return response()->json(['message' => 'Failed to update role status'], 404);
+        }
+        return new RoleResource($role);
+    }
 }

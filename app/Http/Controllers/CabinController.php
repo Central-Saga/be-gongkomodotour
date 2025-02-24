@@ -105,4 +105,21 @@ class CabinController extends Controller
         // $cabin = Cabin::where('status', 'Aktif')->get();
         return CabinResource::collection($cabin);
     }
+
+    /**
+     * Update Status Cabin.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $cabin = $this->cabinService->updateCabinStatus($id, $request->validated());
+
+        if (!$cabin) {
+            return response()->json(['message' => 'Failed to update cabin status'], 404);
+        }
+        return new CabinResource($cabin);
+    }
 }

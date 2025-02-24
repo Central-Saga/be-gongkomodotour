@@ -33,7 +33,7 @@ class HotelOccupanciesController extends Controller
     {
         // Ambil parameter status dari query string
         $status = $request->query('status');
-    
+
         if ($status === null) {
             // Jika tidak ada query parameter, ambil semua hotel occupancies
             $hotelOccupancies = $this->hotelOccupanciesService->getAllHotelOccupancies();
@@ -100,5 +100,22 @@ class HotelOccupanciesController extends Controller
     {
         $hotelOccupancies = $this->hotelOccupanciesService->getActiveHotelOccupancies();
         return HotelOccupancyResource::collection($hotelOccupancies);
+    }
+
+    /**
+     * Update Status Hotel Occupancy.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $hotelOccupancy = $this->hotelOccupanciesService->updateHotelOccupanciesStatus($id, $request->validated());
+
+        if (!$hotelOccupancy) {
+            return response()->json(['message' => 'Failed to update hotel occupancy status'], 404);
+        }
+        return new HotelOccupancyResource($hotelOccupancy);
     }
 }

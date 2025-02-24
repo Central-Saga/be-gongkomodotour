@@ -114,4 +114,21 @@ class TripController extends Controller implements HasMiddleware
         }
         return response()->json(['message' => 'Trip berhasil dihapus'], 200);
     }
+
+    /**
+     * Update Status Trip.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $trip = $this->tripService->updateTripStatus($id, $request->validated());
+
+        if (!$trip) {
+            return response()->json(['message' => 'Failed to update trip status'], 404);
+        }
+        return new TripResource($trip);
+    }
 }

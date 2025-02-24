@@ -128,4 +128,21 @@ class PermissionController extends Controller implements HasMiddleware
         }
         return PermissionResource::collection($permissions);
     }
+
+    /**
+     * Update Status Permission.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $permission = $this->permissionService->updatePermissionStatus($id, $request->validated());
+
+        if (!$permission) {
+            return response()->json(['message' => 'Failed to update permission status'], 404);
+        }
+        return new PermissionResource($permission);
+    }
 }

@@ -95,4 +95,21 @@ class EmailBlastRecipientController extends Controller
         }
         return response()->json(['message' => 'EmailBlastRecipient deleted successfully'], 200);
     }
+
+    /**
+     * Update Status EmailBlastRecipient.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $emailBlastRecipient = $this->emailblastRecipientService->updateEmailBlastRecipientStatus($id, $request->validated());
+
+        if (!$emailBlastRecipient) {
+            return response()->json(['message' => 'Failed to update email blast recipient status'], 404);
+        }
+        return new EmailBlastRecipientResource($emailBlastRecipient);
+    }
 }

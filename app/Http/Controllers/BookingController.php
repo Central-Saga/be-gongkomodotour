@@ -79,4 +79,21 @@ class BookingController extends Controller implements HasMiddleware
         }
         return response()->json(['message' => 'Booking deleted successfully']);
     }
+
+    /**
+     * Update Status Booking.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Pending,Confirmed,Cancelled',
+        ]);
+
+        $booking = $this->bookingService->updateBookingStatus($id, $request->validated());
+
+        if (!$booking) {
+            return response()->json(['message' => 'Failed to update booking status'], 404);
+        }
+        return new BookingResource($booking);
+    }
 }

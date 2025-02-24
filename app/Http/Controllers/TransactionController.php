@@ -94,4 +94,21 @@ class TransactionController extends Controller implements HasMiddleware
         }
         return response()->json(['message' => 'Transaction deleted successfully']);
     }
+
+    /**
+     * Update Status Transaction.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Menunggu Pembayaran,Lunas,Ditolak',
+        ]);
+
+        $transaction = $this->transactionService->updateTransactionStatus($id, $request->validated());
+
+        if (!$transaction) {
+            return response()->json(['message' => 'Failed to update transaction status'], 404);
+        }
+        return new TransactionResource($transaction);
+    }
 }
