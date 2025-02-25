@@ -17,7 +17,10 @@ class GalleryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'category' => $this->faker->randomElement(['Fasilitas', 'Kamar', 'Penginapan', 'Lainnya']),
+            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
         ];
     }
 }

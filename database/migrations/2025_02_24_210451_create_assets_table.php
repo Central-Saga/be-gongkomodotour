@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->morphs('assetable');
             $table->string('title');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('file_path');
             $table->string('file_url');
             $table->timestamps();

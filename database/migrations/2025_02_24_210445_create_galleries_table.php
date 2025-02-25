@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('category');
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
