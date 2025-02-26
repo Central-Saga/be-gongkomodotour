@@ -4,91 +4,95 @@ namespace App\Providers;
 
 use App\Models\Booking;
 use App\Observers\BookingObserver;
-use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
-use App\Repositories\Contracts\BankAccountRepositoryInterface;
-use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
-use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Eloquent\BlogRepository;
+use App\Repositories\Eloquent\BoatRepository;
 use App\Repositories\Eloquent\RoleRepository;
 use App\Repositories\Eloquent\TripRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Services\Implementations\BlogService;
+use App\Services\Implementations\BoatService;
 use App\Services\Implementations\RoleService;
 use App\Services\Implementations\TripService;
 use App\Services\Implementations\UserService;
+use App\Repositories\Eloquent\CabinRepository;
+use App\Services\Implementations\CabinService;
+use App\Repositories\Eloquent\BookingRepository;
+use App\Repositories\Eloquent\GalleryRepository;
+use App\Services\Contracts\BlogServiceInterface;
+use App\Services\Contracts\BoatServiceInterface;
 use App\Services\Contracts\RoleServiceInterface;
 use App\Services\Contracts\TripServiceInterface;
 use App\Services\Contracts\UserServiceInterface;
+use App\Services\Implementations\BookingService;
+use App\Services\Implementations\GalleryService;
 use Illuminate\Auth\Notifications\ResetPassword;
-use App\Repositories\Eloquent\PermissionRepository;
-use App\Repositories\Eloquent\TripPricesRepository;
-use App\Services\Contracts\CustomersServiceInterface;
-use App\Repositories\Contracts\CustomersRepositoryInterface;
+use App\Services\Contracts\CabinServiceInterface;
 use App\Repositories\Eloquent\CustomersRepository;
+use App\Repositories\Eloquent\SurchargeRepository;
 use App\Services\Implementations\CustomersService;
-use App\Repositories\Contracts\HotelOccupanciesRepositoryInterface;
-use App\Services\Contracts\HotelOccupanciesServiceInterface;
-use App\Repositories\Eloquent\HotelOccupanciesRepository;
-use App\Services\Implementations\HotelOccupanciesService;
+use App\Repositories\Eloquent\BookingFeeRepository;
+use App\Repositories\Eloquent\EmailBlastRepository;
+use App\Repositories\Eloquent\PermissionRepository;
+use App\Repositories\Eloquent\SubscriberRepository;
+use App\Repositories\Eloquent\TripPricesRepository;
+use App\Services\Contracts\BookingServiceInterface;
+use App\Services\Contracts\GalleryServiceInterface;
+use App\Services\Implementations\EmailBlastService;
 use App\Services\Implementations\PermissionService;
+use App\Services\Implementations\SubscriberService;
 use App\Services\Implementations\TripPricesService;
+use App\Repositories\Eloquent\BankAccountRepository;
+use App\Repositories\Eloquent\ItinerariesRepository;
+use App\Repositories\Eloquent\TransactionRepository;
+use App\Services\Implementations\BankAccountService;
+use App\Services\Implementations\ItinerariesService;
+use App\Services\Implementations\TransactionService;
 use App\Repositories\Eloquent\TripDurationRepository;
+use App\Services\Contracts\CustomersServiceInterface;
+use App\Services\Implementations\TripDurationService;
+use App\Repositories\Eloquent\AdditionalFeeRepository;
+use App\Services\Contracts\EmailBlastServiceInterface;
 use App\Services\Contracts\PermissionServiceInterface;
+use App\Services\Contracts\SubscriberServiceInterface;
 use App\Services\Contracts\TripPricesServiceInterface;
+use App\Repositories\Contracts\BlogRepositoryInterface;
+use App\Repositories\Contracts\BoatRepositoryInterface;
 use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Repositories\Contracts\TripRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
-use App\Services\Contracts\BoatServiceInterface;
-use App\Services\Implementations\BoatService;
-use App\Repositories\Eloquent\BoatRepository;
-use App\Repositories\Contracts\BoatRepositoryInterface;
-use App\Repositories\Eloquent\CabinRepository;
-use App\Repositories\Contracts\CabinRepositoryInterface;
-use App\Services\Contracts\CabinServiceInterface;
-use App\Services\Implementations\CabinService;
-use App\Repositories\Eloquent\EmailBlastRepository;
-use App\Repositories\Contracts\EmailBlastRepositoryInterface;
-use App\Services\Contracts\EmailBlastServiceInterface;
-use App\Services\Implementations\EmailBlastService;
-use App\Repositories\Eloquent\EmailBlastRecipientRepository;
-use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
-use App\Services\Contracts\EmailBlastRecipientServiceInterface;
-use App\Services\Implementations\EmailBlastRecipientService;
-use App\Repositories\Eloquent\BlogRepository;
-use App\Repositories\Contracts\BlogRepositoryInterface;
-use App\Services\Contracts\BlogServiceInterface;
-use App\Services\Implementations\BlogService;
-use App\Repositories\Eloquent\SubscriberRepository;
-use App\Repositories\Contracts\SubscriberRepositoryInterface;
-use App\Services\Contracts\SubscriberServiceInterface;
-use App\Services\Implementations\SubscriberService;
-use App\Repositories\Contracts\PermissionRepositoryInterface;
-use App\Repositories\Contracts\TripPricesRepositoryInterface;
-use App\Repositories\Contracts\TripDurationRepositoryInterface;
 use App\Repositories\Eloquent\FlightScheduleRepository;
-use App\Repositories\Eloquent\ItinerariesRepository;
-use App\Repositories\Eloquent\AdditionalFeeRepository;
-use App\Repositories\Eloquent\BookingFeeRepository;
-use App\Repositories\Contracts\BookingFeeRepositoryInterface;
-use App\Repositories\Contracts\BookingRepositoryInterface;
-use App\Services\Contracts\FlightScheduleServiceInterface;
-use App\Services\Contracts\ItinerariesServiceInterface;
-use App\Services\Implementations\FlightScheduleService;
-use App\Services\Implementations\ItinerariesService;
-use App\Services\Implementations\BookingService;
-use App\Repositories\Contracts\SurchargeRepositoryInterface;
-use App\Repositories\Contracts\TransactionRepositoryInterface;
-use App\Repositories\Eloquent\BankAccountRepository;
-use App\Repositories\Eloquent\BookingRepository;
-use App\Repositories\Eloquent\SurchargeRepository;
-use App\Repositories\Eloquent\TransactionRepository;
 use App\Services\Contracts\BankAccountServiceInterface;
-use App\Services\Contracts\BookingServiceInterface;
+use App\Services\Contracts\ItinerariesServiceInterface;
 use App\Services\Contracts\TransactionServiceInterface;
+use App\Services\Implementations\FlightScheduleService;
+use App\Repositories\Contracts\CabinRepositoryInterface;
 use App\Services\Contracts\TripDurationServiceInterface;
-use App\Services\Implementations\BankAccountService;
-use App\Services\Implementations\TransactionService;
-use App\Services\Implementations\TripDurationService;
+use App\Repositories\Eloquent\HotelOccupanciesRepository;
+use App\Services\Implementations\HotelOccupanciesService;
+use App\Repositories\Contracts\BookingRepositoryInterface;
+use App\Repositories\Contracts\GalleryRepositoryInterface;
+use App\Services\Contracts\FlightScheduleServiceInterface;
+use App\Repositories\Contracts\CustomersRepositoryInterface;
+use App\Repositories\Contracts\SurchargeRepositoryInterface;
+use App\Repositories\Eloquent\EmailBlastRecipientRepository;
+use App\Services\Contracts\HotelOccupanciesServiceInterface;
+use App\Services\Implementations\EmailBlastRecipientService;
+use App\Repositories\Contracts\BookingFeeRepositoryInterface;
+use App\Repositories\Contracts\EmailBlastRepositoryInterface;
+use App\Repositories\Contracts\PermissionRepositoryInterface;
+use App\Repositories\Contracts\SubscriberRepositoryInterface;
+use App\Repositories\Contracts\TripPricesRepositoryInterface;
+use App\Repositories\Contracts\BankAccountRepositoryInterface;
+use App\Repositories\Contracts\ItinerariesRepositoryInterface;
+use App\Repositories\Contracts\TransactionRepositoryInterface;
+use App\Repositories\Contracts\TripDurationRepositoryInterface;
+use App\Services\Contracts\EmailBlastRecipientServiceInterface;
+use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
+use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
+use App\Repositories\Contracts\HotelOccupanciesRepositoryInterface;
+use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -187,12 +191,12 @@ class AppServiceProvider extends ServiceProvider
         // Binding BlogServiceInterface to BlogService
         $this->app->bind(BlogServiceInterface::class, BlogService::class);
 
-        // Binding SubscriberRepositoryInterface to SubscriberRepository    
+        // Binding SubscriberRepositoryInterface to SubscriberRepository
         $this->app->bind(SubscriberRepositoryInterface::class, SubscriberRepository::class);
 
         // Binding SubscriberServiceInterface to SubscriberService
         $this->app->bind(SubscriberServiceInterface::class, SubscriberService::class);
-        
+
         // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
         $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
 
@@ -220,6 +224,11 @@ class AppServiceProvider extends ServiceProvider
         // Binding TransactionServiceInterface to TransactionService
         $this->app->bind(TransactionServiceInterface::class, TransactionService::class);
 
+        // Binding GalleryRepositoryInterface to GalleryRepository
+        $this->app->bind(GalleryRepositoryInterface::class, GalleryRepository::class);
+
+        // Binding GalleryServiceInterface to GalleryService
+        $this->app->bind(GalleryServiceInterface::class, GalleryService::class);
     }
 
     /**
