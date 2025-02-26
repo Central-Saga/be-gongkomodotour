@@ -4,6 +4,10 @@ namespace App\Services\Implementations;
 
 use App\Services\Contracts\GalleryServiceInterface;
 use App\Repositories\Contracts\GalleryRepositoryInterface;
+use App\Models\Asset;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class GalleryService implements GalleryServiceInterface
 {
@@ -69,11 +73,26 @@ class GalleryService implements GalleryServiceInterface
      */
     public function createGallery(array $data)
     {
+        // Pisahkan data file dari data galeri
+        $fileData = null;
+        if (isset($data['file'])) {
+            $fileData = $data['file'];
+            unset($data['file']);
+        }
+
+        // Buat galeri baru
         $result = $this->repository->createGallery($data);
+
         if ($result) {
+            // Jika ada file, simpan sebagai asset
+            if ($fileData) {
+                $this->saveGalleryAsset($result, $fileData);
+            }
+
             $this->clearGalleryCaches();
             return $result;
         }
+
         return null;
     }
 
@@ -86,11 +105,29 @@ class GalleryService implements GalleryServiceInterface
      */
     public function updateGallery($id, array $data)
     {
+        // Pisahkan data file dari data galeri
+        $fileData = null;
+        if (isset($data['file'])) {
+            $fileData = $data['file'];
+            unset($data['file']);
+        }
+
+        // Update galeri
         $result = $this->repository->updateGallery($id, $data);
+
         if ($result) {
+            // Jika ada file baru, update asset
+            if ($fileData) {
+                // Hapus asset lama jika ada
+                $this->deleteGalleryAssets($result);
+                // Simpan asset baru
+                $this->saveGalleryAsset($result, $fileData);
+            }
+
             $this->clearGalleryCaches($id);
             return $result;
         }
+
         return null;
     }
 
@@ -102,11 +139,22 @@ class GalleryService implements GalleryServiceInterface
      */
     public function deleteGallery($id)
     {
-        $result = $this->repository->deleteGallery($id);
-        if ($result) {
-            $this->clearGalleryCaches($id);
-            return $result;
+        // Ambil galeri yang akan dihapus
+        $gallery = $this->repository->getGalleryById($id);
+
+        if ($gallery) {
+            // Hapus semua asset terkait
+            $this->deleteGalleryAssets($gallery);
+
+            // Hapus galeri
+            $result = $this->repository->deleteGallery($id);
+
+            if ($result) {
+                $this->clearGalleryCaches($id);
+                return $result;
+            }
         }
+
         return null;
     }
 
@@ -131,5 +179,71 @@ class GalleryService implements GalleryServiceInterface
     public function clearGalleryCaches($id = null)
     {
         Cache::forget(self::GALLERIES_ALL_CACHE_KEY);
+    }
+
+    /**
+     * Menyimpan asset untuk galeri
+     *
+     * @param Gallery $gallery
+     * @param mixed $fileData
+     * @return Asset|null
+     */
+    protected function saveGalleryAsset($gallery, $fileData)
+    {
+        try {
+            // Jika $fileData adalah instance UploadedFile
+            if (is_object($fileData) && method_exists($fileData, 'getClientOriginalName')) {
+                $fileName = time() . '_' . $fileData->getClientOriginalName();
+                $filePath = $fileData->storeAs('galleries', $fileName, 'public');
+                $fileUrl = Storage::url($filePath);
+
+                // Buat asset baru
+                return $gallery->assets()->create([
+                    'title' => $gallery->title,
+                    'description' => $gallery->description,
+                    'file_path' => $filePath,
+                    'file_url' => $fileUrl,
+                ]);
+            }
+            // Jika $fileData adalah array dengan informasi file
+            elseif (is_array($fileData) && isset($fileData['path']) && isset($fileData['url'])) {
+                return $gallery->assets()->create([
+                    'title' => $fileData['title'] ?? $gallery->title,
+                    'description' => $fileData['description'] ?? $gallery->description,
+                    'file_path' => $fileData['path'],
+                    'file_url' => $fileData['url'],
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error("Failed to save gallery asset: {$e->getMessage()}");
+        }
+
+        return null;
+    }
+
+    /**
+     * Menghapus semua asset untuk galeri
+     *
+     * @param Gallery $gallery
+     * @return void
+     */
+    protected function deleteGalleryAssets($gallery)
+    {
+        try {
+            // Ambil semua asset
+            $assets = $gallery->assets;
+
+            foreach ($assets as $asset) {
+                // Hapus file dari storage
+                if (Storage::disk('public')->exists($asset->file_path)) {
+                    Storage::disk('public')->delete($asset->file_path);
+                }
+
+                // Hapus record asset
+                $asset->delete();
+            }
+        } catch (\Exception $e) {
+            Log::error("Failed to delete gallery assets: {$e->getMessage()}");
+        }
     }
 }

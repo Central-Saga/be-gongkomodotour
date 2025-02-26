@@ -10,6 +10,7 @@ use App\Http\Controllers\CabinController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\EmailBlastController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\TransactionController;
@@ -62,6 +63,9 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     Route::apiResource('subscriber', SubscriberController::class);
     // Blog
     Route::apiResource('blog', BlogController::class);
+    // Galleries
+    Route::apiResource('galleries', GalleryController::class);
+    Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);
     // Bookings
     Route::apiResource('bookings', BookingController::class);
     Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
