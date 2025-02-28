@@ -20,6 +20,8 @@ class GalleryService implements GalleryServiceInterface
      * Cache key for all galleries
      */
     const GALLERIES_ALL_CACHE_KEY = 'galleries.all';
+    const GALLERIES_ACTIVE_CACHE_KEY = 'galleries.active';
+    const GALLERIES_INACTIVE_CACHE_KEY = 'galleries.inactive';
 
     /**
      * Konstruktor GalleryService
@@ -63,6 +65,41 @@ class GalleryService implements GalleryServiceInterface
     public function getGalleryByCategory($category)
     {
         return $this->repository->getGalleryByCategory($category);
+    }
+
+    /**
+     * Mengambil galeri berdasarkan status
+     *
+     * @param string $status
+     * @return Collection
+     */
+    public function getGalleryByStatus($status)
+    {
+        return $this->repository->getGalleryByStatus($status);
+    }
+
+    /**
+     * Mengambil semua galeri aktif
+     *
+     * @return Collection
+     */
+    public function getAllActiveGalleries()
+    {
+        return Cache::remember(self::GALLERIES_ACTIVE_CACHE_KEY, 3600, function () {
+            return $this->repository->getGalleryByStatus('Aktif');
+        });
+    }
+
+    /**
+     * Mengambil semua galeri tidak aktif
+     *
+     * @return Collection
+     */
+    public function getAllInactiveGalleries()
+    {
+        return Cache::remember(self::GALLERIES_INACTIVE_CACHE_KEY, 3600, function () {
+            return $this->repository->getGalleryByStatus('Non Aktif');
+        });
     }
 
     /**
@@ -179,6 +216,8 @@ class GalleryService implements GalleryServiceInterface
     public function clearGalleryCaches($id = null)
     {
         Cache::forget(self::GALLERIES_ALL_CACHE_KEY);
+        Cache::forget(self::GALLERIES_ACTIVE_CACHE_KEY);
+        Cache::forget(self::GALLERIES_INACTIVE_CACHE_KEY);
     }
 
     /**

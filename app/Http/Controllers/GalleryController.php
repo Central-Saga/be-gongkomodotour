@@ -54,13 +54,19 @@ class GalleryController extends Controller implements HasMiddleware
 
         if ($category) {
             $galleries = $this->galleryService->getGalleryByCategory($category);
-        } elseif ($status) {
-            $galleries = $this->galleryService->getGalleryByStatus($status);
+        } elseif ($status !== null) {
+            if ($status == '1') {
+                $galleries = $this->galleryService->getAllActiveGalleries();
+            } elseif ($status == '0') {
+                $galleries = $this->galleryService->getAllInactiveGalleries();
+            } else {
+                return response()->json(['message' => 'Invalid status parameter'], 400);
+            }
         } else {
             $galleries = $this->galleryService->getAllGalleries();
         }
 
-        return GalleryResource::collection($galleries->load('assets'));
+        return GalleryResource::collection($galleries);
     }
 
     /**
@@ -81,7 +87,7 @@ class GalleryController extends Controller implements HasMiddleware
             ], 500);
         }
 
-        return (new GalleryResource($gallery->load('assets')))
+        return (new GalleryResource($gallery))
             ->additional([
                 'status' => 'success',
                 'message' => 'Galeri berhasil dibuat',
@@ -107,7 +113,7 @@ class GalleryController extends Controller implements HasMiddleware
             ], 404);
         }
 
-        return new GalleryResource($gallery->load('assets'));
+        return new GalleryResource($gallery);
     }
 
     /**
@@ -129,7 +135,7 @@ class GalleryController extends Controller implements HasMiddleware
             ], 404);
         }
 
-        return (new GalleryResource($gallery->load('assets')))
+        return (new GalleryResource($gallery))
             ->additional([
                 'status' => 'success',
                 'message' => 'Galeri berhasil diperbarui',
@@ -178,7 +184,7 @@ class GalleryController extends Controller implements HasMiddleware
             ], 404);
         }
 
-        return (new GalleryResource($gallery->load('assets')))
+        return (new GalleryResource($gallery))
             ->additional([
                 'status' => 'success',
                 'message' => 'Status galeri berhasil diperbarui',

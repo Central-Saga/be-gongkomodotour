@@ -31,7 +31,7 @@ class GalleryRepository implements GalleryRepositoryInterface
      */
     public function getAllGalleries()
     {
-        return $this->model->all();
+        return $this->model->with('assets')->get();
     }
 
     /**
@@ -43,7 +43,7 @@ class GalleryRepository implements GalleryRepositoryInterface
     public function getGalleryById($id)
     {
         try {
-            return $this->model->findOrFail($id);
+            return $this->model->with('assets')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Gallery with ID {$id} not found.");
             return null;
@@ -58,7 +58,7 @@ class GalleryRepository implements GalleryRepositoryInterface
      */
     public function getGalleryByCategory($category)
     {
-        return $this->model->where('category', $category)->get();
+        return $this->model->where('category', $category)->with('assets')->get();
     }
 
     /**
@@ -69,7 +69,7 @@ class GalleryRepository implements GalleryRepositoryInterface
      */
     public function getGalleryByStatus($status)
     {
-        return $this->model->where('status', $status)->get();
+        return $this->model->where('status', $status)->with('assets')->get();
     }
 
     /**

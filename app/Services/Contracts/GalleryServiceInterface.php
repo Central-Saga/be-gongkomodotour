@@ -25,6 +25,25 @@ interface GalleryServiceInterface
     public function getGalleryByCategory($category);
 
     /**
+     * Get gallery by status
+     * @param string $status
+     * @return Collection
+     */
+    public function getGalleryByStatus($status);
+
+    /**
+     * Get all active galleries
+     * @return Collection
+     */
+    public function getAllActiveGalleries();
+
+    /**
+     * Get all inactive galleries
+     * @return Collection
+     */
+    public function getAllInactiveGalleries();
+
+    /**
      * Create gallery
      * @param array $data
      * @return Gallery

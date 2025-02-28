@@ -44,14 +44,14 @@ class BankAccountService implements BankAccountServiceInterface
     public function getActiveBankAccounts()
     {
         return Cache::remember(self::BANK_ACCOUNTS_ACTIVE_CACHE_KEY, 60, function () {
-            return $this->repository->getActiveBankAccounts();
+            return $this->repository->getBankAccountByStatus('Aktif');
         });
     }
 
     public function getInactiveBankAccounts()
     {
         return Cache::remember(self::BANK_ACCOUNTS_INACTIVE_CACHE_KEY, 60, function () {
-            return $this->repository->getInactiveBankAccounts();
+            return $this->repository->getBankAccountByStatus('Non Aktif');
         });
     }
 

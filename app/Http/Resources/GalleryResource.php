@@ -20,8 +20,8 @@ class GalleryResource extends JsonResource
             'description' => $this->description,
             'category' => $this->category,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
             'assets' => $this->whenLoaded('assets', function () {
                 return $this->assets->map(function ($asset) {
                     return [
