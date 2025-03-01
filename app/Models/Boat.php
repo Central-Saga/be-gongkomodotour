@@ -5,14 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Boat extends Model {
+class Boat extends Model
+{
     use HasFactory;
 
     protected $table = 'boat';
     protected $fillable = ['boat_name', 'spesification', 'cabin_information', 'facilities', 'status'];
 
-    public function cabin() {
+    public function cabin()
+    {
         return $this->hasMany(Cabin::class, 'boat_id');
     }
-}
 
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'assetable');
+    }
+}
