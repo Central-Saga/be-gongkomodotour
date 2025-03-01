@@ -79,7 +79,6 @@ class BoatRepository implements BoatRepositoryInterface
             return null;
         }
     }
-}
 
     /**
      * Mengupdate boat status.

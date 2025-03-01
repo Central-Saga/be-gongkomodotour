@@ -62,11 +62,7 @@ class CabinRepository implements CabinRepositoryInterface
     {
         return $this->model->where('status', $status)->get();
     }
-    
-    public function findCabin($id)
-    {
-        try {
-            return $this->model->findOrFail($id);
+
 
     /**
      * Mencari cabin berdasarkan kriteria tertentu (helper berdasarkan ID).
@@ -83,7 +79,6 @@ class CabinRepository implements CabinRepositoryInterface
             return null;
         }
     }
-}
 
     /**
      * Mengupdate cabin status.

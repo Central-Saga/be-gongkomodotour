@@ -62,11 +62,6 @@ class CustomersRepository implements CustomersRepositoryInterface
     {
         return $this->model->where('status', $status)->get();
     }
-    
-    public function findCustomer($id)
-    {
-        try {
-            return $this->model->findOrFail($id);
 
     /**
      * Mencari customer berdasarkan kriteria tertentu (helper berdasarkan ID).
@@ -83,7 +78,6 @@ class CustomersRepository implements CustomersRepositoryInterface
             return null;
         }
     }
-}
 
     /**
      * Mengupdate customer status.
