@@ -113,8 +113,7 @@ class UserService implements UserServiceInterface
         }
 
         // Clear cache
-        Cache::forget(self::USERS_ALL_CACHE_KEY);
-        Cache::forget(self::USERS_ACTIVE_CACHE_KEY);
+        $this->clearUserCaches();
 
         return $user;
     }
@@ -139,9 +138,7 @@ class UserService implements UserServiceInterface
         }
 
         // Clear cache
-        Cache::forget(self::USERS_ALL_CACHE_KEY);
-        Cache::forget(self::USERS_ACTIVE_CACHE_KEY);
-        Cache::forget("user_{$id}_with_roles");
+        $this->clearUserCaches($id);
 
         return $user;
     }
@@ -158,9 +155,40 @@ class UserService implements UserServiceInterface
         $result = $this->userRepository->deleteUser($id);
 
         // Clear cache
-        Cache::forget(self::USERS_ALL_CACHE_KEY);
-        Cache::forget(self::USERS_ACTIVE_CACHE_KEY);
+        $this->clearUserCaches($id);
 
         return $result;
+    }
+
+    public function updateUserStatus($id, $status)
+    {
+        $user = $this->getUserById($id);
+
+        if ($user) {
+            $result = $this->userRepository->updateUserStatus($id, $status);
+
+            $this->clearUserCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Menghapus semua cache user
+     *
+     * @param int|null $id
+     * @return void
+     */
+    public function clearUserCaches($id = null)
+    {
+        Cache::forget(self::USERS_ALL_CACHE_KEY);
+        Cache::forget(self::USERS_ACTIVE_CACHE_KEY);
+        Cache::forget(self::USERS_INACTIVE_CACHE_KEY);
+
+        if ($id) {
+            Cache::forget("user_{$id}_with_roles");
+        }
     }
 }

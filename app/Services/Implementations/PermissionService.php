@@ -104,8 +104,7 @@ class PermissionService implements PermissionServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->permissionRepository->createPermission($data);
-        Cache::forget(self::PERMISSIONS_ALL_CACHE_KEY);
-        Cache::forget(self::PERMISSIONS_ACTIVE_CACHE_KEY);
+        $this->clearPermissionCaches();
         return $result;
     }
 
@@ -120,8 +119,7 @@ class PermissionService implements PermissionServiceInterface
     {
         $data['guard_name'] = 'web';
         $result = $this->permissionRepository->updatePermission($id, $data);
-        Cache::forget(self::PERMISSIONS_ALL_CACHE_KEY);
-        Cache::forget(self::PERMISSIONS_ACTIVE_CACHE_KEY);
+        $this->clearPermissionCaches();
         return $result;
     }
 
@@ -134,9 +132,33 @@ class PermissionService implements PermissionServiceInterface
     public function deletePermission($id)
     {
         $result = $this->permissionRepository->deletePermission($id);
-        Cache::forget(self::PERMISSIONS_ALL_CACHE_KEY);
-        Cache::forget(self::PERMISSIONS_ACTIVE_CACHE_KEY);
+        $this->clearPermissionCaches();
 
         return $result;
+    }
+
+    public function updatePermissionStatus($id, $status)
+    {
+        $permission = $this->getPermissionById($id);
+
+        if ($permission) {
+            $result = $this->permissionRepository->updatePermissionStatus($id, $status);
+
+            $this->clearPermissionCaches($id);
+
+            return $result;
+        }
+    }
+
+    /**
+     * Menghapus semua cache permission
+     *
+     * @return void
+     */
+    public function clearPermissionCaches()
+    {
+        Cache::forget(self::PERMISSIONS_ALL_CACHE_KEY);
+        Cache::forget(self::PERMISSIONS_ACTIVE_CACHE_KEY);
+        Cache::forget(self::PERMISSIONS_INACTIVE_CACHE_KEY);
     }
 }

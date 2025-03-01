@@ -72,4 +72,23 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
     {
         return $this->getEmailBlastById($id);
     }
+
+    /**
+     * Mengupdate email blast status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateEmailBlastStatus($id, $status)
+    {
+        $emailBlast = $this->findEmailBlast($id);
+
+        if ($emailBlast) {
+            $emailBlast->status = $status;
+            $emailBlast->save();
+            return $emailBlast;
+        }
+        return null;
+    }
 }

@@ -67,9 +67,40 @@ class CustomersRepository implements CustomersRepositoryInterface
     {
         try {
             return $this->model->findOrFail($id);
+
+    /**
+     * Mencari customer berdasarkan kriteria tertentu (helper berdasarkan ID).
+     *
+     * @param int $id
+     * @return Customers|null
+     */
+    public function findCustomer($id)
+    {
+        try {
+            return Customers::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Customer with ID {$id} not found.");
             return null;
         }
+    }
+}
+
+    /**
+     * Mengupdate customer status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateCustomerStatus($id, $status)
+    {
+        $customer = $this->findCustomer($id);
+
+        if ($customer) {
+            $customer->status = $status;
+            $customer->save();
+            return $customer;
+        }
+        return null;
     }
 }

@@ -102,10 +102,8 @@ class BoatService implements BoatServiceInterface
      */
     public function createBoat(array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->boatRepository->createBoat($data);
-        Cache::forget(self::BOAT_ALL_CACHE_KEY);
-        Cache::forget(self::BOAT_ACTIVE_CACHE_KEY);
+        $this->clearBoatCaches();
         return $result;
     }
 
@@ -118,15 +116,13 @@ class BoatService implements BoatServiceInterface
      */
     public function updateBoat($id, array $data)
     {
-        $data['guard_name'] = 'web';
         $result = $this->boatRepository->updateBoat($id, $data);
-        Cache::forget(self::BOAT_ALL_CACHE_KEY);
-        Cache::forget(self::BOAT_ACTIVE_CACHE_KEY);
+        $this->clearBoatCaches();
         return $result;
     }
 
     /**
-     * Menghapus boat berdasarkan ID.
+     * Mengha   pus boat berdasarkan ID.
      *
      * @param int $id
      * @return bool
@@ -134,9 +130,30 @@ class BoatService implements BoatServiceInterface
     public function deleteBoat($id)
     {
         $result = $this->boatRepository->deleteBoat($id);
+        $this->clearBoatCaches();
+        return $result;
+    }
+
+    /**
+     * Menghapus semua cache boat
+     *
+     * @return void
+     */
+    public function clearBoatCaches()
+    {
         Cache::forget(self::BOAT_ALL_CACHE_KEY);
         Cache::forget(self::BOAT_ACTIVE_CACHE_KEY);
+        Cache::forget(self::BOAT_INACTIVE_CACHE_KEY);
+    }
 
-        return $result;
+    public function updateBoatStatus($id, $status)
+    {
+        $boat = $this->getBoatById($id);
+
+        if ($boat) {
+            $result = $this->boatRepository->updateBoatStatus($id, $status);
+
+            $this->clearBoatCaches($id);
+        }
     }
 }

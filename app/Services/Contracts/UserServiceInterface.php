@@ -73,4 +73,13 @@ interface UserServiceInterface
      * @return mixed
      */
     public function deleteUser($id);
+
+    /**
+     * Mengupdate status user.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateUserStatus($id, $status);
 }

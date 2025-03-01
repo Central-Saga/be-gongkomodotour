@@ -17,6 +17,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleAndPermissionSeeder::class,
             UserSeeder::class,
+            TripsSeeder::class,
+            // ItinerariesSeeder::class,
+            TripDurationSeeder::class,
+            TripPricesSeeder::class,
+            // FlightScheduleSeeder::class,
             CustomersSeeder::class,
             HotelOccupanciesSeeder::class,
             BoatSeeder::class,
@@ -27,6 +32,15 @@ class DatabaseSeeder extends Seeder
             SubscriberSeeder::class,
             TestimonialSeeder::class,
             FaqSeeder::class,
+            AdditionalFeeSeeder::class,
+            SurchargeSeeder::class,
+            BookingSeeder::class,
+            BankAccountSeeder::class,
+            HotelRequestSeeder::class,
+            TransactionSeeder::class,
+            // DetailTransactionSeeder::class,
+            GallerySeeder::class,
+            AssetSeeder::class,
         ]);
     }
 }

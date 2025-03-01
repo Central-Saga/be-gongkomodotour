@@ -114,8 +114,7 @@ class RoleService implements RoleServiceInterface
         }
 
         // Clear cache
-        Cache::forget(self::ROLES_ALL_CACHE_KEY);
-        Cache::forget(self::ROLES_ACTIVE_CACHE_KEY);
+        $this->clearRoleCaches();
 
         return $role;
     }
@@ -141,8 +140,7 @@ class RoleService implements RoleServiceInterface
         }
 
         // Clear cache
-        Cache::forget(self::ROLES_ALL_CACHE_KEY);
-        Cache::forget(self::ROLES_ACTIVE_CACHE_KEY);
+        $this->clearRoleCaches();
 
         return $role;
     }
@@ -159,9 +157,35 @@ class RoleService implements RoleServiceInterface
         $result = $this->roleRepository->deleteRole($id);
 
         // Clear cache
-        Cache::forget(self::ROLES_ALL_CACHE_KEY);
-        Cache::forget(self::ROLES_ACTIVE_CACHE_KEY);
+        $this->clearRoleCaches();
 
         return $result;
+    }
+
+    public function updateRoleStatus($id, $status)
+    {
+        $role = $this->getRoleById($id);
+
+        if ($role) {
+            $result = $this->roleRepository->updateRoleStatus($id, $status);
+
+            $this->clearRoleCaches($id);
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Menghapus semua cache role
+     *
+     * @return void
+     */
+    public function clearRoleCaches()
+    {
+        Cache::forget(self::ROLES_ALL_CACHE_KEY);
+        Cache::forget(self::ROLES_ACTIVE_CACHE_KEY);
+        Cache::forget(self::ROLES_INACTIVE_CACHE_KEY);
     }
 }

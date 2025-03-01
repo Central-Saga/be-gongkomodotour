@@ -24,4 +24,9 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'assetable');
+    }
 }

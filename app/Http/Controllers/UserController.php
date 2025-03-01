@@ -7,9 +7,22 @@ use App\Http\Resources\UserResource;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Services\Contracts\UserServiceInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware the controller should use.
+     *
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            'permission:mengelola user',
+        ];
+    }
+
     /**
      * @var UserServiceInterface $userService
      */
@@ -43,6 +56,11 @@ class UserController extends Controller
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
+
+        if (!$users) {
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
+        }
+
         return UserResource::collection($users);
     }
 
@@ -52,6 +70,9 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         $user = $this->userService->createUser($request->all());
+        if (!$user) {
+            return response()->json(['message' => 'Gagal membuat user'], 400);
+        }
         return new UserResource($user);
     }
 
@@ -62,7 +83,7 @@ class UserController extends Controller
     {
         $user = $this->userService->getUserById($id);
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
         return new UserResource($user);
     }
@@ -74,7 +95,7 @@ class UserController extends Controller
     {
         $user = $this->userService->updateUser($id, $request->all());
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
         return new UserResource($user);
     }
@@ -87,8 +108,25 @@ class UserController extends Controller
         $deleted = $this->userService->deleteUser($id);
 
         if (!$deleted) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
-        return response()->json(['message' => 'User deleted successfully.']);
+        return response()->json(['message' => 'User berhasil dihapus']);
+    }
+
+    /**
+     * Update Status User.
+     */
+    public function updateStatus(string $id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Non Aktif',
+        ]);
+
+        $user = $this->userService->updateUserStatus($id, $request->validated());
+
+        if (!$user) {
+            return response()->json(['message' => 'Failed to update user status'], 404);
+        }
+        return new UserResource($user);
     }
 }

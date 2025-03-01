@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rules;
+use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends Controller
 {
@@ -32,6 +34,20 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
         ]);
+
+        // Cari role 'Pelanggan'
+        $pelangganRole = Role::where('name', 'Pelanggan')->first();
+
+        // Jika role 'Pelanggan' ditemukan, berikan role tersebut ke user
+        if ($pelangganRole) {
+            $user->assignRole($pelangganRole);
+        } else {
+            // Jika role 'Pelanggan' tidak ditemukan, log error
+            \Log::error('Role Pelanggan tidak ditemukan.');
+            // Opsi lain: buat role jika belum ada
+            $pelangganRole = Role::create(['name' => 'Pelanggan']);
+            $user->assignRole($pelangganRole);
+        }
 
         event(new Registered($user));
 

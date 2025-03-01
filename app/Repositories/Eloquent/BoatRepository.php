@@ -62,7 +62,7 @@ class BoatRepository implements BoatRepositoryInterface
     {
         return $this->model->where('status', $status)->get();
     }
-    
+
     /**
      * Mencari Boat berdasarkan kriteria tertentu (helper berdasarkan ID).
      *
@@ -73,9 +73,30 @@ class BoatRepository implements BoatRepositoryInterface
     {
         try {
             return $this->model->findOrFail($id);
+            return Boat::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Boat with ID {$id} not found.");
             return null;
         }
+    }
+}
+
+    /**
+     * Mengupdate boat status.
+     *
+     * @param int $id
+     * @param string $status
+     * @return mixed
+     */
+    public function updateBoatStatus($id, $status)
+    {
+        $boat = $this->findBoat($id);
+
+        if ($boat) {
+            $boat->status = $status;
+            $boat->save();
+            return $boat;
+        }
+        return null;
     }
 }
