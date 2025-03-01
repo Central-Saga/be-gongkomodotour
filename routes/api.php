@@ -18,6 +18,8 @@ use App\Http\Controllers\HotelOccupanciesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EmailBlastRecipientController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\GalleryAssetController;
@@ -65,6 +67,13 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     Route::apiResource('subscriber', SubscriberController::class);
     // Blog
     Route::apiResource('blog', BlogController::class);
+
+    // Testimonial
+    Route::apiResource('testimonial', TestimonialController::class);
+
+    // Faq
+    Route::apiResource('faq', FaqController::class);
+
     // Galleries
     Route::apiResource('galleries', GalleryController::class);
     Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);

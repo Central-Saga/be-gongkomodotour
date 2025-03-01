@@ -9,15 +9,22 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EmailBlastRecipientRepository implements EmailBlastRecipientRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(EmailBlastRecipient $emailBlastRecipient)
+    {
+        $this->model = $emailBlastRecipient;
+    }
+
     public function getAllEmailBlastRecipient()
     {
-        return EmailBlastRecipient::all();
+        return $this->model->all();
     }
 
     public function getEmailBlastRecipientById($id)
     {
         try {
-            return EmailBlastRecipient::findOrFail($id);
+            return $this->model->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("EmailBlastRecipient with ID {$id} not found.");
             return null;
@@ -26,7 +33,7 @@ class EmailBlastRecipientRepository implements EmailBlastRecipientRepositoryInte
 
     public function createEmailBlastRecipient(array $data)
     {
-        return EmailBlastRecipient::create($data);
+        return $this->model->create($data);
     }
 
     public function updateEmailBlastRecipient($id, array $data)
@@ -53,12 +60,12 @@ class EmailBlastRecipientRepository implements EmailBlastRecipientRepositoryInte
 
     public function getEmailBlastRecipientByName($name)
     {
-        return EmailBlastRecipient::where('subject', $name)->first();
+        return $this->model->where('subject', $name)->first();
     }
 
     public function getEmailBlastRecipientByStatus($status)
     {
-        return EmailBlastRecipient::where('status', $status)->get();
+        return $this->model->where('status', $status)->get();
     }
 
     public function findEmailBlastRecipient($id)

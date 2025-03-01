@@ -9,51 +9,58 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class BoatRepository implements BoatRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Boat $boat)
+    {
+        $this->model = $boat;
+    }
+
     public function getAllBoat()
     {
-        return Boat::all();
+        return $this->model->all();
     }
 
     public function getBoatById($id)
     {
-        return Boat::findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     public function createBoat(array $data)
     {
-        return Boat::create($data);
+        return $this->model->create($data);
     }
 
     public function updateBoat($id, array $data)
     {
-        $Boat = $this->findBoat($id);
+        $boat = $this->findBoat($id);
 
-        if ($Boat) {
-            $Boat->update($data);
+        if ($boat) {
+            $boat->update($data);
         }
 
-        return $Boat;
+        return $boat;
     }
 
     public function deleteBoat($id)
     {
-        $Boat = $this->findBoat($id);
+        $boat = $this->findBoat($id);
 
-        if ($Boat) {
-            $Boat->delete();
+        if ($boat) {
+            $boat->delete();
         }
 
-        return $Boat;
+        return $boat;
     }
 
     public function getBoatByName($name)
     {
-        return Boat::where('name', $name)->first();
+        return $this->model->where('name', $name)->first();
     }
 
     public function getBoatByStatus($status)
     {
-        return Boat::where('status', $status)->get();
+        return $this->model->where('status', $status)->get();
     }
 
     /**
@@ -65,12 +72,14 @@ class BoatRepository implements BoatRepositoryInterface
     public function findBoat($id)
     {
         try {
+            return $this->model->findOrFail($id);
             return Boat::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Boat with ID {$id} not found.");
             return null;
         }
     }
+}
 
     /**
      * Mengupdate boat status.

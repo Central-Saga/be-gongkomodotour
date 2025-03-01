@@ -9,19 +9,26 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CustomersRepository implements CustomersRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Customers $customer)
+    {
+        $this->model = $customer;
+    }
+
     public function getAllCustomers()
     {
-        return Customers::all();
+        return $this->model->all();
     }
 
     public function getCustomerById($id)
     {
-        return Customers::findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     public function createCustomer(array $data)
     {
-        return Customers::create($data);
+        return $this->model->create($data);
     }
 
     public function updateCustomer($id, array $data)
@@ -48,13 +55,18 @@ class CustomersRepository implements CustomersRepositoryInterface
 
     public function getCustomerByName($name)
     {
-        return Customers::where('name', $name)->first();
+        return $this->model->where('name', $name)->first();
     }
 
     public function getCustomerByStatus($status)
     {
-        return Customers::where('status', $status)->get();
+        return $this->model->where('status', $status)->get();
     }
+    
+    public function findCustomer($id)
+    {
+        try {
+            return $this->model->findOrFail($id);
 
     /**
      * Mencari customer berdasarkan kriteria tertentu (helper berdasarkan ID).
@@ -71,6 +83,7 @@ class CustomersRepository implements CustomersRepositoryInterface
             return null;
         }
     }
+}
 
     /**
      * Mengupdate customer status.
