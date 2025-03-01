@@ -31,7 +31,7 @@ class GalleryRepository implements GalleryRepositoryInterface
      */
     public function getAllGalleries()
     {
-        return $this->model->with('assets')->get();
+        return $this->model->latest()->get();
     }
 
     /**
@@ -43,7 +43,7 @@ class GalleryRepository implements GalleryRepositoryInterface
     public function getGalleryById($id)
     {
         try {
-            return $this->model->with('assets')->findOrFail($id);
+            return $this->model->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Gallery with ID {$id} not found.");
             return null;
@@ -58,7 +58,7 @@ class GalleryRepository implements GalleryRepositoryInterface
      */
     public function getGalleryByCategory($category)
     {
-        return $this->model->where('category', $category)->with('assets')->get();
+        return $this->model->where('category', $category)->latest()->get();
     }
 
     /**
@@ -69,7 +69,7 @@ class GalleryRepository implements GalleryRepositoryInterface
      */
     public function getGalleryByStatus($status)
     {
-        return $this->model->where('status', $status)->with('assets')->get();
+        return $this->model->where('status', $status)->latest()->get();
     }
 
     /**
@@ -101,7 +101,7 @@ class GalleryRepository implements GalleryRepositoryInterface
         if ($gallery) {
             try {
                 $gallery->update($data);
-                return $gallery;
+                return $gallery->fresh();
             } catch (\Exception $e) {
                 Log::error("Failed to update gallery with ID {$id}: {$e->getMessage()}");
                 return null;
@@ -160,7 +160,7 @@ class GalleryRepository implements GalleryRepositoryInterface
         if ($gallery) {
             $gallery->status = $status;
             $gallery->save();
-            return $gallery;
+            return $gallery->fresh();
         }
         return null;
     }

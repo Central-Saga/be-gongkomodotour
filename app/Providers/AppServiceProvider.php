@@ -93,6 +93,10 @@ use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use App\Repositories\Contracts\HotelOccupanciesRepositoryInterface;
 use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
+use App\Services\Contracts\AssetServiceInterface;
+use App\Services\Implementations\AssetService;
+use App\Repositories\Contracts\AssetRepositoryInterface;
+use App\Repositories\Eloquent\AssetRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -229,6 +233,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding GalleryServiceInterface to GalleryService
         $this->app->bind(GalleryServiceInterface::class, GalleryService::class);
+
+        // Binding AssetRepositoryInterface to AssetRepository
+        $this->app->bind(AssetRepositoryInterface::class, AssetRepository::class);
+
+        // Binding AssetServiceInterface to AssetService
+        $this->app->bind(AssetServiceInterface::class, AssetService::class);
     }
 
     /**

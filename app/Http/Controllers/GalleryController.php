@@ -9,6 +9,7 @@ use App\Http\Requests\GalleryStoreRequest;
 use App\Http\Requests\GalleryUpdateRequest;
 use App\Http\Requests\GalleryStatusUpdateRequest;
 use App\Services\Contracts\GalleryServiceInterface;
+use App\Services\Contracts\AssetServiceInterface;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
 class GalleryController extends Controller implements HasMiddleware
@@ -17,6 +18,11 @@ class GalleryController extends Controller implements HasMiddleware
      * @var GalleryServiceInterface
      */
     protected $galleryService;
+
+    /**
+     * @var AssetServiceInterface
+     */
+    protected $assetService;
 
     /**
      * Get the middleware the controller should use.
@@ -34,10 +40,14 @@ class GalleryController extends Controller implements HasMiddleware
      * Konstruktor GalleryController.
      *
      * @param GalleryServiceInterface $galleryService
+     * @param AssetServiceInterface $assetService
      */
-    public function __construct(GalleryServiceInterface $galleryService)
-    {
+    public function __construct(
+        GalleryServiceInterface $galleryService,
+        AssetServiceInterface $assetService
+    ) {
         $this->galleryService = $galleryService;
+        $this->assetService = $assetService;
     }
 
     /**
@@ -74,6 +84,14 @@ class GalleryController extends Controller implements HasMiddleware
      *
      * @param GalleryStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
+     *
+     * Contoh request:
+     * {
+     *   "title": "Judul Galeri",
+     *   "description": "Deskripsi galeri",
+     *   "category": "Kategori Galeri",
+     *   "status": "Aktif"
+     * }
      */
     public function store(GalleryStoreRequest $request)
     {
@@ -113,20 +131,35 @@ class GalleryController extends Controller implements HasMiddleware
             ], 404);
         }
 
+        // Load assets jika diperlukan
+        $includeAssets = request()->query('include_assets', false);
+        if ($includeAssets) {
+            $assets = $this->assetService->getAssets('gallery', $id);
+            $gallery->setRelation('assets', $assets);
+        }
+
         return new GalleryResource($gallery);
     }
 
     /**
-     * Memperbarui galeri tertentu.
+     * Memperbarui data galeri tertentu.
      *
      * @param GalleryUpdateRequest $request
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
+     *
+     * Contoh request:
+     * {
+     *   "title": "Judul Galeri Baru",
+     *   "description": "Deskripsi galeri baru",
+     *   "category": "Kategori Galeri Baru",
+     *   "status": "Aktif"
+     * }
      */
     public function update(GalleryUpdateRequest $request, string $id)
     {
         $data = $request->validated();
-        $gallery = $this->galleryService->updateGallery($id, $data);
+        $gallery = $this->galleryService->updateGalleryBasicInfo($id, $data);
 
         if (!$gallery) {
             return response()->json([

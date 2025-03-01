@@ -20,6 +20,8 @@ use App\Http\Controllers\EmailBlastRecipientController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\GalleryAssetController;
+use App\Http\Controllers\AssetController;
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -66,6 +68,10 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // Galleries
     Route::apiResource('galleries', GalleryController::class);
     Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);
+    // Generic Assets
+    Route::apiResource('assets', AssetController::class)->except(['index']);
+    Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
+    Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
     // Bookings
     Route::apiResource('bookings', BookingController::class);
     Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);

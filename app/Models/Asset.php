@@ -19,6 +19,7 @@ class Asset extends Model
         'description',
         'file_path',
         'file_url',
+        'is_external',
     ];
 
     public function assetable()

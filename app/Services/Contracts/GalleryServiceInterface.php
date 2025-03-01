@@ -59,12 +59,19 @@ interface GalleryServiceInterface
     public function updateGallery($id, array $data);
 
     /**
+     * Update gallery basic info
+     * @param int $id
+     * @param array $data
+     * @return Gallery
+     */
+    public function updateGalleryBasicInfo($id, array $data);
+
+    /**
      * Delete gallery
      * @param int $id
      * @return bool
      */
     public function deleteGallery($id);
-
 
     /**
      * Update gallery status
@@ -73,4 +80,10 @@ interface GalleryServiceInterface
      * @return Gallery
      */
     public function updateGalleryStatus($id, $status);
+
+    /**
+     * Clear gallery caches
+     * @return void
+     */
+    public function clearGalleryCaches();
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GalleryStoreRequest extends FormRequest
+class AssetUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,8 @@ class GalleryStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Data galeri dasar
-            'title' => 'required|string|max:255',
+            'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|string|max:255',
-            'status' => 'required|in:Aktif,Non Aktif',
         ];
     }
 }
