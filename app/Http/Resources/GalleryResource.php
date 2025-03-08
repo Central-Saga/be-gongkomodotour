@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Asset;
 
 class GalleryResource extends JsonResource
 {
@@ -14,6 +15,11 @@ class GalleryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Load assets jika belum di-load
+        if (!$this->relationLoaded('assets')) {
+            $this->load('assets');
+        }
+
         $data = [
             'id' => $this->id,
             'title' => $this->title,
@@ -22,11 +28,7 @@ class GalleryResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
-        ];
-
-        // Jika assets sudah di-load, tambahkan ke response
-        if ($this->relationLoaded('assets')) {
-            $data['assets'] = $this->assets->map(function ($asset) {
+            'assets' => $this->assets->map(function ($asset) {
                 return [
                     'id' => $asset->id,
                     'title' => $asset->title,
@@ -37,8 +39,8 @@ class GalleryResource extends JsonResource
                     'created_at' => $asset->created_at->toDateTimeString(),
                     'updated_at' => $asset->updated_at->toDateTimeString(),
                 ];
-            });
-        }
+            }),
+        ];
 
         return $data;
     }

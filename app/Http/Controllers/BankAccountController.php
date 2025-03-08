@@ -8,19 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\BankAccountResource;
 use App\Http\Requests\BankAccountStoreRequest;
 use App\Http\Requests\BankAccountUpdateRequest;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use App\Services\Contracts\BankAccountServiceInterface;
 
-class BankAccountController extends Controller implements HasMiddleware
+class BankAccountController extends Controller
 {
     protected $bankAccountService;
 
-    public static function middleware()
-    {
-        return [
-            // 'permission:mengelola bank_accounts',
-        ];
-    }
 
     public function __construct(BankAccountServiceInterface $bankAccountService)
     {

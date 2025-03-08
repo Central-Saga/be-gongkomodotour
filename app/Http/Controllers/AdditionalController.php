@@ -4,19 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\AdditionalServiceInterface;
-use App\Http\Middleware\HasMiddleware;
-use App\Http\Middleware\Middleware;
 
-class AdditionalController extends Controller implements HasMiddleware
+class AdditionalController extends Controller
 {
     protected $additionalService;
-
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola additional_fees',
-        ];
-    }
 
     public function __construct(AdditionalServiceInterface $additionalService)
     {

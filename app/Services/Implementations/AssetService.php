@@ -55,7 +55,7 @@ class AssetService implements AssetServiceInterface
         $model = $this->getModelInstance($modelType, $modelId);
 
         if (!$model) {
-            return collect([]);
+            return \collect([]);
         }
 
         return $model->assets;

@@ -25,6 +25,15 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\GalleryAssetController;
 use App\Http\Controllers\AssetController;
 
+// Route untuk debugging CORS
+Route::get('/cors-test', function () {
+    return response()->json([
+        'message' => 'CORS test successful',
+        'status' => 'success',
+        'timestamp' => now()->toIso8601String()
+    ]);
+});
+
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/logout', [
@@ -34,60 +43,99 @@ Route::post('/logout', [
 
 Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // Permissions
-    Route::apiResource('permissions', PermissionController::class);
-    Route::patch('permissions/{id}/status', [PermissionController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola permission')->group(function () {
+        Route::apiResource('permissions', PermissionController::class);
+        Route::patch('permissions/{id}/status', [PermissionController::class, 'updateStatus']);
+    });
     // Roles
-    Route::apiResource('roles', RoleController::class);
-    Route::patch('roles/{id}/status', [RoleController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola role')->group(function () {
+        Route::apiResource('roles', RoleController::class);
+        Route::patch('roles/{id}/status', [RoleController::class, 'updateStatus']);
+    });
     // Users
-    Route::apiResource('users', UserController::class);
-    Route::patch('users/{id}/status', [UserController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola user')->group(function () {
+        Route::apiResource('users', UserController::class);
+        Route::patch('users/{id}/status', [UserController::class, 'updateStatus']);
+    });
     // Trips
-    Route::apiResource('trips', TripController::class);
-    Route::patch('trips/{id}/status', [TripController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola trip')->group(function () {
+        Route::apiResource('trips', TripController::class);
+        Route::patch('trips/{id}/status', [TripController::class, 'updateStatus']);
+    });
     // Customers
-    Route::apiResource('customers', CustomersController::class);
-    Route::patch('customers/{id}/status', [CustomersController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola customer')->group(function () {
+        Route::apiResource('customers', CustomersController::class);
+        Route::patch('customers/{id}/status', [CustomersController::class, 'updateStatus']);
+    });
     // Hotel Occupancies
-    Route::apiResource('hoteloccupancies', HotelOccupanciesController::class);
-    Route::patch('hoteloccupancies/{id}/status', [HotelOccupanciesController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola hotel occupancy')->group(function () {
+        Route::apiResource('hoteloccupancies', HotelOccupanciesController::class);
+        Route::patch('hoteloccupancies/{id}/status', [HotelOccupanciesController::class, 'updateStatus']);
+    });
     // Boats
-    Route::apiResource('boat', BoatController::class);
-    Route::patch('boat/{id}/status', [BoatController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola boat')->group(function () {
+        Route::apiResource('boat', BoatController::class);
+        Route::patch('boat/{id}/status', [BoatController::class, 'updateStatus']);
+    });
     // Cabins
-    Route::apiResource('cabin', CabinController::class);
-    Route::patch('cabin/{id}/status', [CabinController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola cabin')->group(function () {
+        Route::apiResource('cabin', CabinController::class);
+        Route::patch('cabin/{id}/status', [CabinController::class, 'updateStatus']);
+    });
     // EmailBlast
-    Route::apiResource('email_blast', EmailBlastController::class);
-    Route::patch('email_blast/{id}/status', [EmailBlastController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola email blast')->group(function () {
+        Route::apiResource('email_blast', EmailBlastController::class);
+        Route::patch('email_blast/{id}/status', [EmailBlastController::class, 'updateStatus']);
+    });
     // EmailBlastRecipient
-    Route::apiResource('email_blast_recipient', EmailBlastRecipientController::class);
-    Route::patch('email_blast_recipient/{id}/status', [EmailBlastRecipientController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola email blast recipient')->group(function () {
+        Route::apiResource('email_blast_recipient', EmailBlastRecipientController::class);
+        Route::patch('email_blast_recipient/{id}/status', [EmailBlastRecipientController::class, 'updateStatus']);
+    });
     // Subscribers
-    Route::apiResource('subscriber', SubscriberController::class);
+    Route::middleware('permission:mengelola subscriber')->group(function () {
+        Route::apiResource('subscriber', SubscriberController::class);
+    });
     // Blog
-    Route::apiResource('blog', BlogController::class);
+    Route::middleware('permission:mengelola blog')->group(function () {
+        Route::apiResource('blog', BlogController::class);
 
     // Testimonial
-    Route::apiResource('testimonial', TestimonialController::class);
+    Route::middleware('permission:mengelola testimonial')->group(function () {
+        Route::apiResource('testimonial', TestimonialController::class);
+    });
 
     // Faq
-    Route::apiResource('faq', FaqController::class);
+    Route::middleware('permission:mengelola faq')->group(function () {
+        Route::apiResource('faq', FaqController::class);
+    });
 
     // Galleries
-    Route::apiResource('galleries', GalleryController::class);
-    Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola gallery')->group(function () {
+        Route::apiResource('galleries', GalleryController::class);
+        Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);
+    });
     // Generic Assets
-    Route::apiResource('assets', AssetController::class)->except(['index']);
-    Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
-    Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
+    Route::middleware('permission:mengelola asset')->group(function () {
+        Route::apiResource('assets', AssetController::class)->except(['index']);
+        Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
+        Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
+    });
     // Bookings
-    Route::apiResource('bookings', BookingController::class);
-    Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola booking')->group(function () {
+        Route::apiResource('bookings', BookingController::class);
+        Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
+    });
     // Transactions
-    Route::apiResource('transactions', TransactionController::class);
-    Route::patch('transactions/{id}/status', [TransactionController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola transaction')->group(function () {
+        Route::apiResource('transactions', TransactionController::class);
+        Route::patch('transactions/{id}/status', [TransactionController::class, 'updateStatus']);
+    });
     // Bank Accounts
-    Route::apiResource('bank_accounts', BankAccountController::class);
-    Route::patch('bank_accounts/{id}/status', [BankAccountController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola bank account')->group(function () {
+        Route::apiResource('bank_accounts', BankAccountController::class);
+        Route::patch('bank_accounts/{id}/status', [BankAccountController::class, 'updateStatus']);
+    });
 });
+
+Route::get('/index-users', [UserController::class, 'index']);

@@ -7,22 +7,9 @@ use App\Http\Resources\UserResource;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Services\Contracts\UserServiceInterface;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UserController extends Controller implements HasMiddleware
+class UserController extends Controller
 {
-    /**
-     * Get the middleware the controller should use.
-     *
-     * @return array
-     */
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola user',
-        ];
-    }
-
     /**
      * @var UserServiceInterface $userService
      */

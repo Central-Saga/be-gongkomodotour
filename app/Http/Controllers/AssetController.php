@@ -9,26 +9,13 @@ use App\Http\Requests\AssetStoreRequest;
 use App\Http\Requests\AssetUpdateRequest;
 use App\Http\Requests\AssetMultipleStoreRequest;
 use App\Services\Contracts\AssetServiceInterface;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class AssetController extends Controller implements HasMiddleware
+class AssetController extends Controller
 {
     /**
      * @var AssetServiceInterface
      */
     protected $assetService;
-
-    /**
-     * Get the middleware the controller should use.
-     *
-     * @return array
-     */
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola assets',
-        ];
-    }
 
     /**
      * Konstruktor AssetController.
