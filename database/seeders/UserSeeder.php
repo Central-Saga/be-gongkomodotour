@@ -26,11 +26,11 @@ class UserSeeder extends Seeder
 
         // Create additional users as needed using the factory
         // Example: create an admin user
-        $admin = User::factory()->create([
-            'name'  => 'Admin User',
-            'email' => 'admin@example.com',
-        ]);
-        $admin->assignRole('Admin');
+        // $admin = User::factory()->create([
+        //     'name'  => 'Admin User',
+        //     'email' => 'admin@example.com',
+        // ]);
+        // $admin->assignRole('Admin');
         // Remove the user from the default role
         $admin->removeRole('Pelanggan');
 
@@ -43,6 +43,6 @@ class UserSeeder extends Seeder
 
 
 
-        User::factory(10)->create();
+        // User::factory(10)->create();
     }
 }
