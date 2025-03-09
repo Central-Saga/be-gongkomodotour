@@ -116,4 +116,15 @@ class FaqRepository implements FaqRepositoryInterface
             return null;
         }
     }
+    public function updateFaqStatus($id, $status)
+    {
+        $faq = $this->findFaq($id);
+
+        if ($faq) {
+            $faq->status = $status;
+            $faq->save();
+            return $faq;
+        }
+        return null;
+    }
 }

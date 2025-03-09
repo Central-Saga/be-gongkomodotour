@@ -4,19 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\HotelRequestServiceInterface;
-use App\Http\Middleware\HasMiddleware;
-use App\Http\Middleware\Middleware;
 
-class HotelRequestController extends Controller implements HasMiddleware
+class HotelRequestController extends Controller
 {
     protected $hotelRequestService;
-
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola hotel_requests',
-        ];
-    }
 
     public function __construct(HotelRequestServiceInterface $hotelRequestService)
     {

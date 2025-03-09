@@ -8,9 +8,8 @@ use App\Http\Resources\TripResource;
 use App\Http\Requests\TripStoreRequest;
 use App\Http\Requests\TripUpdateRequest;
 use App\Services\Contracts\TripServiceInterface;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class TripController extends Controller implements HasMiddleware
+class TripController extends Controller
 {
     protected $tripService;
 
@@ -19,10 +18,6 @@ class TripController extends Controller implements HasMiddleware
      *
      * @return array
      */
-    public static function middleware()
-    {
-        return ['permission:mengelola trips'];
-    }
 
     /**
      * Konstruktor TripController.

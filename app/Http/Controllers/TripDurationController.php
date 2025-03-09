@@ -4,19 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\TripDurationServiceInterface;
-use App\Http\Middleware\HasMiddleware;
-use App\Http\Middleware\Middleware;
 
-class TripDurationController extends Controller implements HasMiddleware
+class TripDurationController extends Controller
 {
     protected $tripDurationService;
 
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola trip_durations',
-        ];
-    }
 
     public function __construct(TripDurationServiceInterface $tripDurationService)
     {

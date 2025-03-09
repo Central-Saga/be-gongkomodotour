@@ -10,9 +10,8 @@ use App\Http\Requests\GalleryUpdateRequest;
 use App\Http\Requests\GalleryStatusUpdateRequest;
 use App\Services\Contracts\GalleryServiceInterface;
 use App\Services\Contracts\AssetServiceInterface;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class GalleryController extends Controller implements HasMiddleware
+class GalleryController extends Controller
 {
     /**
      * @var GalleryServiceInterface
@@ -29,12 +28,6 @@ class GalleryController extends Controller implements HasMiddleware
      *
      * @return array
      */
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola galleries',
-        ];
-    }
 
     /**
      * Konstruktor GalleryController.

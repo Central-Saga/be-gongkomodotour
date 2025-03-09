@@ -6,19 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Resources\TransactionResource;
 use App\Http\Requests\TransactionStoreRequest;
 use App\Http\Requests\TransactionUpdateRequest;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use App\Services\Contracts\TransactionServiceInterface;
 
-class TransactionController extends Controller implements HasMiddleware
+class TransactionController extends Controller
 {
     protected $transactionService;
-
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola transactions',
-        ];
-    }
 
     public function __construct(TransactionServiceInterface $transactionService)
     {

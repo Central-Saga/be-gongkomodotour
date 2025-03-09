@@ -7,18 +7,10 @@ use App\Http\Resources\BookingResource;
 use App\Http\Requests\BookingStoreRequest;
 use App\Http\Requests\BookingUpdateRequest;
 use App\Services\Contracts\BookingServiceInterface;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class BookingController extends Controller implements HasMiddleware
+class BookingController extends Controller
 {
     protected $bookingService;
-
-    public static function middleware()
-    {
-        return [
-            'permission:mengelola bookings',
-        ];
-    }
 
     public function __construct(BookingServiceInterface $bookingService)
     {

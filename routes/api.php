@@ -139,3 +139,9 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
 });
 
 Route::get('/index-users', [UserController::class, 'index']);
+Route::get('/landing-page-trips', [TripController::class, 'index']);
+Route::get('/landing-page-testimonial', [TestimonialController::class, 'index']);
+Route::get('/landing-page-faq', [FaqController::class, 'index']);
+Route::get('/landing-page-gallery', [GalleryController::class, 'index']);
+
+}); 

@@ -160,8 +160,8 @@ class GalleryRepository implements GalleryRepositoryInterface
         if ($gallery) {
             $gallery->status = $status;
             $gallery->save();
-            return $gallery->fresh();
+            return true;
         }
-        return null;
+        return false;
     }
 }
