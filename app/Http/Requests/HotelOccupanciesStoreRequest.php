@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class HotelOccupanciesstoreRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'hotel_name' => 'required|string|max:255',
+            'hotel_type' => 'required|string|max:50',
+            'occupancy' => 'required|string|in:Single Occupancy, Double Occupancy',
+            'price' => 'required|numeric',
+            'status' => 'required|string|in:Aktif, Non Aktif',
+        ];
+    }
+}
