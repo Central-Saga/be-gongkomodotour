@@ -32,14 +32,14 @@ class UserSeeder extends Seeder
         // ]);
         // $admin->assignRole('Admin');
         // Remove the user from the default role
-        $admin->removeRole('Pelanggan');
+        // $admin->removeRole('Pelanggan');
 
         // Example: create a pelanggan user
-        $pelanggan = User::factory()->create([
-            'name'  => 'Pelanggan User',
-            'email' => 'pelanggan@example.com',
-        ]);
-        $pelanggan->assignRole('Pelanggan');
+        // $pelanggan  User::factory()->create([
+        //     'name'  => 'Pelanggan User',
+        //     'email' => 'pelanggan@example.com',
+        // ]);
+        // $pelanggan->assignRole('Pelanggan');
 
 
 
