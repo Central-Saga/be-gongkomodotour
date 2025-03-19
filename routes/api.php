@@ -43,7 +43,7 @@ Route::post('/logout', [
 
 Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // Permissions
-    Route::middleware('permission:mengelola permission')->group(function () {
+    Route::middleware('permission:mengelola permissions')->group(function () {
         Route::apiResource('permissions', PermissionController::class);
         Route::patch('permissions/{id}/status', [PermissionController::class, 'updateStatus']);
     });
