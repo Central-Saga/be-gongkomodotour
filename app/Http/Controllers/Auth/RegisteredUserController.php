@@ -9,6 +9,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\Customers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
@@ -35,6 +36,15 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->string('password')),
         ]);
 
+        $customer = Customers::create([
+            'user_id' => $user->id,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+            'nasionality' => $request->nasionality,
+            'region' => $request->region,
+            'status' => 'Aktif', // Status otomatis diatur ke "Aktif"
+        ]);
+
         // Cari role 'Pelanggan'
         $pelangganRole = Role::where('name', 'Pelanggan')->first();
 
@@ -58,7 +68,16 @@ class RegisteredUserController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'alamat' => $customer->alamat,
+                'no_hp' => $customer->no_hp,
+                'nasionality' => $customer->nasionality,
+                'region' => $customer->region,
+                'status' => $customer->status,
+            ],
         ]);
     }
 }
