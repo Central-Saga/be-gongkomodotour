@@ -62,7 +62,10 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
+            $token = $request->user()->currentAccessToken();
+            if ($token && !$token instanceof \Laravel\Sanctum\TransientToken) {
+                $token->delete();
+            }
             return response()->json(['message' => 'Logout successful']);
         }
         return response()->json(['message' => 'No authenticated user'], 401);
