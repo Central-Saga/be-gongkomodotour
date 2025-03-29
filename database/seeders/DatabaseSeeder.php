@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleAndPermissionSeeder::class,
             UserSeeder::class,
-            // TripsSeeder::class,
+            TripsSeeder::class,
             // ItinerariesSeeder::class,
             // TripDurationSeeder::class,
             // TripPricesSeeder::class,
