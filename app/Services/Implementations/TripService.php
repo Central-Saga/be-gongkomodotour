@@ -14,6 +14,7 @@ use App\Repositories\Contracts\TripPricesRepositoryInterface;
 use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
 use App\Repositories\Contracts\SurchargeRepositoryInterface;
 use Illuminate\Support\Arr;
+use App\Services\Contracts\AssetServiceInterface;
 
 class TripService implements TripServiceInterface
 {
@@ -24,6 +25,7 @@ class TripService implements TripServiceInterface
     protected $tripPricesRepository;
     protected $additionalFeeRepository;
     protected $surchargeRepository;
+    protected $assetService;
 
     const TRIPS_ALL_CACHE_KEY = 'trips.all';
     const TRIPS_ACTIVE_CACHE_KEY = 'trips.active';
@@ -44,7 +46,8 @@ class TripService implements TripServiceInterface
         TripDurationRepositoryInterface $tripDurationRepository,
         TripPricesRepositoryInterface $tripPricesRepository,
         AdditionalFeeRepositoryInterface $additionalFeeRepository,
-        SurchargeRepositoryInterface $surchargeRepository
+        SurchargeRepositoryInterface $surchargeRepository,
+        AssetServiceInterface $assetService
     ) {
         $this->tripRepository = $tripRepository;
         $this->itinerariesRepository = $itinerariesRepository;
@@ -53,6 +56,7 @@ class TripService implements TripServiceInterface
         $this->tripPricesRepository = $tripPricesRepository;
         $this->additionalFeeRepository = $additionalFeeRepository;
         $this->surchargeRepository = $surchargeRepository;
+        $this->assetService = $assetService;
     }
 
     /**
@@ -167,7 +171,6 @@ class TripService implements TripServiceInterface
                 'include',
                 'exclude',
                 'note',
-                'duration',
                 'start_time',
                 'end_time',
                 'meeting_point',
@@ -175,6 +178,7 @@ class TripService implements TripServiceInterface
                 'status'
             ]);
             $trip = $this->tripRepository->createTrip($tripData);
+            Log::info($trip);
 
             // Buat itineraries jika ada
             if (isset($data['itineraries'])) {
@@ -226,12 +230,23 @@ class TripService implements TripServiceInterface
                 }
             }
 
+            // Jika request memiliki assets, buat masing-masing asset
+            if (isset($data['assets'])) {
+                foreach ($data['assets'] as $asset) {
+                    $assetData = array_merge($asset, [
+                        'model_type' => 'trip',
+                        'model_id' => $trip->id
+                    ]);
+                    $this->assetService->addAsset('trip', $trip->id, $assetData);
+                }
+            }
+
             DB::commit();
 
             // Clear all related caches
             $this->clearTripCaches();
 
-            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges']);
+            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Failed to create trip: {$e->getMessage()}");
@@ -257,7 +272,6 @@ class TripService implements TripServiceInterface
                 'include',
                 'exclude',
                 'note',
-                'duration',
                 'start_time',
                 'end_time',
                 'meeting_point',
@@ -379,12 +393,38 @@ class TripService implements TripServiceInterface
                 $this->surchargeRepository->deleteSurchargesNotIn($trip->id, $payloadSurchargeIds);
             }
 
+            // Update assets secara parsial jika ada di payload
+            if (isset($data['assets'])) {
+                $payloadAssetIds = [];
+                foreach ($data['assets'] as $assetData) {
+                    $assetData['model_type'] = 'trip';
+                    $assetData['model_id'] = $trip->id;
+
+                    if (isset($assetData['id'])) {
+                        $this->assetService->updateAsset($assetData['id'], $assetData);
+                        $payloadAssetIds[] = $assetData['id'];
+                    } else {
+                        $newAsset = $this->assetService->addAsset('trip', $trip->id, $assetData);
+                        if ($newAsset && isset($newAsset->id)) {
+                            $payloadAssetIds[] = $newAsset->id;
+                        }
+                    }
+                }
+
+                // Hapus asset yang tidak ada di payload
+                $existingAssets = $trip->assets()->pluck('id')->toArray();
+                $assetsToDelete = array_diff($existingAssets, $payloadAssetIds);
+                foreach ($assetsToDelete as $assetId) {
+                    $this->assetService->deleteAsset($assetId);
+                }
+            }
+
             DB::commit();
 
             // Clear cache yang terkait
             $this->clearTripCaches($id);
 
-            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices',]);
+            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating trip: ' . $e->getMessage());
@@ -407,6 +447,12 @@ class TripService implements TripServiceInterface
             $this->itinerariesRepository->deleteItineraries($id);
             $this->flightScheduleRepository->deleteFlightSchedule($id);
             $this->tripDurationRepository->deleteTripDuration($id);
+
+            // Delete related assets
+            $trip = $this->getTripById($id);
+            if ($trip) {
+                $trip->assets()->delete();
+            }
 
             // Delete the trip
             $result = $this->tripRepository->deleteTrip($id);

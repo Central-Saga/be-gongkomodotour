@@ -26,7 +26,6 @@ class TripStoreRequest extends FormRequest
             'include'       => 'required|string',
             'exclude'       => 'required|string',
             'note'          => 'nullable|string',
-            'duration'      => 'required|integer',
             'start_time'    => 'required|date_format:H:i:s',
             'end_time'      => 'required|after_or_equal:start_time|date_format:H:i:s',
             'meeting_point' => 'required|string',

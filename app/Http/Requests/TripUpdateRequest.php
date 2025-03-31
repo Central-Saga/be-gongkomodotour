@@ -26,7 +26,6 @@ class TripUpdateRequest extends FormRequest
             'include'       => 'sometimes|required|string',
             'exclude'       => 'sometimes|required|string',
             'note'          => 'sometimes|nullable|string',
-            'duration'      => 'sometimes|required|integer',
             'start_time'    => 'sometimes|required|date_format:H:i:s',
             'end_time'      => 'sometimes|required|after_or_equal:start_time|date_format:H:i:s',
             'meeting_point' => 'sometimes|required|string',

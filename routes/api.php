@@ -99,43 +99,43 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // Blog
     Route::middleware('permission:mengelola blog')->group(function () {
         Route::apiResource('blog', BlogController::class);
+    });
 
-        // Testimonial
-        Route::middleware('permission:mengelola testimonial')->group(function () {
-            Route::apiResource('testimonial', TestimonialController::class);
-        });
+    // Testimonial
+    Route::middleware('permission:mengelola testimonial')->group(function () {
+        Route::apiResource('testimonial', TestimonialController::class);
+    });
 
-        // Faq
-        Route::middleware('permission:mengelola faq')->group(function () {
-            Route::apiResource('faq', FaqController::class);
-        });
+    // Faq
+    Route::middleware('permission:mengelola faq')->group(function () {
+        Route::apiResource('faq', FaqController::class);
+    });
 
-        // Galleries
-        Route::middleware('permission:mengelola gallery')->group(function () {
-            Route::apiResource('galleries', GalleryController::class);
-            Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);
-        });
-        // Generic Assets
-        Route::middleware('permission:mengelola asset')->group(function () {
-            Route::apiResource('assets', AssetController::class)->except(['index']);
-            Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
-            Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
-        });
-        // Bookings
-        Route::middleware('permission:mengelola booking')->group(function () {
-            Route::apiResource('bookings', BookingController::class);
-            Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
-        });
-        // Transactions
-        Route::middleware('permission:mengelola transaction')->group(function () {
-            Route::apiResource('transactions', TransactionController::class);
-            Route::patch('transactions/{id}/status', [TransactionController::class, 'updateStatus']);
-        });
-        // Bank Accounts
-        Route::middleware('permission:mengelola bank account')->group(function () {
-            Route::apiResource('bank_accounts', BankAccountController::class);
-            Route::patch('bank_accounts/{id}/status', [BankAccountController::class, 'updateStatus']);
-        });
+    // Galleries
+    Route::middleware('permission:mengelola galleries')->group(function () {
+        Route::apiResource('galleries', GalleryController::class);
+        Route::patch('galleries/{id}/status', [GalleryController::class, 'updateStatus']);
+    });
+    // Generic Assets
+    Route::middleware('permission:mengelola assets')->group(function () {
+        Route::apiResource('assets', AssetController::class)->except(['index']);
+        Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
+        Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
+    });
+    // Bookings
+    Route::middleware('permission:mengelola booking')->group(function () {
+        Route::apiResource('bookings', BookingController::class);
+        Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
+    });
+    // Transactions
+    Route::middleware('permission:mengelola transaction')->group(function () {
+        Route::apiResource('transactions', TransactionController::class);
+        Route::patch('transactions/{id}/status', [TransactionController::class, 'updateStatus']);
+    });
+    // Bank Accounts
+    Route::middleware('permission:mengelola bank account')->group(function () {
+        Route::apiResource('bank_accounts', BankAccountController::class);
+        Route::patch('bank_accounts/{id}/status', [BankAccountController::class, 'updateStatus']);
     });
 });
 Route::get('/index-users', [UserController::class, 'index']);

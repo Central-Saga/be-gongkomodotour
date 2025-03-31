@@ -48,4 +48,9 @@ class Trips extends Model
     {
         return $this->hasMany(Surcharge::class, 'trip_id', 'id');
     }
+
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'assetable');
+    }
 }
