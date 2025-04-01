@@ -40,10 +40,10 @@ class TripUpdateRequest extends FormRequest
             // Validasi untuk flight schedules
             'flight_schedules' => 'sometimes|array',
             'flight_schedules.*.route' => 'required_with:flight_schedules|string',
-            'flight_schedules.*.eta_time' => 'required_with:flight_schedules|date_format:H:i:s',
-            'flight_schedules.*.eta_text' => 'required_with:flight_schedules|string',
-            'flight_schedules.*.etd_time' => 'required_with:flight_schedules|date_format:H:i:s',
-            'flight_schedules.*.etd_text' => 'required_with:flight_schedules|string',
+            'flight_schedules.*.eta_time' => 'nullable|date_format:H:i:s',
+            'flight_schedules.*.eta_text' => 'nullable|string',
+            'flight_schedules.*.etd_time' => 'nullable|date_format:H:i:s',
+            'flight_schedules.*.etd_text' => 'nullable|string',
 
             // Validasi untuk trip durations
             'trip_durations' => 'sometimes|array',
@@ -63,7 +63,7 @@ class TripUpdateRequest extends FormRequest
             'additional_fees' => 'sometimes|array',
             'additional_fees.*.fee_category' => 'required_with:additional_fees|string',
             'additional_fees.*.price' => 'required_with:additional_fees|numeric',
-            'additional_fees.*.region' => 'required_with:additional_fees|in:Domestic,Overseas',
+            'additional_fees.*.region' => 'required_with:additional_fees|in:Domestic,Overseas,Domestic & Overseas',
             'additional_fees.*.unit' => 'required_with:additional_fees|in:per_pax,per_5pax,per_day,per_day_guide',
             'additional_fees.*.pax_min' => 'required_with:additional_fees|integer',
             'additional_fees.*.pax_max' => 'required_with:additional_fees|integer',

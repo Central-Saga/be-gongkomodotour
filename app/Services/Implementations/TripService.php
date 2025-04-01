@@ -190,6 +190,7 @@ class TripService implements TripServiceInterface
 
             // Buat flight schedules jika ada
             if (isset($data['flight_schedules'])) {
+                Log::info($data['flight_schedules']);
                 foreach ($data['flight_schedules'] as $schedule) {
                     $schedule['trip_id'] = $trip->id;
                     $this->flightScheduleRepository->createFlightSchedule($schedule);
