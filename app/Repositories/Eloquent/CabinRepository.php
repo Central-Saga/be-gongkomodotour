@@ -63,6 +63,20 @@ class CabinRepository implements CabinRepositoryInterface
         return $this->model->where('status', $status)->get();
     }
 
+    /**
+     * Menghapus cabin yang tidak ada dalam array ID yang diberikan
+     *
+     * @param int $boatId
+     * @param array $cabinIds
+     * @return void
+     */
+    public function deleteCabinsNotIn($boatId, array $cabinIds)
+    {
+        return $this->model
+            ->where('boat_id', $boatId)
+            ->whereNotIn('id', $cabinIds)
+            ->delete();
+    }
 
     /**
      * Mencari cabin berdasarkan kriteria tertentu (helper berdasarkan ID).

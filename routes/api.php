@@ -73,14 +73,14 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::patch('hoteloccupancies/{id}/status', [HotelOccupanciesController::class, 'updateStatus']);
     });
     // Boats
-    Route::middleware('permission:mengelola boat')->group(function () {
-        Route::apiResource('boat', BoatController::class);
-        Route::patch('boat/{id}/status', [BoatController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola boats')->group(function () {
+        Route::apiResource('boats', BoatController::class);
+        Route::patch('boats/{id}/status', [BoatController::class, 'updateStatus']);
     });
     // Cabins
-    Route::middleware('permission:mengelola cabin')->group(function () {
-        Route::apiResource('cabin', CabinController::class);
-        Route::patch('cabin/{id}/status', [CabinController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola cabins')->group(function () {
+        Route::apiResource('cabins', CabinController::class);
+        Route::patch('cabins/{id}/status', [CabinController::class, 'updateStatus']);
     });
     // EmailBlast
     Route::middleware('permission:mengelola email blast')->group(function () {
