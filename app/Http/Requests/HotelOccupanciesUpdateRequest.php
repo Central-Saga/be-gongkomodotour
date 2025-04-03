@@ -24,9 +24,9 @@ class HotelOccupanciesUpdateRequest extends FormRequest
         return [
             'hotel_name' => 'sometimes|required|string|max:255',
             'hotel_type' => 'sometimes|required|string|max:50',
-            'occupancy' => 'sometimes|required|string|in:Single Occupancy, Double Occupancy',
+            'occupancy' => 'sometimes|required|string|in:Single Occupancy,Double Occupancy',
             'price' => 'sometimes|required|numeric',
-            'status' => 'sometimes|required|string|in:Aktif, Non Aktif',
+            'status' => 'sometimes|required|string|in:Aktif,Non Aktif',
         ];
     }
 }
