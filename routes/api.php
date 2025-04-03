@@ -68,9 +68,9 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::patch('customers/{id}/status', [CustomersController::class, 'updateStatus']);
     });
     // Hotel Occupancies
-    Route::middleware('permission:mengelola hotel occupancy')->group(function () {
-        Route::apiResource('hoteloccupancies', HotelOccupanciesController::class);
-        Route::patch('hoteloccupancies/{id}/status', [HotelOccupanciesController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola hotel_occupancies')->group(function () {
+        Route::apiResource('hotels', HotelOccupanciesController::class);
+        Route::patch('hotels/{id}/status', [HotelOccupanciesController::class, 'updateStatus']);
     });
     // Boats
     Route::middleware('permission:mengelola boats')->group(function () {

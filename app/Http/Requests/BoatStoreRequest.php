@@ -21,7 +21,7 @@ class BoatStoreRequest extends FormRequest
             'status' => 'required|in:Aktif,Non Aktif',
             'cabins' => 'sometimes|array',
             'cabins.*.cabin_name' => 'required_with:cabins|string|max:255',
-            'cabins.*.bed_type' => 'required_with:cabins|string',
+            'cabins.*.bed_type' => 'required_with:cabins|string|in:Single,Double,Queen,King',
             'cabins.*.min_pax' => 'required_with:cabins|integer|min:1',
             'cabins.*.max_pax' => 'required_with:cabins|integer|min:1|gte:cabins.*.min_pax',
             'cabins.*.base_price' => 'required_with:cabins|numeric|min:0',
