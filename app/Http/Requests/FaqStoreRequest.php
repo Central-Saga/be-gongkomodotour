@@ -27,7 +27,7 @@ class FaqStoreRequest extends FormRequest
         return [
             'question'      => 'required|string|max:255',
             'answer'        => 'required|string',
-            'category'      => 'nullable|string|max:100',
+            'category'      => 'required|string|in:Umum,Pembayaran,Pemesanan,Pembatalan,Lainnya',
             'display_order' => 'required|integer|min:1|max:6',
             'status'        => 'required|in:Aktif,Non Aktif',
         ];

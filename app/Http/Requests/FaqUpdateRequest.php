@@ -22,7 +22,7 @@ class FaqUpdateRequest extends FormRequest
         return [
             'question'      => 'sometimes|required|string|max:255',
             'answer'        => 'sometimes|required|string',
-            'category'      => 'sometimes|nullable|string|max:100',
+            'category'      => 'sometimes|required|string|in:Umum,Pembayaran,Pemesanan,Pembatalan,Lainnya',
             'display_order' => 'sometimes|required|integer|min:1|max:6',
             'status'        => 'sometimes|required|in:Aktif,Non Aktif',
         ];
