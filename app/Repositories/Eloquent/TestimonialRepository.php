@@ -18,17 +18,19 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
     public function getAllTestimonial()
     {
-        return $this->model->all();
+        return $this->model->with('customer', 'customer.user')->get();
     }
 
     public function getTestimonialById($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('customer', 'customer.user')->find($id);
     }
 
     public function createTestimonial(array $data)
     {
-        return $this->model->create($data);
+        $testimonial = $this->model->create($data);
+        $testimonial->load('customer', 'customer.user');
+        return $testimonial;
     }
 
     public function updateTestimonial($id, array $data)
@@ -37,6 +39,7 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
         if ($testimonial) {
             $testimonial->update($data);
+            $testimonial->load('customer', 'customer.user');
         }
 
         return $testimonial;
@@ -48,6 +51,7 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
         if ($testimonial) {
             $testimonial->delete();
+            $testimonial->load('customer', 'customer.user');
             return true;
         }
 
@@ -66,12 +70,12 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
     public function getTestimonialByApproved($approved)
     {
-        return $this->model->where('is_approved', $approved)->get();
+        return $this->model->where('is_approved', $approved)->with('customer', 'customer.user')->get();
     }
 
     public function getTestimonialByHighlight($highlight)
     {
-        return $this->model->where('is_highlight', $highlight)->get();
+        return $this->model->where('is_highlight', $highlight)->with('customer', 'customer.user')->get();
     }
 
     public function getTestimonialByFilters($approved = null, $highlight = null)
@@ -81,11 +85,11 @@ class TestimonialRepository implements TestimonialRepositoryInterface
         if (!is_null($approved)) {
             $query->where('is_approved', (bool) $approved);
         }
-    
+
         if (!is_null($highlight)) {
             $query->where('is_highlight', (bool) $highlight);
         }
 
-        return $query->get();
+        return $query->with('customer', 'customer.user')->get();
     }
 }

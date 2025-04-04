@@ -102,8 +102,8 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     });
 
     // Testimonial
-    Route::middleware('permission:mengelola testimonial')->group(function () {
-        Route::apiResource('testimonial', TestimonialController::class);
+    Route::middleware('permission:mengelola testimonials')->group(function () {
+        Route::apiResource('testimonials', TestimonialController::class);
     });
 
     // Faq

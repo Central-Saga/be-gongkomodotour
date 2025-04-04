@@ -25,6 +25,14 @@ class TestimonialResource extends JsonResource
             'is_highlight' => $this->is_highlight,
             'created_at'   => $this->created_at,
             'updated_at'   => $this->updated_at,
+
+            'customer' => $this->whenLoaded('customer', function () {
+                return new CustomerResource($this->customer);
+            }),
+
+            'user' => $this->whenLoaded('customer.user', function () {
+                return new UserResource($this->customer->user);
+            }),
         ];
     }
 }
