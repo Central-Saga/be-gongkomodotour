@@ -28,7 +28,7 @@ class FaqStoreRequest extends FormRequest
             'question'      => 'required|string|max:255',
             'answer'        => 'required|string',
             'category'      => 'nullable|string|max:100',
-            'display_order' => 'nullable|integer',
+            'display_order' => 'nullable|integer|min:1|max:6',
             'status'        => 'required|in:Aktif,Non Aktif',
         ];
     }

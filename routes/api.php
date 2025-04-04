@@ -107,8 +107,8 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     });
 
     // Faq
-    Route::middleware('permission:mengelola faq')->group(function () {
-        Route::apiResource('faq', FaqController::class);
+    Route::middleware('permission:mengelola faqs')->group(function () {
+        Route::apiResource('faqs', FaqController::class);
     });
 
     // Galleries

@@ -6,6 +6,7 @@ use App\Models\Faq;
 use App\Repositories\Contracts\FaqRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class FaqRepository implements FaqRepositoryInterface
 {
@@ -126,5 +127,33 @@ class FaqRepository implements FaqRepositoryInterface
             return $faq;
         }
         return null;
+    }
+
+    public function shiftDisplayOrderUp($fromOrder, $toOrder = null, $excludeId = null)
+    {
+        $query = $this->model->where('display_order', '>=', $fromOrder);
+
+        if ($toOrder !== null) {
+            $query->where('display_order', '<', $toOrder);
+        }
+
+        if ($excludeId !== null) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->update([
+            'display_order' => DB::raw('display_order + 1')
+        ]);
+    }
+
+    public function shiftDisplayOrderDown($fromOrder, $toOrder, $excludeId)
+    {
+        return $this->model
+            ->where('display_order', '>', $fromOrder)
+            ->where('display_order', '<=', $toOrder)
+            ->where('id', '!=', $excludeId)
+            ->update([
+                'display_order' => DB::raw('display_order - 1')
+            ]);
     }
 }
