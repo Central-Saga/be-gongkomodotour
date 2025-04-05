@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('email_blast_id')->constrained('email_blast')->onDelete('cascade');
             $table->string('recipient_email');
-            $table->enum('status', ['pending', 'sent', 'failed'])->default('pending');
+            $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
     }

@@ -83,18 +83,18 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::patch('cabins/{id}/status', [CabinController::class, 'updateStatus']);
     });
     // EmailBlast
-    Route::middleware('permission:mengelola email blast')->group(function () {
-        Route::apiResource('email_blast', EmailBlastController::class);
-        Route::patch('email_blast/{id}/status', [EmailBlastController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola email blasts')->group(function () {
+        Route::apiResource('email_blasts', EmailBlastController::class);
+        Route::patch('email_blasts/{id}/status', [EmailBlastController::class, 'updateStatus']);
     });
     // EmailBlastRecipient
-    Route::middleware('permission:mengelola email blast recipient')->group(function () {
-        Route::apiResource('email_blast_recipient', EmailBlastRecipientController::class);
-        Route::patch('email_blast_recipient/{id}/status', [EmailBlastRecipientController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola email_blast_recipients')->group(function () {
+        Route::apiResource('recipients', EmailBlastRecipientController::class);
+        Route::patch('recipients/{id}/status', [EmailBlastRecipientController::class, 'updateStatus']);
     });
     // Subscribers
-    Route::middleware('permission:mengelola subscriber')->group(function () {
-        Route::apiResource('subscriber', SubscriberController::class);
+    Route::middleware('permission:mengelola subscribers')->group(function () {
+        Route::apiResource('subscribers', SubscriberController::class);
     });
     // Blog
     Route::middleware('permission:mengelola blogs')->group(function () {

@@ -16,7 +16,7 @@ class EmailBlastRecipientUpdateRequest extends FormRequest
         return [
             'email_blast_id'  => 'sometimes|required|integer|exists:email_blast,id',
             'recipient_email' => 'sometimes|required|email|max:255',
-            'status'          => 'sometimes|required|string|in:pending,sent,failed',
+            'status'          => 'sometimes|required|string|in:Aktif,Non Aktif',
         ];
     }
 }

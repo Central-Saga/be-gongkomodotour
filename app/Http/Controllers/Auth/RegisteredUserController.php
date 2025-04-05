@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rules\Password;
+use App\Models\Subscriber;
 
 class RegisteredUserController extends Controller
 {
@@ -43,6 +44,14 @@ class RegisteredUserController extends Controller
             'nasionality' => $request->nasionality,
             'region' => $request->region,
             'status' => 'Aktif', // Status otomatis diatur ke "Aktif"
+        ]);
+
+        // Membuat subscriber baru
+        $subscriber = Subscriber::create([
+            'customer_id' => $customer->id,
+            'email' => $request->email,
+            'name' => $request->name,
+            'status' => 'Aktif',
         ]);
 
         // Cari role 'Pelanggan'
