@@ -28,9 +28,9 @@ class DatabaseSeeder extends Seeder
             // CabinSeeder::class,
             // EmailBlastSeeder::class,
             // EmailBlastRecipientSeeder::class,
-            // BlogSeeder::class,
+            BlogSeeder::class,
             // SubscriberSeeder::class,
-            TestimonialSeeder::class,
+            // TestimonialSeeder::class,
             // FaqSeeder::class,
             // AdditionalFeeSeeder::class,
             // SurchargeSeeder::class,
@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             // HotelRequestSeeder::class,
             // TransactionSeeder::class,
             // DetailTransactionSeeder::class,
-            GallerySeeder::class,
+            // GallerySeeder::class,
             // AssetSeeder::class,
         ]);
     }

@@ -24,6 +24,7 @@ class BlogResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'author'     => new UserResource($this->whenLoaded('author')),
+            'assets'     => AssetResource::collection($this->whenLoaded('assets')),
         ];
     }
 }

@@ -22,7 +22,7 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function getAllBlog()
     {
-        return $this->model->all();
+        return $this->model->with('author', 'assets')->get();
     }
 
     /**
@@ -33,7 +33,7 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function getBlogById($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('author', 'assets')->find($id);
     }
 
     /**
@@ -44,7 +44,9 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function createBlog(array $data)
     {
-        return $this->model->create($data);
+        $blog = $this->model->create($data);
+        $blog->load('author', 'assets');
+        return $blog;
     }
 
     /**
@@ -59,6 +61,7 @@ class BlogRepository implements BlogRepositoryInterface
         $blog = $this->model->find($id);
         if ($blog) {
             $blog->update($data);
+            $blog->load('author', 'assets');
         }
         return $blog;
     }
@@ -71,7 +74,11 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function deleteBlog($id)
     {
-        return $this->model->destroy($id);
+        $blog = $this->model->find($id);
+        if ($blog) {
+            $blog->delete();
+        }
+        return $blog;
     }
 
     /**
@@ -82,7 +89,7 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function getBlogByName($name)
     {
-        return $this->model->where('title', 'like', "%{$name}%")->get();
+        return $this->model->where('title', 'like', "%{$name}%")->with('author', 'assets')->get();
     }
 
     /**
@@ -93,7 +100,7 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function getBlogByStatus($status)
     {
-        return $this->model->where('status', $status)->get();
+        return $this->model->where('status', $status)->with('author', 'assets')->get();
     }
 
     /**
@@ -104,6 +111,6 @@ class BlogRepository implements BlogRepositoryInterface
      */
     public function findBlog($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('author', 'assets')->find($id);
     }
 }

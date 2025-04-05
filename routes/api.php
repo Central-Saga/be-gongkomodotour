@@ -97,8 +97,8 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::apiResource('subscriber', SubscriberController::class);
     });
     // Blog
-    Route::middleware('permission:mengelola blog')->group(function () {
-        Route::apiResource('blog', BlogController::class);
+    Route::middleware('permission:mengelola blogs')->group(function () {
+        Route::apiResource('blogs', BlogController::class);
     });
 
     // Testimonial
