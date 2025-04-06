@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         //
     })
+    ->withSchedule(function ($schedule) {
+        // Jalankan setiap menit untuk memproses email yang terjadwal
+        $schedule->command('email:process-scheduled')->everyMinute();
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

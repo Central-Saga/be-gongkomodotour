@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('subject');
             $table->text('body');
             $table->enum('recipient_type', ['all_customers', 'subscribers', 'spesific_list']);
-            $table->enum('status', ['Draft', 'Scheduled', 'Sent', 'Failed'])->default('Draft');
+            $table->enum('status', ['Draft', 'Scheduled', 'Processing', 'Sent', 'Failed'])->default('Draft');
             $table->dateTime('scheduled_at')->nullable();
             $table->dateTime('sent_at')->nullable();
             $table->timestamps();

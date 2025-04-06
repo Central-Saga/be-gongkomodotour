@@ -96,4 +96,23 @@ interface EmailBlastServiceInterface
      * @return mixed
      */
     public function updateEmailBlastStatus($id, $status);
+
+    /**
+     * Mengirim email blast.
+     *
+     * @param int $id
+     * @param int|null $delayInMinutes
+     * @return mixed
+     */
+    public function sendEmailBlast($id, $delayInMinutes = null);
+
+    /**
+     * Menjadwalkan pengiriman email blast.
+     *
+     * @param int $id
+     * @param string $scheduledAt
+     * @param int|null $delayInMinutes
+     * @return mixed
+     */
+    public function scheduleEmailBlast($id, $scheduledAt, $delayInMinutes = null);
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\Contracts\EmailBlastServiceInterface;
 use App\Repositories\Contracts\EmailBlastRepositoryInterface;
 use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
+use App\Jobs\SendEmailBlastJob;
 
 class EmailBlastService implements EmailBlastServiceInterface
 {
@@ -285,5 +286,88 @@ class EmailBlastService implements EmailBlastServiceInterface
         Cache::forget(self::EMAILBLAST_SENT_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_SCHEDULED_CACHE_KEY);
         Cache::forget(self::EMAILBLAST_FAILED_CACHE_KEY);
+    }
+
+    /**
+     * Mengirim email blast.
+     *
+     * @param int $id
+     * @param int|null $delayInMinutes
+     * @return mixed
+     */
+    public function sendEmailBlast($id, $delayInMinutes = null)
+    {
+        try {
+            $emailBlast = $this->getEmailBlastById($id);
+
+            if (!$emailBlast) {
+                throw new \Exception("Email blast not found");
+            }
+
+            if ($emailBlast->status !== 'Draft' && $emailBlast->status !== 'Scheduled') {
+                throw new \Exception("Email blast can only be sent from Draft or Scheduled status");
+            }
+
+            DB::beginTransaction();
+
+            // Update status menjadi Processing
+            $emailBlast->update(['status' => 'Processing']);
+
+            // Dispatch jobs untuk setiap recipient dengan delay
+            foreach ($emailBlast->recipients as $recipient) {
+                SendEmailBlastJob::dispatch($emailBlast, $recipient, $delayInMinutes);
+            }
+
+            DB::commit();
+            $this->clearEmailBlastCaches();
+
+            return $emailBlast;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Failed to send email blast: {$e->getMessage()}");
+            throw $e;
+        }
+    }
+
+    /**
+     * Menjadwalkan pengiriman email blast.
+     *
+     * @param int $id
+     * @param string $scheduledAt
+     * @param int|null $delayInMinutes
+     * @return mixed
+     */
+    public function scheduleEmailBlast($id, $scheduledAt, $delayInMinutes = null)
+    {
+        try {
+            $emailBlast = $this->getEmailBlastById($id);
+
+            if (!$emailBlast) {
+                throw new \Exception("Email blast not found");
+            }
+
+            if ($emailBlast->status !== 'Draft') {
+                throw new \Exception("Email blast can only be scheduled from Draft status");
+            }
+
+            $emailBlast->update([
+                'status' => 'Scheduled',
+                'scheduled_at' => $scheduledAt
+            ]);
+
+            // Jika ada delay, dispatch jobs sekarang dengan delay
+            if ($delayInMinutes !== null) {
+                foreach ($emailBlast->recipients as $recipient) {
+                    SendEmailBlastJob::dispatch($emailBlast, $recipient, $delayInMinutes);
+                }
+            }
+
+            $this->clearEmailBlastCaches();
+
+            return $emailBlast;
+        } catch (\Exception $e) {
+            Log::error("Failed to schedule email blast: {$e->getMessage()}");
+            throw $e;
+        }
     }
 }

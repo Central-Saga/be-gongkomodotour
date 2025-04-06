@@ -25,6 +25,16 @@ class EmailBlast extends Model
         'sent_at' => 'datetime',
     ];
 
+    const STATUS_DRAFT = 'Draft';
+    const STATUS_SCHEDULED = 'Scheduled';
+    const STATUS_PROCESSING = 'Processing';
+    const STATUS_SENT = 'Sent';
+    const STATUS_FAILED = 'Failed';
+
+    protected $attributes = [
+        'status' => self::STATUS_DRAFT,
+    ];
+
     public function recipients()
     {
         return $this->hasMany(EmailBlastRecipient::class);
