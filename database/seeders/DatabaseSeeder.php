@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             // BoatSeeder::class,
             // CabinSeeder::class,
             // EmailBlastSeeder::class,
-            // EmailBlastRecipientSeeder::class,
+            EmailBlastRecipientSeeder::class,
             // BlogSeeder::class,
             SubscriberSeeder::class,
             // TestimonialSeeder::class,

@@ -10,7 +10,7 @@ class EmailBlastStoreRequest extends FormRequest
     {
         return true;
     }
-    
+
     public function rules(): array
     {
         return [
@@ -18,9 +18,14 @@ class EmailBlastStoreRequest extends FormRequest
             'body'           => 'required|string',
             // Update recipient_type validation to only allow valid enum values
             'recipient_type' => 'required|string|in:all_customers,subscribers,spesific_list',
-            'status'         => 'sometimes|required|string|in:draft,scheduled,sent,failed',
+            'status'         => 'sometimes|required|string|in:Draft,Scheduled,Sent,Failed',
             'scheduled_at'   => 'nullable|date',
             'sent_at'        => 'nullable|date',
+
+            // Validasi untuk recipients
+            'recipients' => 'required_if:recipient_type,spesific_list|array',
+            'recipients.*.email' => 'required_with:recipients|email|max:255',
+            'recipients.*.status' => 'sometimes|required|string|in:Aktif,Non Aktif',
         ];
     }
 }

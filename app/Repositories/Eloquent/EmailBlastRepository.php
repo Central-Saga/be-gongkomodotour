@@ -18,13 +18,13 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
     public function getAllEmailBlast()
     {
-        return $this->model->all();
+        return $this->model->with('recipients')->get();
     }
 
     public function getEmailBlastById($id)
     {
         try {
-            return $this->model->findOrFail($id);
+            return $this->model->with('recipients')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("EmailBlast with ID {$id} not found.");
             return null;
@@ -33,7 +33,9 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
     public function createEmailBlast(array $data)
     {
-        return $this->model->create($data);
+        $emailBlast = $this->model->create($data);
+        $emailBlast->load('recipients');
+        return $emailBlast;
     }
 
     public function updateEmailBlast($id, array $data)
@@ -42,6 +44,7 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
         if ($emailBlast) {
             $emailBlast->update($data);
+            $emailBlast->load('recipients');
         }
 
         return $emailBlast;
@@ -53,6 +56,7 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
         if ($emailBlast) {
             $emailBlast->delete();
+            $emailBlast->load('recipients');
         }
 
         return $emailBlast;
@@ -60,12 +64,12 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
 
     public function getEmailBlastByName($name)
     {
-        return $this->model->where('subject', $name)->first();
+        return $this->model->where('subject', $name)->with('recipients')->first();
     }
 
     public function getEmailBlastByStatus($status)
     {
-        return $this->model->where('status', $status)->get();
+        return $this->model->where('status', $status)->with('recipients')->get();
     }
 
     public function findEmailBlast($id)
@@ -87,6 +91,7 @@ class EmailBlastRepository implements EmailBlastRepositoryInterface
         if ($emailBlast) {
             $emailBlast->status = $status;
             $emailBlast->save();
+            $emailBlast->load('recipients');
             return $emailBlast;
         }
         return null;

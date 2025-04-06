@@ -21,7 +21,7 @@ class EmailBlastRecipientFactory extends Factory
         return [
             'email_blast_id'  => EmailBlast::factory(),
             'recipient_email' => $this->faker->unique()->safeEmail,
-            'status'          => $this->faker->randomElement(['pending', 'sent', 'failed']),
+            'status'          => $this->faker->randomElement(['Aktif', 'Non Aktif']),
             'created_at'      => now(),
             'updated_at'      => now(),
         ];

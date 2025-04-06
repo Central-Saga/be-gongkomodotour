@@ -24,6 +24,10 @@ class EmailBlastResource extends JsonResource
             'sent_at'        => $this->sent_at ? $this->sent_at->toDateTimeString() : null,
             'created_at'     => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at'     => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+
+            'recipients'     => $this->whenLoaded('recipients', function () {
+                return EmailBlastRecipientResource::collection($this->recipients);
+            }),
         ];
     }
 }

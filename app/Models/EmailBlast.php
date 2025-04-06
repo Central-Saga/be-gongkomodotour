@@ -24,4 +24,9 @@ class EmailBlast extends Model
         'scheduled_at' => 'datetime',
         'sent_at' => 'datetime',
     ];
+
+    public function recipients()
+    {
+        return $this->hasMany(EmailBlastRecipient::class);
+    }
 }

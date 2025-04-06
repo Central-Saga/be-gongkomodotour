@@ -83,9 +83,9 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::patch('cabins/{id}/status', [CabinController::class, 'updateStatus']);
     });
     // EmailBlast
-    Route::middleware('permission:mengelola email blasts')->group(function () {
-        Route::apiResource('email_blasts', EmailBlastController::class);
-        Route::patch('email_blasts/{id}/status', [EmailBlastController::class, 'updateStatus']);
+    Route::middleware('permission:mengelola email_blasts')->group(function () {
+        Route::apiResource('emails', EmailBlastController::class);
+        Route::patch('emails/{id}/status', [EmailBlastController::class, 'updateStatus']);
     });
     // EmailBlastRecipient
     Route::middleware('permission:mengelola email_blast_recipients')->group(function () {
