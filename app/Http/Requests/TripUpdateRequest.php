@@ -91,6 +91,18 @@ class TripUpdateRequest extends FormRequest
             'additional_fees' => $this->convertAdditionalFeesToFloat($this->additional_fees ?? []),
             'surcharges' => $this->convertSurchargesToFloat($this->surcharges ?? []),
         ]);
+
+        // Konversi is_required ke boolean
+        if ($this->has('additional_fees')) {
+            $this->merge([
+                'additional_fees' => array_map(function ($fee) {
+                    if (isset($fee['is_required'])) {
+                        $fee['is_required'] = (bool) $fee['is_required'];
+                    }
+                    return $fee;
+                }, $this->additional_fees)
+            ]);
+        }
     }
 
     /**
