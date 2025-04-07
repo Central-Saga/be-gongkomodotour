@@ -2,32 +2,40 @@
 
 namespace Database\Factories;
 
-use App\Models\Trips;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\AdditionalFee;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AdditionalFee>
- */
 class AdditionalFeeFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = AdditionalFee::class;
+
     public function definition(): array
     {
+        $feeCategories = [
+            'Entrance Fee National Park',
+            'Ranger Fee',
+            'Conservation Fee',
+            'Guide Fee',
+            'Equipment Rental Fee',
+        ];
+
+        $regions = ['Domestic', 'Overseas', 'Domestic & Overseas'];
+        $units = ['per_pax', 'per_5pax', 'per_day', 'per_day_guide'];
+        $dayTypes = ['Weekday', 'Weekend', null];
+
         return [
-            'trip_id' => $this->faker->randomElement(Trips::pluck('id')->toArray()),
-            'fee_category' => $this->faker->randomElement(['Parkir', 'Transfer', 'Tiket Masuk']),
-            'price' => $this->faker->randomFloat(2, 0, 100),
-            'region' => $this->faker->randomElement(['Domestic', 'Overseas']),
-            'unit' => $this->faker->randomElement(['per_pax', 'per_5pax', 'per_day', 'per_day_guide']),
-            'pax_min' => $this->faker->numberBetween(1, 10),
-            'pax_max' => $this->faker->numberBetween(1, 10),
-            'day_type' => $this->faker->randomElement(['Weekday', 'Weekend']),
-            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
-            'is_required' => $this->faker->boolean(),
+            'trip_id' => null, // Will be set by relationship
+            'fee_category' => $this->faker->randomElement($feeCategories),
+            'price' => $this->faker->randomNumber(5, true) * 1000, // e.g., 150000, 250000
+            'region' => $this->faker->randomElement($regions),
+            'unit' => $this->faker->randomElement($units),
+            'pax_min' => $this->faker->numberBetween(1, 5),
+            'pax_max' => $this->faker->randomElement([5, 10, 999]),
+            'day_type' => $this->faker->randomElement($dayTypes),
+            'is_required' => $this->faker->boolean(80), // 80% chance of being required
+            'status' => 'Aktif',
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
