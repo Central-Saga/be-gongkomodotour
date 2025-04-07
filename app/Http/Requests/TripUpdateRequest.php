@@ -56,13 +56,13 @@ class TripUpdateRequest extends FormRequest
             'trip_durations.*.prices' => 'sometimes|array',
             'trip_durations.*.prices.*.pax_min' => 'required_with:trip_durations.*.prices|integer',
             'trip_durations.*.prices.*.pax_max' => 'required_with:trip_durations.*.prices|integer',
-            'trip_durations.*.prices.*.price_per_pax' => 'required_with:trip_durations.*.prices|numeric',
+            'trip_durations.*.prices.*.price_per_pax' => 'required_with:trip_durations.*.prices|numeric|min:0',
             'trip_durations.*.prices.*.status' => 'required_with:trip_durations.*.prices|in:Aktif,Non Aktif',
 
             // Validasi untuk additional fees
             'additional_fees' => 'sometimes|array',
             'additional_fees.*.fee_category' => 'required_with:additional_fees|string',
-            'additional_fees.*.price' => 'required_with:additional_fees|numeric',
+            'additional_fees.*.price' => 'required_with:additional_fees|numeric|min:0',
             'additional_fees.*.region' => 'required_with:additional_fees|in:Domestic,Overseas,Domestic & Overseas',
             'additional_fees.*.unit' => 'required_with:additional_fees|in:per_pax,per_5pax,per_day,per_day_guide',
             'additional_fees.*.pax_min' => 'required_with:additional_fees|integer',
@@ -72,12 +72,68 @@ class TripUpdateRequest extends FormRequest
             'additional_fees.*.status' => 'required_with:additional_fees|in:Aktif,Non Aktif',
 
             // Validasi untuk surcharge
-            'surcharge' => 'sometimes|array',
-            'surcharge.*.season' => 'required_with:surcharge|string',
-            'surcharge.*.start_date' => 'required_with:surcharge|date',
-            'surcharge.*.end_date' => 'required_with:surcharge|date',
-            'surcharge.*.surcharge_price' => 'required_with:surcharge|numeric',
-            'surcharge.*.status' => 'required_with:surcharge|in:Aktif,Non Aktif',
+            'surcharges' => 'sometimes|array',
+            'surcharges.*.season' => 'required_with:surcharges|string',
+            'surcharges.*.start_date' => 'required_with:surcharges|date',
+            'surcharges.*.end_date' => 'required_with:surcharges|date',
+            'surcharges.*.surcharge_price' => 'required_with:surcharges|numeric|min:0',
+            'surcharges.*.status' => 'required_with:surcharges|in:Aktif,Non Aktif',
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'trip_durations' => $this->convertPricesToFloat($this->trip_durations ?? []),
+            'additional_fees' => $this->convertAdditionalFeesToFloat($this->additional_fees ?? []),
+            'surcharges' => $this->convertSurchargesToFloat($this->surcharges ?? []),
+        ]);
+    }
+
+    /**
+     * Convert prices to float in trip durations
+     */
+    private function convertPricesToFloat(array $durations): array
+    {
+        return array_map(function ($duration) {
+            if (isset($duration['prices'])) {
+                $duration['prices'] = array_map(function ($price) {
+                    if (isset($price['price_per_pax'])) {
+                        $price['price_per_pax'] = (float) $price['price_per_pax'];
+                    }
+                    return $price;
+                }, $duration['prices']);
+            }
+            return $duration;
+        }, $durations);
+    }
+
+    /**
+     * Convert additional fees prices to float
+     */
+    private function convertAdditionalFeesToFloat(array $fees): array
+    {
+        return array_map(function ($fee) {
+            if (isset($fee['price'])) {
+                $fee['price'] = (float) $fee['price'];
+            }
+            return $fee;
+        }, $fees);
+    }
+
+    /**
+     * Convert surcharges prices to float
+     */
+    private function convertSurchargesToFloat(array $surcharges): array
+    {
+        return array_map(function ($surcharge) {
+            if (isset($surcharge['surcharge_price'])) {
+                $surcharge['surcharge_price'] = (float) $surcharge['surcharge_price'];
+            }
+            return $surcharge;
+        }, $surcharges);
     }
 }

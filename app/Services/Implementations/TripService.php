@@ -175,7 +175,8 @@ class TripService implements TripServiceInterface
                 'end_time',
                 'meeting_point',
                 'type',
-                'status'
+                'status',
+                'is_highlight'
             ]);
             $trip = $this->tripRepository->createTrip($tripData);
             Log::info($trip);
@@ -277,7 +278,8 @@ class TripService implements TripServiceInterface
                 'end_time',
                 'meeting_point',
                 'type',
-                'status'
+                'status',
+                'is_highlight'
             ]);
             $trip = $this->tripRepository->updateTrip($id, $tripData);
             if (!$trip || !isset($trip->id)) {
