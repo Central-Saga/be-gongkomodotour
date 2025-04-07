@@ -35,6 +35,7 @@ class TripsFactory extends Factory
             'meeting_point' => $this->faker->address(),
             'type' => $this->faker->randomElement(['Open Trip', 'Private Trip']),
             'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
+            'is_highlight' => $this->faker->randomElement(['Yes', 'No']),
         ];
     }
 

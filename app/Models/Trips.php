@@ -22,6 +22,7 @@ class Trips extends Model
         'meeting_point',
         'type',
         'status',
+        'is_highlight',
     ];
 
     public function itineraries()

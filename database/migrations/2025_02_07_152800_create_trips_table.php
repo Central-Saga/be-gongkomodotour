@@ -21,6 +21,7 @@ return new class extends Migration
             $table->time('end_time');
             $table->string('meeting_point');
             $table->enum('type', ['Open Trip', 'Private Trip']);
+            $table->enum('is_highlight', ['Yes', 'No']);
             $table->enum('status', ['Aktif', 'Non Aktif']);
             $table->timestamps();
         });

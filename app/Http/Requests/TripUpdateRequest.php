@@ -31,7 +31,7 @@ class TripUpdateRequest extends FormRequest
             'meeting_point' => 'sometimes|required|string',
             'type'          => 'sometimes|required|string|in:Open Trip,Private Trip',
             'status'        => 'sometimes|required|in:Aktif,Non Aktif',
-
+            'is_highlight'  => 'sometimes|required|in:Yes,No',
             // Validasi untuk itineraries
             'itineraries' => 'sometimes|array',
             'itineraries.*.day_number' => 'required_with:itineraries|integer',

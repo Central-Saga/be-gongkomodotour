@@ -26,6 +26,7 @@ class TripResource extends JsonResource
             'meeting_point' => $this->meeting_point,
             'type' => $this->type,
             'status' => $this->status,
+            'is_highlight' => $this->is_highlight,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
 
