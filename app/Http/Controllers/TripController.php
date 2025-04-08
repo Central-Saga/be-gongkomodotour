@@ -126,4 +126,16 @@ class TripController extends Controller
         }
         return new TripResource($trip);
     }
+
+    /**
+     * Get highlighted trips.
+     */
+    public function getHighlightedTrips()
+    {
+        $trips = $this->tripService->getHighlightedTrips();
+        if (!$trips) {
+            return response()->json(['message' => 'Trip tidak ditemukan'], 404);
+        }
+        return TripResource::collection($trips);
+    }
 }

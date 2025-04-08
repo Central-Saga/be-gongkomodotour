@@ -178,4 +178,17 @@ class TripRepository implements TripRepositoryInterface
         }
         return null;
     }
+
+    /**
+     * Mengambil trip yang dihighlight.
+     *
+     * @return mixed
+     */
+    public function getHighlightedTrips()
+    {
+        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')
+            ->where('is_highlight', true)
+            ->where('status', 'Aktif')
+            ->get();
+    }
 }

@@ -33,6 +33,7 @@ class TripService implements TripServiceInterface
     const TRIP_DETAIL_CACHE_KEY = 'trip.detail.';
     const TRIP_OPEN_CACHE_KEY = 'trip.open';
     const TRIP_PRIVATE_CACHE_KEY = 'trip.private';
+    const TRIPS_HIGHLIGHTED_CACHE_KEY = 'trips.highlighted';
 
     /**
      * Konstruktor TripService.
@@ -151,6 +152,18 @@ class TripService implements TripServiceInterface
     {
         return Cache::remember(self::TRIPS_INACTIVE_CACHE_KEY, 3600, function () {
             return $this->tripRepository->getTripByStatus('Non Aktif');
+        });
+    }
+
+    /**
+     * Mengambil trips yang dihighlight.
+     *
+     * @return mixed
+     */
+    public function getHighlightedTrips()
+    {
+        return Cache::remember(self::TRIPS_HIGHLIGHTED_CACHE_KEY, 3600, function () {
+            return $this->tripRepository->getHighlightedTrips();
         });
     }
 
@@ -501,6 +514,7 @@ class TripService implements TripServiceInterface
         Cache::forget(self::TRIPS_INACTIVE_CACHE_KEY);
         Cache::forget(self::TRIP_OPEN_CACHE_KEY);
         Cache::forget(self::TRIP_PRIVATE_CACHE_KEY);
+        Cache::forget(self::TRIPS_HIGHLIGHTED_CACHE_KEY);
 
         if ($tripId) {
             Cache::forget(self::TRIP_DETAIL_CACHE_KEY . $tripId);

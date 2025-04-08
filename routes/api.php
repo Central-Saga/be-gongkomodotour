@@ -41,6 +41,15 @@ Route::post('/logout', [
     'destroy'
 ])->middleware('auth:sanctum');
 
+// Route publik untuk landing page
+Route::prefix('landing-page')->group(function () {
+    Route::get('/trips', [TripController::class, 'index']);
+    Route::get('/highlighted-trips', [TripController::class, 'getHighlightedTrips']);
+    Route::get('/testimonial', [TestimonialController::class, 'index']);
+    Route::get('/faq', [FaqController::class, 'index']);
+    Route::get('/gallery', [GalleryController::class, 'index']);
+});
+
 Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     // Permissions
     Route::middleware('permission:mengelola permissions')->group(function () {
@@ -139,7 +148,3 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     });
 });
 Route::get('/index-users', [UserController::class, 'index']);
-Route::get('/landing-page-trips', [TripController::class, 'index']);
-Route::get('/landing-page-testimonial', [TestimonialController::class, 'index']);
-Route::get('/landing-page-faq', [FaqController::class, 'index']);
-Route::get('/landing-page-gallery', [GalleryController::class, 'index']);
