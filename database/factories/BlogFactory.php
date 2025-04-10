@@ -16,8 +16,8 @@ class BlogFactory extends Factory
         return [
             'author_id' => User::factory(),
             'title' => $this->faker->sentence,
-            'slug' => Str::slug($this->faker->sentence),
             'content' => $this->faker->paragraphs(3, true),
+            'category' => $this->faker->randomElement(['travel', 'trips']),
             'status' => $this->faker->randomElement(['draft', 'published']),
         ];
     }
