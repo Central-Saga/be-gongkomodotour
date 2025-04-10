@@ -49,6 +49,28 @@ class BlogService implements BlogServiceInterface
     }
 
     /**
+     * Mereset semua cache blog.
+     *
+     * @return void
+     */
+    public function resetBlogCache()
+    {
+        Cache::forget(self::BLOG_ALL_CACHE_KEY);
+        Cache::forget(self::BLOG_PUBLISHED_CACHE_KEY);
+        Cache::forget(self::BLOG_DRAFT_CACHE_KEY);
+
+        // Hapus cache untuk setiap kategori
+        $categories = $this->blogRepository->getAllBlog()
+            ->pluck('category')
+            ->unique()
+            ->values();
+
+        foreach ($categories as $category) {
+            Cache::forget("blog.category.{$category}");
+        }
+    }
+
+    /**
      * Membuat blog baru.
      *
      * @param array $data
@@ -57,9 +79,7 @@ class BlogService implements BlogServiceInterface
     public function createBlog(array $data)
     {
         $result = $this->blogRepository->createBlog($data);
-        Cache::forget(self::BLOG_ALL_CACHE_KEY);
-        Cache::forget(self::BLOG_PUBLISHED_CACHE_KEY);
-        Cache::forget(self::BLOG_DRAFT_CACHE_KEY);
+        $this->resetBlogCache();
         return $result;
     }
 
@@ -73,9 +93,7 @@ class BlogService implements BlogServiceInterface
     public function updateBlog($id, array $data)
     {
         $result = $this->blogRepository->updateBlog($id, $data);
-        Cache::forget(self::BLOG_ALL_CACHE_KEY);
-        Cache::forget(self::BLOG_PUBLISHED_CACHE_KEY);
-        Cache::forget(self::BLOG_DRAFT_CACHE_KEY);
+        $this->resetBlogCache();
         return $result;
     }
 
@@ -88,9 +106,7 @@ class BlogService implements BlogServiceInterface
     public function deleteBlog($id)
     {
         $result = $this->blogRepository->deleteBlog($id);
-        Cache::forget(self::BLOG_ALL_CACHE_KEY);
-        Cache::forget(self::BLOG_PUBLISHED_CACHE_KEY);
-        Cache::forget(self::BLOG_DRAFT_CACHE_KEY);
+        $this->resetBlogCache();
         return $result;
     }
 
@@ -119,24 +135,45 @@ class BlogService implements BlogServiceInterface
     /**
      * Mengambil semua blog yang dipublikasikan.
      *
+     * @param string|null $category
      * @return mixed
      */
-    public function getPublishedBlog()
+    public function getPublishedBlog($category = null)
     {
-        return Cache::remember(self::BLOG_PUBLISHED_CACHE_KEY, 3600, function () {
-            return $this->blogRepository->getBlogByStatus('published');
+        $cacheKey = $category ? "blog.published.{$category}" : self::BLOG_PUBLISHED_CACHE_KEY;
+
+        return Cache::remember($cacheKey, 3600, function () use ($category) {
+            return $this->blogRepository->getBlogByStatus('published', $category);
         });
     }
 
     /**
      * Mengambil semua blog yang berstatus draft.
      *
+     * @param string|null $category
      * @return mixed
      */
-    public function getDraftBlog()
+    public function getDraftBlog($category = null)
     {
-        return Cache::remember(self::BLOG_DRAFT_CACHE_KEY, 3600, function () {
-            return $this->blogRepository->getBlogByStatus('draft');
+        $cacheKey = $category ? "blog.draft.{$category}" : self::BLOG_DRAFT_CACHE_KEY;
+
+        return Cache::remember($cacheKey, 3600, function () use ($category) {
+            return $this->blogRepository->getBlogByStatus('draft', $category);
+        });
+    }
+
+    /**
+     * Mengambil blog berdasarkan kategori.
+     *
+     * @param string $category
+     * @return mixed
+     */
+    public function getBlogByCategory($category)
+    {
+        $cacheKey = "blog.category.{$category}";
+
+        return Cache::remember($cacheKey, 3600, function () use ($category) {
+            return $this->blogRepository->getBlogByCategory($category);
         });
     }
 }

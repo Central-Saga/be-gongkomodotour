@@ -17,7 +17,7 @@ class BlogFactory extends Factory
             'author_id' => User::factory(),
             'title' => $this->faker->sentence,
             'content' => $this->faker->paragraphs(3, true),
-            'category' => $this->faker->randomElement(['travel', 'trips']),
+            'category' => $this->faker->randomElement(['travel', 'tips']),
             'status' => $this->faker->randomElement(['draft', 'published']),
         ];
     }

@@ -56,9 +56,10 @@ interface BlogRepositoryInterface
      * Mengambil blog berdasarkan status.
      *
      * @param string $status
+     * @param string|null $category
      * @return mixed
      */
-    public function getBlogByStatus($status);
+    public function getBlogByStatus($status, $category = null);
 
     /**
      * Mencari blog berdasarkan kriteria tertentu.
@@ -67,4 +68,12 @@ interface BlogRepositoryInterface
      * @return mixed
      */
     public function findBlog($id);
+
+    /**
+     * Mengambil blog berdasarkan kategori.
+     *
+     * @param string $category
+     * @return mixed
+     */
+    public function getBlogByCategory($category);
 }

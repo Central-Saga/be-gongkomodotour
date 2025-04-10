@@ -48,6 +48,7 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/testimonial', [TestimonialController::class, 'index']);
     Route::get('/faq', [FaqController::class, 'index']);
     Route::get('/gallery', [GalleryController::class, 'index']);
+    Route::get('/blogs', [BlogController::class, 'index']);
 });
 
 Route::middleware('auth:sanctum', 'check.user.status')->group(function () {

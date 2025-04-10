@@ -96,11 +96,18 @@ class BlogRepository implements BlogRepositoryInterface
      * Mengambil blog berdasarkan status.
      *
      * @param string $status
+     * @param string|null $category
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getBlogByStatus($status)
+    public function getBlogByStatus($status, $category = null)
     {
-        return $this->model->where('status', $status)->with('author', 'assets')->get();
+        $query = $this->model->where('status', $status);
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        return $query->with('author', 'assets')->get();
     }
 
     /**
@@ -112,5 +119,18 @@ class BlogRepository implements BlogRepositoryInterface
     public function findBlog($id)
     {
         return $this->model->with('author', 'assets')->find($id);
+    }
+
+    /**
+     * Mengambil blog berdasarkan kategori.
+     *
+     * @param string $category
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getBlogByCategory($category)
+    {
+        return $this->model->where('category', $category)
+            ->with('author', 'assets')
+            ->get();
     }
 }

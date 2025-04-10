@@ -35,12 +35,13 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        // Ambil parameter status dari query string
+        // Ambil parameter status dan kategori dari query string
         $status = $request->query('status');
+        $category = $request->query('category');
 
-        if ($status === null) {
-            // Jika tidak ada query parameter, ambil semua blog
-            $blogs = $this->blogService->getAllBlog();
+        if ($category) {
+            // Jika ada kategori, ambil blog berdasarkan kategori
+            $blogs = $this->blogService->getBlogByCategory($category);
         } elseif ($status === 1) {
             // Jika status = published, ambil blog yang dipublikasikan
             $blogs = $this->blogService->getPublishedBlog();
@@ -48,8 +49,10 @@ class BlogController extends Controller
             // Jika status = draft, ambil blog berstatus draft
             $blogs = $this->blogService->getDraftBlog();
         } else {
-            return response()->json(['error' => 'Invalid status parameter'], 400);
+            // Jika tidak ada parameter, ambil semua blog
+            $blogs = $this->blogService->getAllBlog();
         }
+
         return BlogResource::collection($blogs);
     }
 
