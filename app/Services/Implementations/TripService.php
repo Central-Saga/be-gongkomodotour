@@ -194,30 +194,21 @@ class TripService implements TripServiceInterface
             $trip = $this->tripRepository->createTrip($tripData);
             Log::info($trip);
 
-            // Buat itineraries jika ada
-            if (isset($data['itineraries'])) {
-                foreach ($data['itineraries'] as $itinerary) {
-                    $itinerary['trip_id'] = $trip->id;
-                    $this->itinerariesRepository->createItineraries($itinerary);
-                }
-            }
-
-            // Buat flight schedules jika ada
-            if (isset($data['flight_schedules'])) {
-                Log::info($data['flight_schedules']);
-                foreach ($data['flight_schedules'] as $schedule) {
-                    $schedule['trip_id'] = $trip->id;
-                    $this->flightScheduleRepository->createFlightSchedule($schedule);
-                }
-            }
-
-            // Buat trip durations beserta trip prices jika ada
+            // Buat trip durations beserta itineraries dan trip prices jika ada
             if (isset($data['trip_durations'])) {
                 foreach ($data['trip_durations'] as $duration) {
                     $duration['trip_id'] = $trip->id;
                     $tripDuration = $this->tripDurationRepository->createTripDuration($duration);
                     if (!$tripDuration || !isset($tripDuration->id)) {
                         throw new \Exception("Trip duration creation failed: repository returned invalid trip duration object.");
+                    }
+
+                    // Buat itineraries untuk trip duration ini
+                    if (isset($duration['itineraries'])) {
+                        foreach ($duration['itineraries'] as $itinerary) {
+                            $itinerary['trip_duration_id'] = $tripDuration->id;
+                            $this->itinerariesRepository->createItineraries($itinerary);
+                        }
                     }
 
                     if (isset($duration['prices'])) {
@@ -261,7 +252,7 @@ class TripService implements TripServiceInterface
             // Clear all related caches
             $this->clearTripCaches();
 
-            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
+            return $trip->fresh(['tripDuration.itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Failed to create trip: {$e->getMessage()}");
@@ -299,43 +290,7 @@ class TripService implements TripServiceInterface
                 throw new \Exception("Trip update failed: repository returned invalid trip object.");
             }
 
-            // Update itineraries secara parsial
-            if (isset($data['itineraries'])) {
-                $payloadItineraryIds = [];
-                foreach ($data['itineraries'] as $itineraryData) {
-                    $itineraryData['trip_id'] = $trip->id;
-                    if (isset($itineraryData['id'])) {
-                        $this->itinerariesRepository->updateItineraries($itineraryData['id'], $itineraryData);
-                        $payloadItineraryIds[] = $itineraryData['id'];
-                    } else {
-                        $newItinerary = $this->itinerariesRepository->createItineraries($itineraryData);
-                        if ($newItinerary && isset($newItinerary->id)) {
-                            $payloadItineraryIds[] = $newItinerary->id;
-                        }
-                    }
-                }
-                $this->itinerariesRepository->deleteItinerariesNotIn($trip->id, $payloadItineraryIds);
-            }
-
-            // Update flight schedules secara parsial
-            if (isset($data['flight_schedules'])) {
-                $payloadFlightScheduleIds = [];
-                foreach ($data['flight_schedules'] as $scheduleData) {
-                    $scheduleData['trip_id'] = $trip->id;
-                    if (isset($scheduleData['id'])) {
-                        $this->flightScheduleRepository->updateFlightSchedule($scheduleData['id'], $scheduleData);
-                        $payloadFlightScheduleIds[] = $scheduleData['id'];
-                    } else {
-                        $newSchedule = $this->flightScheduleRepository->createFlightSchedule($scheduleData);
-                        if ($newSchedule && isset($newSchedule->id)) {
-                            $payloadFlightScheduleIds[] = $newSchedule->id;
-                        }
-                    }
-                }
-                $this->flightScheduleRepository->deleteFlightScheduleNotIn($trip->id, $payloadFlightScheduleIds);
-            }
-
-            // Update trip durations beserta trip prices secara parsial
+            // Update trip durations beserta itineraries dan trip prices secara parsial
             if (isset($data['trip_durations'])) {
                 $payloadTripDurationIds = [];
                 foreach ($data['trip_durations'] as $durationData) {
@@ -351,6 +306,24 @@ class TripService implements TripServiceInterface
                     }
                     if (!$tripDuration || !isset($tripDuration->id)) {
                         throw new \Exception("Trip duration update failed: repository returned invalid trip duration object.");
+                    }
+
+                    // Update itineraries untuk trip duration ini
+                    if (isset($durationData['itineraries'])) {
+                        $payloadItineraryIds = [];
+                        foreach ($durationData['itineraries'] as $itineraryData) {
+                            $itineraryData['trip_duration_id'] = $tripDuration->id;
+                            if (isset($itineraryData['id'])) {
+                                $this->itinerariesRepository->updateItineraries($itineraryData['id'], $itineraryData);
+                                $payloadItineraryIds[] = $itineraryData['id'];
+                            } else {
+                                $newItinerary = $this->itinerariesRepository->createItineraries($itineraryData);
+                                if ($newItinerary && isset($newItinerary->id)) {
+                                    $payloadItineraryIds[] = $newItinerary->id;
+                                }
+                            }
+                        }
+                        $this->itinerariesRepository->deleteItinerariesNotIn($tripDuration->id, $payloadItineraryIds);
                     }
 
                     if (isset($durationData['prices'])) {
@@ -440,7 +413,7 @@ class TripService implements TripServiceInterface
             // Clear cache yang terkait
             $this->clearTripCaches($id);
 
-            return $trip->fresh(['itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
+            return $trip->fresh(['tripDuration.itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating trip: ' . $e->getMessage());

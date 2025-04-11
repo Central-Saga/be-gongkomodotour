@@ -31,8 +31,8 @@ class TripResource extends JsonResource
             'updated_at' => $this->updated_at->toDateTimeString(),
 
             // Relasi
-            'itineraries' => $this->whenLoaded('itineraries', function () {
-                return ItinerariesResource::collection($this->itineraries);
+            'itineraries' => $this->whenLoaded('tripDuration.itineraries', function () {
+                return ItinerariesResource::collection($this->tripDuration->itineraries);
             }),
 
             'flight_schedules' => $this->whenLoaded('flightSchedule', function () {
@@ -52,7 +52,10 @@ class TripResource extends JsonResource
             }),
 
             'surcharges' => $this->whenLoaded('surcharges', function () {
-                return SurchargeResource::collection($this->surcharges);
+                return SurchargeResource::collection($this->surcharges->map(function ($surcharge) {
+                    $surcharge->surcharge_price = (float) $surcharge->surcharge_price;
+                    return $surcharge;
+                }));
             }),
 
             'assets' => $this->whenLoaded('assets', function () {

@@ -34,10 +34,10 @@ class TripsSeeder extends Seeder
             ->count(4)
             ->highlighted()
             ->has(FlightSchedule::factory()->count(1))
-            ->has(Itineraries::factory()->count(3))
             ->has(
                 TripDuration::factory()
                     ->count(1)
+                    ->has(Itineraries::factory()->count(3))
                     ->has(TripPrices::factory()->count(6))
             )
             ->has(AdditionalFee::factory()->count(2)) // 2 additional fees per trip
@@ -73,10 +73,10 @@ class TripsSeeder extends Seeder
         Trips::factory()
             ->count(8)
             ->has(FlightSchedule::factory()->count(1))
-            ->has(Itineraries::factory()->count(3))
             ->has(
                 TripDuration::factory()
                     ->count(1)
+                    ->has(Itineraries::factory()->count(3))
                     ->has(TripPrices::factory()->count(6))
             )
             ->has(AdditionalFee::factory()->count(2)) // 2 additional fees per trip

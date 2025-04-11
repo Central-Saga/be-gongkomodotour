@@ -20,7 +20,7 @@ class ItinerariesFactory extends Factory
         ];
 
         return [
-            'trip_id' => null, // Will be set by relationship
+            'trip_duration_id' => null, // Will be set by relationship
             'day_number' => $this->faker->numberBetween(1, 6),
             'activities' => $this->faker->randomElement($activities) . ' (Breakfast / Lunch)',
         ];

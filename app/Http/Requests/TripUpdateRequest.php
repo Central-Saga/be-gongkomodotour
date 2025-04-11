@@ -52,6 +52,12 @@ class TripUpdateRequest extends FormRequest
             'trip_durations.*.duration_nights' => 'required_with:trip_durations|integer',
             'trip_durations.*.status' => 'required_with:trip_durations|in:Aktif,Non Aktif',
 
+            // Validasi untuk itineraries dalam trip durations
+            'trip_durations.*.itineraries' => 'sometimes|array',
+            'trip_durations.*.itineraries.*.id' => 'sometimes|integer',
+            'trip_durations.*.itineraries.*.day_number' => 'required_with:trip_durations.*.itineraries|integer',
+            'trip_durations.*.itineraries.*.activities' => 'required_with:trip_durations.*.itineraries|string',
+
             // Validasi untuk trip prices dalam setiap trip durations
             'trip_durations.*.prices' => 'sometimes|array',
             'trip_durations.*.prices.*.pax_min' => 'required_with:trip_durations.*.prices|integer',

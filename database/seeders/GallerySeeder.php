@@ -30,7 +30,7 @@ class GallerySeeder extends Seeder
             $storagePath = 'gallery/' . basename($image);
 
             if (file_exists($image)) {
-                Log::info('Copying image from ' . $image . ' to ' . $storagePath);
+                // Log::info('Copying image from ' . $image . ' to ' . $storagePath);
                 Storage::disk('public')->put($storagePath, file_get_contents($image));
 
                 $gallery->assets()->create([

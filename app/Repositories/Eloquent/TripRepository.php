@@ -30,7 +30,9 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getAllTrips()
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->get();
+        $trips = $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->get();
+
+        return $trips;
     }
 
     /**
@@ -43,9 +45,21 @@ class TripRepository implements TripRepositoryInterface
     {
         try {
             // Mengambil trip berdasarkan ID, handle jika tidak ditemukan
-            return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->findOrFail($id);
+            $trip = $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->findOrFail($id);
+
+            // Log data trip dan relasinya
+            Log::info('Trip Data:', [
+                'trip' => $trip->toArray(),
+                'trip_duration' => $trip->tripDuration->toArray(),
+                'itineraries' => $trip->tripDuration->flatMap->itineraries->toArray()
+            ]);
+
+            return $trip;
         } catch (ModelNotFoundException $e) {
             Log::error("Trip with ID {$id} not found.");
+            return null;
+        } catch (\Exception $e) {
+            Log::error("Error getting trip with ID {$id}: " . $e->getMessage());
             return null;
         }
     }
@@ -58,7 +72,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByName($name)
     {
-        return $this->trips->where('name', $name)->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->first();
+        return $this->trips->where('name', $name)->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->first();
     }
 
     /**
@@ -69,7 +83,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByStatus($status)
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->where('status', $status)->get();
+        return $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->where('status', $status)->get();
     }
 
     /**
@@ -80,7 +94,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByType($type)
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->where('type', $type)->get();
+        return $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')->where('type', $type)->get();
     }
 
     /**
@@ -186,7 +200,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getHighlightedTrips()
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')
+        return $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')
             ->where('is_highlight', true)
             ->where('status', 'Aktif')
             ->get();

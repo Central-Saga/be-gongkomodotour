@@ -25,11 +25,6 @@ class Trips extends Model
         'is_highlight',
     ];
 
-    public function itineraries()
-    {
-        return $this->hasMany(Itineraries::class, 'trip_id', 'id');
-    }
-
     public function flightSchedule()
     {
         return $this->hasMany(FlightSchedule::class, 'trip_id', 'id');
