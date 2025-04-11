@@ -44,6 +44,7 @@ Route::post('/logout', [
 // Route publik untuk landing page
 Route::prefix('landing-page')->group(function () {
     Route::get('/trips', [TripController::class, 'index']);
+    Route::get('/trips/{id}', [TripController::class, 'show']);
     Route::get('/highlighted-trips', [TripController::class, 'getHighlightedTrips']);
     Route::get('/testimonial', [TestimonialController::class, 'index']);
     Route::get('/faq', [FaqController::class, 'index']);

@@ -20,8 +20,8 @@ class BlogSeeder extends Seeder
             for ($i = 1; $i <= 2; $i++) {
                 $imageIndex = (($index * 2) + $i) % 10;
                 $imageIndex = $imageIndex === 0 ? 10 : $imageIndex;
-                $imagePath = "public/img/wisata/wisata-" . $imageIndex . ".jpg";
-                $storagePath = "blog/wisata-" . $imageIndex . ".jpg";
+                $imagePath = "public/img/wisata/wisata-" . $imageIndex . ".jpeg";
+                $storagePath = "blog/wisata-" . $imageIndex . ".jpeg";
 
                 if (file_exists($imagePath)) {
                     Log::info('Copying image from ' . $imagePath . ' to ' . $storagePath);

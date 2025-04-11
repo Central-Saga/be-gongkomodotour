@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             // HotelRequestSeeder::class,
             // TransactionSeeder::class,
             // DetailTransactionSeeder::class,
-            // GallerySeeder::class,
+            GallerySeeder::class,
             // AssetSeeder::class,
         ]);
     }
