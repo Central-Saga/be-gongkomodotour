@@ -64,6 +64,31 @@ interface TripServiceInterface
     public function getInactiveTrips();
 
     /**
+     * Mengambil trip berdasarkan has_boat.
+     *
+     * @param bool $hasBoat
+     * @return mixed
+     */
+    public function getTripByHasBoat($hasBoat);
+
+    /**
+     * Mengambil trip berdasarkan destination_count.
+     *
+     * @param int $destinationCount
+     * @return mixed
+     */
+    public function getTripByDestinationCount($destinationCount);
+
+    /**
+     * Mengambil trip berdasarkan range destination_count.
+     *
+     * @param int $min
+     * @param int $max
+     * @return mixed
+     */
+    public function getTripByDestinationCountRange($min, $max);
+
+    /**
      * Membuat trip baru.
      *
      * @param array $data

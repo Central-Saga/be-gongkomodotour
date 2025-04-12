@@ -76,4 +76,29 @@ interface TripRepositoryInterface
      * @return mixed
      */
     public function updateTripStatus($id, $status);
+
+    /**
+     * Mengambil trip berdasarkan has_boat.
+     *
+     * @param bool $hasBoat
+     * @return mixed
+     */
+    public function getTripByHasBoat($hasBoat);
+
+    /**
+     * Mengambil trip berdasarkan destination_count.
+     *
+     * @param int $destinationCount
+     * @return mixed
+     */
+    public function getTripByDestinationCount($destinationCount);
+
+    /**
+     * Mengambil trip berdasarkan range destination_count.
+     *
+     * @param int $min
+     * @param int $max
+     * @return mixed
+     */
+    public function getTripByDestinationCountRange($min, $max);
 }

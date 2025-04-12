@@ -23,6 +23,8 @@ class Trips extends Model
         'type',
         'status',
         'is_highlight',
+        'destination_count',
+        'has_boat',
     ];
 
     public function flightSchedule()

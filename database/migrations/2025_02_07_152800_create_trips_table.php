@@ -23,6 +23,8 @@ return new class extends Migration
             $table->enum('type', ['Open Trip', 'Private Trip']);
             $table->enum('is_highlight', ['Yes', 'No']);
             $table->enum('status', ['Aktif', 'Non Aktif']);
+            $table->integer('destination_count')->default(0);
+            $table->boolean('has_boat')->default(false);
             $table->timestamps();
         });
     }

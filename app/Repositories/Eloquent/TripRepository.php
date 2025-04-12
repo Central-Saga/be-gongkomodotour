@@ -98,6 +98,46 @@ class TripRepository implements TripRepositoryInterface
     }
 
     /**
+     * Mengambil trip berdasarkan has_boat.
+     *
+     * @param bool $hasBoat
+     * @return mixed
+     */
+    public function getTripByHasBoat($hasBoat)
+    {
+        return $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')
+            ->where('has_boat', $hasBoat)
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan destination_count.
+     *
+     * @param int $destinationCount
+     * @return mixed
+     */
+    public function getTripByDestinationCount($destinationCount)
+    {
+        return $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')
+            ->where('destination_count', $destinationCount)
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan range destination_count.
+     *
+     * @param int $min
+     * @param int $max
+     * @return mixed
+     */
+    public function getTripByDestinationCountRange($min, $max)
+    {
+        return $this->trips->with('flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets')
+            ->whereBetween('destination_count', [$min, $max])
+            ->get();
+    }
+
+    /**
      * Membuat trip baru.
      *
      * @param array $data

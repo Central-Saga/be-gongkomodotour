@@ -32,6 +32,8 @@ class TripStoreRequest extends FormRequest
             'type'          => 'required|string|in:Open Trip,Private Trip',
             'status'        => 'required|in:Aktif,Non Aktif',
             'is_highlight'  => 'required|in:Yes,No',
+            'destination_count' => 'required|integer|min:0',
+            'has_boat'      => 'required|boolean',
             // Validasi untuk itineraries
             'itineraries' => 'sometimes|array',
             'itineraries.*.day_number' => 'required_with:itineraries|integer',

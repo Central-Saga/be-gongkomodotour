@@ -29,10 +29,50 @@ class TripsSeeder extends Seeder
             Storage::makeDirectory('public/trip');
         }
 
-        // Generate 4 highlighted trips with related data
+        // Generate 2 highlighted trips with boat and 3 destinations
+        Trips::factory()
+            ->count(2)
+            ->highlighted()
+            ->withBoat()
+            ->withDestinationCount(3)
+            ->has(FlightSchedule::factory()->count(1))
+            ->has(
+                TripDuration::factory()
+                    ->count(1)
+                    ->has(Itineraries::factory()->count(3))
+                    ->has(TripPrices::factory()->count(6))
+            )
+            ->has(AdditionalFee::factory()->count(2))
+            ->has(Surcharge::factory()->count(1))
+            ->create()
+            ->each(function ($trip) use ($imageFiles) {
+                $this->createAssets($trip, $imageFiles);
+            });
+
+        // Generate 2 highlighted trips without boat and 2 destinations
+        Trips::factory()
+            ->count(2)
+            ->highlighted()
+            ->withoutBoat()
+            ->withDestinationCount(2)
+            ->has(FlightSchedule::factory()->count(1))
+            ->has(
+                TripDuration::factory()
+                    ->count(1)
+                    ->has(Itineraries::factory()->count(3))
+                    ->has(TripPrices::factory()->count(6))
+            )
+            ->has(AdditionalFee::factory()->count(2))
+            ->has(Surcharge::factory()->count(1))
+            ->create()
+            ->each(function ($trip) use ($imageFiles) {
+                $this->createAssets($trip, $imageFiles);
+            });
+
+        // Generate 4 non-highlighted trips with boat and random destinations (1-5)
         Trips::factory()
             ->count(4)
-            ->highlighted()
+            ->withBoat()
             ->has(FlightSchedule::factory()->count(1))
             ->has(
                 TripDuration::factory()
@@ -40,38 +80,17 @@ class TripsSeeder extends Seeder
                     ->has(Itineraries::factory()->count(3))
                     ->has(TripPrices::factory()->count(6))
             )
-            ->has(AdditionalFee::factory()->count(2)) // 2 additional fees per trip
-            ->has(Surcharge::factory()->count(1)) // 1 surcharge per trip
+            ->has(AdditionalFee::factory()->count(2))
+            ->has(Surcharge::factory()->count(1))
             ->create()
             ->each(function ($trip) use ($imageFiles) {
-                // Pilih 10 gambar secara acak
-                $selectedImages = collect($imageFiles)->random(10);
-
-                // Simpan informasi gambar ke database
-                foreach ($selectedImages as $image) {
-                    $storagePath = 'trip/' . basename($image);
-
-                    if (file_exists($image)) {
-                        Log::info('Copying image from ' . $image . ' to ' . $storagePath);
-                        Storage::disk('public')->put($storagePath, file_get_contents($image));
-
-                        Asset::create([
-                            'title' => 'Trip Image',
-                            'description' => 'Image for trip',
-                            'file_path' => 'public/' . $storagePath,
-                            'file_url' => Storage::url($storagePath),
-                            'assetable_id' => $trip->id,
-                            'assetable_type' => $trip->getMorphClass(),
-                        ]);
-                    } else {
-                        Log::warning('Image not found: ' . $image);
-                    }
-                }
+                $this->createAssets($trip, $imageFiles);
             });
 
-        // Generate 8 non-highlighted trips with related data
+        // Generate 4 non-highlighted trips without boat and random destinations (1-5)
         Trips::factory()
-            ->count(8)
+            ->count(4)
+            ->withoutBoat()
             ->has(FlightSchedule::factory()->count(1))
             ->has(
                 TripDuration::factory()
@@ -79,33 +98,36 @@ class TripsSeeder extends Seeder
                     ->has(Itineraries::factory()->count(3))
                     ->has(TripPrices::factory()->count(6))
             )
-            ->has(AdditionalFee::factory()->count(2)) // 2 additional fees per trip
-            ->has(Surcharge::factory()->count(1)) // 1 surcharge per trip
+            ->has(AdditionalFee::factory()->count(2))
+            ->has(Surcharge::factory()->count(1))
             ->create()
             ->each(function ($trip) use ($imageFiles) {
-                // Pilih 10 gambar secara acak
-                $selectedImages = collect($imageFiles)->random(10);
-
-                // Simpan informasi gambar ke database
-                foreach ($selectedImages as $image) {
-                    $storagePath = 'trip/' . basename($image);
-
-                    if (file_exists($image)) {
-                        Log::info('Copying image from ' . $image . ' to ' . $storagePath);
-                        Storage::disk('public')->put($storagePath, file_get_contents($image));
-
-                        Asset::create([
-                            'title' => 'Trip Image',
-                            'description' => 'Image for trip',
-                            'file_path' => 'public/' . $storagePath,
-                            'file_url' => Storage::url($storagePath),
-                            'assetable_id' => $trip->id,
-                            'assetable_type' => $trip->getMorphClass(),
-                        ]);
-                    } else {
-                        Log::warning('Image not found: ' . $image);
-                    }
-                }
+                $this->createAssets($trip, $imageFiles);
             });
+    }
+
+    private function createAssets($trip, $imageFiles)
+    {
+        $selectedImages = collect($imageFiles)->random(10);
+
+        foreach ($selectedImages as $image) {
+            $storagePath = 'trip/' . basename($image);
+
+            if (file_exists($image)) {
+                Log::info('Copying image from ' . $image . ' to ' . $storagePath);
+                Storage::disk('public')->put($storagePath, file_get_contents($image));
+
+                Asset::create([
+                    'title' => 'Trip Image',
+                    'description' => 'Image for trip',
+                    'file_path' => 'public/' . $storagePath,
+                    'file_url' => Storage::url($storagePath),
+                    'assetable_id' => $trip->id,
+                    'assetable_type' => $trip->getMorphClass(),
+                ]);
+            } else {
+                Log::warning('Image not found: ' . $image);
+            }
+        }
     }
 }

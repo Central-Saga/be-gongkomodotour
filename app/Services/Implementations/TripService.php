@@ -168,6 +168,49 @@ class TripService implements TripServiceInterface
     }
 
     /**
+     * Mengambil trip berdasarkan has_boat.
+     *
+     * @param bool $hasBoat
+     * @return mixed
+     */
+    public function getTripByHasBoat($hasBoat)
+    {
+        $cacheKey = 'trips.has_boat.' . ($hasBoat ? 'true' : 'false');
+        return Cache::remember($cacheKey, 3600, function () use ($hasBoat) {
+            return $this->tripRepository->getTripByHasBoat($hasBoat);
+        });
+    }
+
+    /**
+     * Mengambil trip berdasarkan destination_count.
+     *
+     * @param int $destinationCount
+     * @return mixed
+     */
+    public function getTripByDestinationCount($destinationCount)
+    {
+        $cacheKey = 'trips.destination_count.' . $destinationCount;
+        return Cache::remember($cacheKey, 3600, function () use ($destinationCount) {
+            return $this->tripRepository->getTripByDestinationCount($destinationCount);
+        });
+    }
+
+    /**
+     * Mengambil trip berdasarkan range destination_count.
+     *
+     * @param int $min
+     * @param int $max
+     * @return mixed
+     */
+    public function getTripByDestinationCountRange($min, $max)
+    {
+        $cacheKey = 'trips.destination_count.range.' . $min . '.' . $max;
+        return Cache::remember($cacheKey, 3600, function () use ($min, $max) {
+            return $this->tripRepository->getTripByDestinationCountRange($min, $max);
+        });
+    }
+
+    /**
      * Membuat trip baru.
      *
      * @param array $data

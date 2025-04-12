@@ -66,6 +66,8 @@ class TripsFactory extends Factory
             'type' => $this->faker->randomElement(['Open Trip', 'Private Trip']),
             'status' => 'Aktif',
             'is_highlight' => 'No', // Default to 'No'
+            'has_boat' => $this->faker->boolean(30), // 30% chance of having boat
+            'destination_count' => $this->faker->numberBetween(1, 5), // Random number between 1-5 destinations
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -74,5 +76,20 @@ class TripsFactory extends Factory
     public function highlighted()
     {
         return $this->state(['is_highlight' => 'Yes']);
+    }
+
+    public function withBoat()
+    {
+        return $this->state(['has_boat' => true]);
+    }
+
+    public function withoutBoat()
+    {
+        return $this->state(['has_boat' => false]);
+    }
+
+    public function withDestinationCount($count)
+    {
+        return $this->state(['destination_count' => $count]);
     }
 }
