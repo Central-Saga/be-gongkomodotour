@@ -220,6 +220,14 @@ class TripService implements TripServiceInterface
                 }
             }
 
+            // Buat flight schedules jika ada
+            if (isset($data['flight_schedules'])) {
+                foreach ($data['flight_schedules'] as $flightSchedule) {
+                    $flightSchedule['trip_id'] = $trip->id;
+                    $this->flightScheduleRepository->createFlightSchedule($flightSchedule);
+                }
+            }
+
             // Jika request memiliki additional fees, buat masing-masing additional fee
             if (isset($data['additional_fees'])) {
                 foreach ($data['additional_fees'] as $fee) {
@@ -344,6 +352,24 @@ class TripService implements TripServiceInterface
                     }
                 }
                 $this->tripDurationRepository->deleteTripDurationNotIn($trip->id, $payloadTripDurationIds);
+            }
+
+            // Update flight schedules secara parsial jika ada di payload
+            if (isset($data['flight_schedules'])) {
+                $payloadFlightScheduleIds = [];
+                foreach ($data['flight_schedules'] as $flightScheduleData) {
+                    $flightScheduleData['trip_id'] = $trip->id;
+                    if (isset($flightScheduleData['id'])) {
+                        $this->flightScheduleRepository->updateFlightSchedule($flightScheduleData['id'], $flightScheduleData);
+                        $payloadFlightScheduleIds[] = $flightScheduleData['id'];
+                    } else {
+                        $newFlightSchedule = $this->flightScheduleRepository->createFlightSchedule($flightScheduleData);
+                        if ($newFlightSchedule && isset($newFlightSchedule->id)) {
+                            $payloadFlightScheduleIds[] = $newFlightSchedule->id;
+                        }
+                    }
+                }
+                $this->flightScheduleRepository->deleteFlightScheduleNotIn($trip->id, $payloadFlightScheduleIds);
             }
 
             // Update additional fees secara parsial jika ada di payload
