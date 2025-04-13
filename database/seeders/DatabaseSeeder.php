@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             // EmailBlastRecipientSeeder::class,
             BlogSeeder::class,
             // SubscriberSeeder::class,
-            // TestimonialSeeder::class,
+            TestimonialSeeder::class,
             FaqSeeder::class,
             // AdditionalFeeSeeder::class,
             // SurchargeSeeder::class,

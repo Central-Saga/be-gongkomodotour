@@ -51,4 +51,9 @@ class Trips extends Model
     {
         return $this->morphMany(Asset::class, 'assetable');
     }
+
+    public function testimonials()
+    {
+        return $this->hasMany(Testimonial::class, 'trip_id', 'id');
+    }
 }

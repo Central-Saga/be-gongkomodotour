@@ -18,18 +18,18 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
     public function getAllTestimonial()
     {
-        return $this->model->with('customer', 'customer.user')->get();
+        return $this->model->with('customer', 'customer.user', 'trip')->get();
     }
 
     public function getTestimonialById($id)
     {
-        return $this->model->with('customer', 'customer.user')->find($id);
+        return $this->model->with('customer', 'customer.user', 'trip')->find($id);
     }
 
     public function createTestimonial(array $data)
     {
         $testimonial = $this->model->create($data);
-        $testimonial->load('customer', 'customer.user');
+        $testimonial->load('customer', 'customer.user', 'trip');
         return $testimonial;
     }
 
@@ -39,7 +39,7 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
         if ($testimonial) {
             $testimonial->update($data);
-            $testimonial->load('customer', 'customer.user');
+            $testimonial->load('customer', 'customer.user', 'trip');
         }
 
         return $testimonial;
@@ -51,7 +51,7 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
         if ($testimonial) {
             $testimonial->delete();
-            $testimonial->load('customer', 'customer.user');
+            $testimonial->load('customer', 'customer.user', 'trip');
             return true;
         }
 
@@ -70,12 +70,12 @@ class TestimonialRepository implements TestimonialRepositoryInterface
 
     public function getTestimonialByApproved($approved)
     {
-        return $this->model->where('is_approved', $approved)->with('customer', 'customer.user')->get();
+        return $this->model->where('is_approved', $approved)->with('customer', 'customer.user', 'trip')->get();
     }
 
     public function getTestimonialByHighlight($highlight)
     {
-        return $this->model->where('is_highlight', $highlight)->with('customer', 'customer.user')->get();
+        return $this->model->where('is_highlight', $highlight)->with('customer', 'customer.user', 'trip')->get();
     }
 
     public function getTestimonialByFilters($approved = null, $highlight = null)
@@ -90,6 +90,6 @@ class TestimonialRepository implements TestimonialRepositoryInterface
             $query->where('is_highlight', (bool) $highlight);
         }
 
-        return $query->with('customer', 'customer.user')->get();
+        return $query->with('customer', 'customer.user', 'trip')->get();
     }
 }

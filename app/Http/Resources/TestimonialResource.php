@@ -19,6 +19,7 @@ class TestimonialResource extends JsonResource
         return [
             'id'           => $this->id,
             'customer_id'  => $this->customer_id,
+            'trip_id'      => $this->trip_id,
             'rating'       => $this->rating,
             'review'       => $this->review,
             'is_approved'  => $this->is_approved,
@@ -32,6 +33,10 @@ class TestimonialResource extends JsonResource
 
             'user' => $this->whenLoaded('customer.user', function () {
                 return new UserResource($this->customer->user);
+            }),
+
+            'trip' => $this->whenLoaded('trip', function () {
+                return new TripResource($this->trip);
             }),
         ];
     }
