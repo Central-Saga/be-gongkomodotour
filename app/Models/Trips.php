@@ -27,6 +27,10 @@ class Trips extends Model
         'has_boat',
     ];
 
+    protected $casts = [
+        'has_boat' => 'boolean',
+    ];
+
     public function flightSchedule()
     {
         return $this->hasMany(FlightSchedule::class, 'trip_id', 'id');

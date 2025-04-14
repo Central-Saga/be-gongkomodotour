@@ -98,6 +98,7 @@ class TripStoreRequest extends FormRequest
             'trip_durations' => $this->convertPricesToFloat($this->trip_durations ?? []),
             'additional_fees' => $this->convertAdditionalFeesToFloat($this->additional_fees ?? []),
             'surcharges' => $this->convertSurchargesToFloat($this->surcharges ?? []),
+            'has_boat' => (bool) $this->has_boat
         ]);
 
         // Konversi is_required ke boolean

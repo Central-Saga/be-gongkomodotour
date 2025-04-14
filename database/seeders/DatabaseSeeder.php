@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             // FlightScheduleSeeder::class,
             // CustomersSeeder::class,
             // HotelOccupanciesSeeder::class,
-            // BoatSeeder::class,
+            BoatSeeder::class,
             // CabinSeeder::class,
             // EmailBlastSeeder::class,
             // EmailBlastRecipientSeeder::class,
