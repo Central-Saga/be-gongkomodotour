@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\CustomerResource;
+use App\Http\Resources\UserResource;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,7 +30,7 @@ class AuthenticatedSessionController extends Controller
             ], 401);
         }
 
-        $user = Auth::user();
+        $user = Auth::user()->load('customer');
 
         if ($user->status !== 'Aktif') {
             Auth::logout();
@@ -38,20 +40,16 @@ class AuthenticatedSessionController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        $roles = $user->getRoleNames(); // Ambil roles
+        $roles = $user->getRoleNames();
         $permissions = $user->getPermissionsViaRoles()->pluck('name');
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'status' => $user->status,
-                'roles' => $roles,
-                'permissions' => $permissions,
-            ],
+            'user' => new UserResource($user),
+            'customer' => $user->customer ? new CustomerResource($user->customer) : null,
+            'roles' => $roles,
+            'permissions' => $permissions,
             'status' => 'Login successful'
         ], 200);
     }

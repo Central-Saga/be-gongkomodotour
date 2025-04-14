@@ -31,7 +31,15 @@ class BoatSeeder extends Seeder
             'luxury_phinisi.jpg'
         ];
 
-        Boat::factory(9)->create()->each(function ($boat, $index) use ($boatImages) {
+        $imageTypes = [
+            'Exterior View',
+            'Deck View',
+            'Cabin Interior',
+            'Dining Area',
+            'Sun Deck'
+        ];
+
+        Boat::factory(9)->create()->each(function ($boat, $index) use ($boatImages, $imageTypes) {
             $imageName = $boatImages[$index];
             $sourcePath = public_path("img/boat/{$imageName}");
             $storagePath = "boat/{$imageName}";
@@ -40,13 +48,16 @@ class BoatSeeder extends Seeder
                 Log::info('Copying boat image from ' . $sourcePath . ' to ' . $storagePath);
                 Storage::disk('public')->put($storagePath, file_get_contents($sourcePath));
 
-                $boat->assets()->create([
-                    'title' => "Boat Image " . ($index + 1),
-                    'description' => "Image for boat " . $boat->boat_name,
-                    'file_path' => "public/" . $storagePath,
-                    'file_url' => Storage::url($storagePath),
-                    'is_external' => false,
-                ]);
+                // Buat 5 asset untuk setiap boat
+                foreach ($imageTypes as $type) {
+                    $boat->assets()->create([
+                        'title' => "Boat {$type}",
+                        'description' => "{$type} of {$boat->boat_name}",
+                        'file_path' => "public/" . $storagePath,
+                        'file_url' => Storage::url($storagePath),
+                        'is_external' => false,
+                    ]);
+                }
             } else {
                 Log::warning('Boat image not found: ' . $sourcePath);
             }

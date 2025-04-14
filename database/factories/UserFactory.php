@@ -3,9 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Database\Factories\CustomersFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -50,8 +51,12 @@ class UserFactory extends Factory
      */
     public function configure()
     {
-        return $this->afterCreating(function (User $user) {
-            $user->assignRole('Pelanggan');
+        return $this->afterMaking(function (User $user) {
+            if ($user->hasRole('Pelanggan')) {
+                CustomersFactory::new()->state([
+                    'user_id' => $user->id,
+                ])->create();
+            }
         });
     }
 }

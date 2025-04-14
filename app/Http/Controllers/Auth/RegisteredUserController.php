@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Subscriber;
+use App\Http\Resources\CustomerResource;
+use App\Http\Resources\UserResource;
 
 class RegisteredUserController extends Controller
 {
@@ -73,20 +75,17 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        $roles = $user->getRoleNames();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name');
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'alamat' => $customer->alamat,
-                'no_hp' => $customer->no_hp,
-                'nasionality' => $customer->nasionality,
-                'region' => $customer->region,
-                'status' => $customer->status,
-            ],
+            'user' => new UserResource($user),
+            'customer' => new CustomerResource($user->customer),
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'status' => 'Registration successful'
         ]);
     }
 }

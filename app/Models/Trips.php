@@ -17,6 +17,7 @@ class Trips extends Model
         'include',
         'exclude',
         'note',
+        'region',
         'start_time',
         'end_time',
         'meeting_point',

@@ -60,6 +60,7 @@ class TripsFactory extends Factory
             'include' => $this->faker->randomElement($includes),
             'exclude' => $this->faker->randomElement($excludes),
             'note' => 'Valid for Low Season; additional charges apply during High/Peak Seasons.',
+            'region' => $this->faker->randomElement(['Domestic', 'Overseas', 'Domestic & Overseas']),
             'start_time' => $this->faker->randomElement(['07:00:00', '08:00:00', '09:00:00']),
             'end_time' => $this->faker->randomElement(['17:00:00', '18:00:00', '19:00:00']),
             'meeting_point' => $this->faker->randomElement($meetingPoints),

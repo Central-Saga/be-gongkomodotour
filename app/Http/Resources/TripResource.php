@@ -20,6 +20,7 @@ class TripResource extends JsonResource
             'include' => $this->include,
             'exclude' => $this->exclude,
             'note' => $this->note,
+            'region' => $this->region,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
             'meeting_point' => $this->meeting_point,
