@@ -235,6 +235,7 @@ class TripService implements TripServiceInterface
                 'status',
                 'is_highlight',
                 'has_boat',
+                'has_hotel',
                 'destination_count'
             ]);
             $trip = $this->tripRepository->createTrip($tripData);
@@ -340,6 +341,7 @@ class TripService implements TripServiceInterface
                 'status',
                 'is_highlight',
                 'has_boat',
+                'has_hotel',
                 'destination_count'
             ]);
             $trip = $this->tripRepository->updateTrip($id, $tripData);
