@@ -17,9 +17,13 @@ class Booking extends Model
     protected $fillable = [
         'trip_id',
         'trip_duration_id',
-        'customer_id',
         'user_id',
         'hotel_occupancy_id',
+        'customer_name',
+        'customer_email',
+        'customer_address',
+        'customer_country',
+        'customer_phone',
         'total_price',
         'total_pax',
         'status',
@@ -37,11 +41,6 @@ class Booking extends Model
     public function tripDuration()
     {
         return $this->belongsTo(TripDuration::class);
-    }
-
-    public function customer()
-    {
-        return $this->belongsTo(Customers::class);
     }
 
     public function boat()

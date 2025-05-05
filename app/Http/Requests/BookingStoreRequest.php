@@ -24,7 +24,11 @@ class BookingStoreRequest extends FormRequest
         return [
             'trip_id' => 'required|exists:trips,id',
             'trip_duration_id' => 'required|exists:trip_durations,id',
-            'customer_id' => 'required|exists:customers,id',
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'required|email|max:255',
+            'customer_address' => 'nullable|string|max:255',
+            'customer_country' => 'nullable|string|max:100',
+            'customer_phone' => 'nullable|string|max:50',
             'user_id' => 'nullable|exists:users,id',
             'hotel_occupancy_id' => 'required|exists:hoteloccupancies,id',
             'total_pax' => 'required|integer',

@@ -24,7 +24,11 @@ class BookingUpdateRequest extends FormRequest
         return [
             'trip_id' => 'sometimes|required|exists:trips,id',
             'trip_duration_id' => 'sometimes|required|exists:trip_durations,id',
-            'customer_id' => 'sometimes|required|exists:customers,id',
+            'customer_name' => 'sometimes|required|string|max:255',
+            'customer_email' => 'sometimes|required|email|max:255',
+            'customer_address' => 'sometimes|nullable|string|max:255',
+            'customer_country' => 'sometimes|nullable|string|max:100',
+            'customer_phone' => 'sometimes|nullable|string|max:50',
             'user_id' => 'sometimes|required|exists:users,id',
             'hotel_occupancy_id' => 'sometimes|required|exists:hoteloccupancies,id',
             'total_pax' => 'sometimes|required|integer',
