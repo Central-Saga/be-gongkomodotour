@@ -51,9 +51,14 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/boats/{id}', [BoatController::class, 'show']);
     Route::get('/cabins', [CabinController::class, 'index']);
     Route::get('/cabins/{id}', [CabinController::class, 'show']);
+    Route::get('/hotels', [HotelOccupanciesController::class, 'index']);
     Route::get('/faq', [FaqController::class, 'index']);
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::get('/blogs', [BlogController::class, 'index']);
+
+    // Public Booking Routes
+    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::get('/bookings/{id}', [BookingController::class, 'show']);
 });
 
 Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
@@ -83,7 +88,7 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::patch('customers/{id}/status', [CustomersController::class, 'updateStatus']);
     });
     // Hotel Occupancies
-    Route::middleware('permission:mengelola hotel_occupancies')->group(function () {
+    Route::middleware('permission:mengelola hotel_occupancies|melihat hotel occupancy')->group(function () {
         Route::apiResource('hotels', HotelOccupanciesController::class);
         Route::patch('hotels/{id}/status', [HotelOccupanciesController::class, 'updateStatus']);
     });
@@ -137,9 +142,9 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
         Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
     });
-    // Bookings
+    // Bookings - Protected Routes
     Route::middleware('permission:mengelola booking')->group(function () {
-        Route::apiResource('bookings', BookingController::class);
+        Route::apiResource('bookings', BookingController::class)->except(['store', 'show']);
         Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
     });
     // Transactions

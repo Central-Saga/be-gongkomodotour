@@ -25,7 +25,7 @@ class BookingStoreRequest extends FormRequest
             'trip_id' => 'required|exists:trips,id',
             'trip_duration_id' => 'required|exists:trip_durations,id',
             'customer_id' => 'required|exists:customers,id',
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
             'hotel_occupancy_id' => 'required|exists:hoteloccupancies,id',
             'total_pax' => 'required|integer',
             'status' => 'required|in:Pending,Confirmed,Cancelled',

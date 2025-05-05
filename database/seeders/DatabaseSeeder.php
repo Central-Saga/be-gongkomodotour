@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             // TripPricesSeeder::class,
             // FlightScheduleSeeder::class,
             // CustomersSeeder::class,
-            // HotelOccupanciesSeeder::class,
+            HotelOccupanciesSeeder::class,
             BoatSeeder::class,
             CabinSeeder::class,
             // EmailBlastSeeder::class,
