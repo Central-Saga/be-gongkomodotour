@@ -68,6 +68,7 @@ class TripUpdateRequest extends FormRequest
             'trip_durations.*.prices.*.pax_max' => 'required_with:trip_durations.*.prices|integer',
             'trip_durations.*.prices.*.price_per_pax' => 'required_with:trip_durations.*.prices|numeric|min:0',
             'trip_durations.*.prices.*.status' => 'required_with:trip_durations.*.prices|in:Aktif,Non Aktif',
+            'trip_durations.*.prices.*.region' => 'required_with:trip_durations.*.prices|in:Domestic,Overseas,Domestic & Overseas',
 
             // Validasi untuk additional fees
             'additional_fees' => 'sometimes|array',

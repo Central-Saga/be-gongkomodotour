@@ -21,6 +21,7 @@ class TripPricesResource extends JsonResource
             'pax_max' => $this->pax_max,
             'price_per_pax' => $this->price_per_pax,
             'status' => $this->status,
+            'region' => $this->region,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
 

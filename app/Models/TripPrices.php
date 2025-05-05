@@ -18,6 +18,7 @@ class TripPrices extends Model
         'pax_max',
         'price_per_pax',
         'status',
+        'region',
     ];
 
     public function tripDuration()
