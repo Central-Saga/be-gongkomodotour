@@ -35,6 +35,7 @@ class TripStoreRequest extends FormRequest
             'is_highlight'  => 'required|in:Yes,No',
             'destination_count' => 'required|integer|min:0',
             'has_boat'      => 'required|boolean',
+            'has_hotel'     => 'required|boolean',
             // Validasi untuk itineraries
             'itineraries' => 'sometimes|array',
             'itineraries.*.day_number' => 'required_with:itineraries|integer',

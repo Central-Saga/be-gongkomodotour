@@ -34,6 +34,7 @@ class TripsSeeder extends Seeder
             ->count(2)
             ->highlighted()
             ->withBoat()
+            ->withHotel()
             ->withDestinationCount(3)
             ->has(FlightSchedule::factory()->count(1))
             ->has(
@@ -54,6 +55,7 @@ class TripsSeeder extends Seeder
             ->count(2)
             ->highlighted()
             ->withoutBoat()
+            ->withHotel()
             ->withDestinationCount(2)
             ->has(FlightSchedule::factory()->count(1))
             ->has(
@@ -73,6 +75,7 @@ class TripsSeeder extends Seeder
         Trips::factory()
             ->count(4)
             ->withBoat()
+            ->withHotel()
             ->has(FlightSchedule::factory()->count(1))
             ->has(
                 TripDuration::factory()
@@ -91,6 +94,7 @@ class TripsSeeder extends Seeder
         Trips::factory()
             ->count(4)
             ->withoutBoat()
+            ->withHotel()
             ->has(FlightSchedule::factory()->count(1))
             ->has(
                 TripDuration::factory()

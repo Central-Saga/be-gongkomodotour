@@ -26,10 +26,12 @@ class Trips extends Model
         'is_highlight',
         'destination_count',
         'has_boat',
+        'has_hotel',
     ];
 
     protected $casts = [
         'has_boat' => 'boolean',
+        'has_hotel' => 'boolean',
     ];
 
     public function flightSchedule()

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('status', ['Aktif', 'Non Aktif']);
             $table->integer('destination_count')->default(0);
             $table->boolean('has_boat')->default(false);
+            $table->boolean('has_hotel')->default(false);
             $table->timestamps();
         });
     }

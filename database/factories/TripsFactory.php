@@ -68,6 +68,7 @@ class TripsFactory extends Factory
             'status' => 'Aktif',
             'is_highlight' => 'No', // Default to 'No'
             'has_boat' => $this->faker->boolean(30), // 30% chance of having boat
+            'has_hotel' => $this->faker->boolean(30), // 30% chance of having hotel
             'destination_count' => $this->faker->numberBetween(1, 5), // Random number between 1-5 destinations
             'created_at' => now(),
             'updated_at' => now(),
@@ -87,6 +88,16 @@ class TripsFactory extends Factory
     public function withoutBoat()
     {
         return $this->state(['has_boat' => false]);
+    }
+
+    public function withHotel()
+    {
+        return $this->state(['has_hotel' => true]);
+    }
+
+    public function withoutHotel()
+    {
+        return $this->state(['has_hotel' => false]);
     }
 
     public function withDestinationCount($count)
