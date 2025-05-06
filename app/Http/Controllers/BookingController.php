@@ -89,11 +89,12 @@ class BookingController extends Controller
      */
     public function updateStatus(string $id, Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:Pending,Confirmed,Cancelled',
         ]);
 
-        $booking = $this->bookingService->updateBookingStatus($id, $request->validated());
+        // Mengirim langsung nilai status, bukan array validated
+        $booking = $this->bookingService->updateBookingStatus($id, $validated['status']);
 
         if (!$booking) {
             return response()->json(['message' => 'Failed to update booking status'], 404);

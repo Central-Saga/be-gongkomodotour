@@ -147,8 +147,8 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
     });
     // Bookings - Protected Routes
-    Route::middleware('permission:mengelola booking')->group(function () {
-        Route::apiResource('bookings', BookingController::class)->except(['store', 'show']);
+    Route::middleware('permission:mengelola bookings')->group(function () {
+        Route::apiResource('bookings', BookingController::class)->except(['store']);
         Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
     });
     // Transactions
