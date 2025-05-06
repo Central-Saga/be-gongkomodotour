@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 
 class TransactionRepository implements TransactionRepositoryInterface
@@ -80,21 +81,21 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function createTransaction(array $data)
     {
         try {
-            \Log::info('Repository: Attempting to create transaction');
-            \Log::info('Repository: Transaction data:', $data);
+            Log::info('Repository: Attempting to create transaction');
+            Log::info('Repository: Transaction data:', $data);
 
             $transaction = $this->model->create($data);
 
             if ($transaction) {
-                \Log::info('Repository: Transaction created successfully with ID: ' . $transaction->id);
+                Log::info('Repository: Transaction created successfully with ID: ' . $transaction->id);
                 return $transaction;
             }
 
-            \Log::error('Repository: Failed to create transaction - no error but transaction is null');
+            Log::error('Repository: Failed to create transaction - no error but transaction is null');
             return null;
         } catch (\Exception $e) {
-            \Log::error("Repository: Failed to create transaction: {$e->getMessage()}");
-            \Log::error("Repository: Stack trace: " . $e->getTraceAsString());
+            Log::error("Repository: Failed to create transaction: {$e->getMessage()}");
+            Log::error("Repository: Stack trace: " . $e->getTraceAsString());
             return null;
         }
     }
@@ -114,7 +115,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         }
         try {
             $transaction->update($data);
-            return $transaction;
+            return $transaction->fresh(['details', 'booking']);
         } catch (\Exception $e) {
             Log::error("Failed to update transaction with ID {$id}: {$e->getMessage()}");
             return null;
@@ -170,9 +171,9 @@ class TransactionRepository implements TransactionRepositoryInterface
         $transaction = $this->findTransaction($id);
 
         if ($transaction) {
-            $transaction->status = $status;
+            $transaction->payment_status = $status;
             $transaction->save();
-            return $transaction;
+            return $transaction->fresh(['details', 'booking']);
         }
         return null;
     }

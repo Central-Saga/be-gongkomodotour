@@ -35,7 +35,7 @@ class BookingUpdateRequest extends FormRequest
             'status' => 'sometimes|required|in:Pending,Confirmed,Cancelled',
             'start_date' => 'sometimes|required|date',
             'end_date' => 'sometimes|required|date',
-            'is_hotel_requested' => 'sometimes|required|boolean',
+            'is_hotel_requested' => 'sometimes|nullable|boolean',
             'cabins' => 'sometimes|array',
             'cabins.*.cabin_id' => 'required|exists:cabin,id',
             'cabins.*.total_pax' => 'required|integer|min:1',
