@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('total_price', 15, 2)->nullable();
             $table->integer('total_pax');
             $table->date('start_date');
+            $table->boolean('is_hotel_requested')->default(false);
             $table->date('end_date');
             $table->enum('status', ['Pending', 'Confirmed', 'Cancelled'])->default('Pending');
             $table->timestamps();

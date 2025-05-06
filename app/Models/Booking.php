@@ -29,6 +29,7 @@ class Booking extends Model
         'status',
         'start_date',
         'end_date',
+        'is_hotel_requested'
     ];
 
     // protected $appends = ['computed_cabin_price'];

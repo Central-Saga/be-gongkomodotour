@@ -33,6 +33,7 @@ class BookingStoreRequest extends FormRequest
             'hotel_occupancy_id' => 'required|exists:hoteloccupancies,id',
             'total_pax' => 'required|integer',
             'status' => 'required|in:Pending,Confirmed,Cancelled',
+            'is_hotel_requested' => 'required|boolean',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
 

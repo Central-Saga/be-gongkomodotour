@@ -39,6 +39,7 @@ class BookingFactory extends Factory
             'start_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'end_date' => $this->faker->dateTimeBetween('now', '+1 year'),
             'status' => $this->faker->randomElement(['Pending', 'Confirmed', 'Cancelled']),
+            'is_hotel_requested' => $this->faker->boolean(),
         ];
     }
 

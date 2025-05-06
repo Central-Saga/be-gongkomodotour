@@ -30,6 +30,7 @@ class BookingResource extends JsonResource
             'customer_address' => $this->customer_address,
             'customer_country' => $this->customer_country,
             'customer_phone' => $this->customer_phone,
+            'is_hotel_requested' => $this->is_hotel_requested,
 
             'trip' => $this->whenLoaded('trip', function () {
                 return TripResource::make($this->trip);
