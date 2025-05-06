@@ -30,7 +30,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getAllTransactions()
     {
-        return $this->model->with('details', 'booking', 'bankAccount')->get();
+        return $this->model->with('details', 'booking')->get();
     }
 
     /**
@@ -42,7 +42,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function getTransactionById($id)
     {
         try {
-            return $this->model->with('details', 'booking', 'bankAccount')->findOrFail($id);
+            return $this->model->with('details', 'booking')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Transaction with ID {$id} not found.");
             return null;
@@ -57,7 +57,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByName($name)
     {
-        return $this->model->with('details', 'booking', 'bankAccount')->where('name', $name)->first();
+        return $this->model->with('details', 'booking')->where('name', $name)->first();
     }
 
     /**
@@ -68,7 +68,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByStatus($status)
     {
-        return $this->model->with('details', 'booking', 'bankAccount')->where('payment_status', $status)->get();
+        return $this->model->with('details', 'booking')->where('payment_status', $status)->get();
     }
 
     /**
@@ -80,9 +80,21 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function createTransaction(array $data)
     {
         try {
-            return $this->model->create($data);
+            \Log::info('Repository: Attempting to create transaction');
+            \Log::info('Repository: Transaction data:', $data);
+
+            $transaction = $this->model->create($data);
+
+            if ($transaction) {
+                \Log::info('Repository: Transaction created successfully with ID: ' . $transaction->id);
+                return $transaction;
+            }
+
+            \Log::error('Repository: Failed to create transaction - no error but transaction is null');
+            return null;
         } catch (\Exception $e) {
-            Log::error("Failed to create transaction: {$e->getMessage()}");
+            \Log::error("Repository: Failed to create transaction: {$e->getMessage()}");
+            \Log::error("Repository: Stack trace: " . $e->getTraceAsString());
             return null;
         }
     }

@@ -31,7 +31,7 @@ class Booking extends Model
         'end_date',
     ];
 
-    protected $appends = ['computed_cabin_price', 'computed_total_price'];
+    // protected $appends = ['computed_cabin_price'];
 
     public function trip()
     {

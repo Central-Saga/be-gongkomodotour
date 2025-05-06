@@ -43,9 +43,9 @@ class BookingRepository implements BookingRepositoryInterface
     {
         return $this->booking->with([
             'trip',
+            'trip.surcharges',
             'tripDuration',
             'tripDuration.tripPrices',
-            'customer',
             'boat',
             'cabin',
             'user',
@@ -65,9 +65,9 @@ class BookingRepository implements BookingRepositoryInterface
         try {
             return $this->booking->with([
                 'trip',
+                'trip.surcharges',
                 'tripDuration',
                 'tripDuration.tripPrices',
-                'customer',
                 'boat',
                 'cabin',
                 'user',
@@ -93,7 +93,6 @@ class BookingRepository implements BookingRepositoryInterface
                 'trip',
                 'tripDuration',
                 'tripDuration.tripPrices',
-                'customer',
                 'boat',
                 'cabin',
                 'user',
@@ -114,7 +113,6 @@ class BookingRepository implements BookingRepositoryInterface
             'trip',
             'tripDuration',
             'tripDuration.tripPrices',
-            'customer',
             'boat',
             'cabin',
             'user',
@@ -143,25 +141,9 @@ class BookingRepository implements BookingRepositoryInterface
                 foreach ($data['cabins'] as $cabinData) {
                     $cabin = Cabin::find($cabinData['cabin_id']);
                     if ($cabin) {
-                        $totalPax = $cabinData['total_pax'];
-                        $basePrice = $cabin->base_price;
-                        $additionalPrice = $cabin->additional_price;
-                        $minPax = $cabin->min_pax;
-                        $maxPax = $cabin->max_pax;
-
-                        if ($totalPax > $maxPax) {
-                            $totalPax = $maxPax;
-                        }
-                        if ($totalPax <= $minPax) {
-                            $price = $basePrice;
-                        } else {
-                            $extraPax = $totalPax - $minPax;
-                            $price = $basePrice + ($extraPax * $additionalPrice);
-                        }
-
                         $cabinPivotData[$cabin->id] = [
-                            'total_pax' => $totalPax,
-                            'total_price' => $price
+                            'total_pax' => $cabinData['total_pax'],
+                            'total_price' => $cabinData['total_price']
                         ];
                     }
                 }
@@ -175,12 +157,6 @@ class BookingRepository implements BookingRepositoryInterface
 
             // Sinkronisasi additional fees
             $this->syncAdditionalFees($booking, $data);
-
-            // Refresh booking dan hitung total price menggunakan calculateBookingPrices
-            $booking->refresh();
-            $finalTotalPrice = $this->calculateBookingPrices($booking);
-            $booking->total_price = $finalTotalPrice;
-            $booking->saveQuietly();
 
             return $booking;
         } catch (\Exception $e) {
@@ -212,23 +188,9 @@ class BookingRepository implements BookingRepositoryInterface
                 foreach ($data['cabins'] as $cabinData) {
                     $cabin = Cabin::find($cabinData['cabin_id']);
                     if ($cabin) {
-                        $totalPax = $cabinData['total_pax'];
-                        $basePrice = $cabin->base_price;
-                        $additionalPrice = $cabin->additional_price;
-                        $minPax = $cabin->min_pax;
-                        $maxPax = $cabin->max_pax;
-                        if ($totalPax > $maxPax) {
-                            $totalPax = $maxPax;
-                        }
-                        if ($totalPax <= $minPax) {
-                            $price = $basePrice;
-                        } else {
-                            $extraPax = $totalPax - $minPax;
-                            $price = $basePrice + ($extraPax * $additionalPrice);
-                        }
                         $cabinPivotData[$cabin->id] = [
-                            'total_pax' => $totalPax,
-                            'total_price' => $price
+                            'total_pax' => $cabinData['total_pax'],
+                            'total_price' => $cabinData['total_price']
                         ];
                     }
                 }
@@ -242,12 +204,6 @@ class BookingRepository implements BookingRepositoryInterface
 
             // Sinkronisasi additional fees
             $this->syncAdditionalFees($booking, $data);
-
-            // Refresh booking dan hitung total price menggunakan calculateBookingPrices
-            $booking->refresh();
-            $finalTotalPrice = $this->calculateBookingPrices($booking);
-            $booking->total_price = $finalTotalPrice;
-            $booking->saveQuietly();
 
             return $booking;
         } catch (\Exception $e) {
@@ -324,8 +280,7 @@ class BookingRepository implements BookingRepositoryInterface
                 if (is_array($fee)) {
                     $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee['additional_fee_id']);
                     if ($feeObj && !$feeObj->is_required && $feeObj->status === 'Aktif') {
-                        $totalPrice = $fee['total_price'] ?? $feeObj->price;
-                        $syncFees[$feeObj->id] = ['total_price' => $totalPrice];
+                        $syncFees[$feeObj->id] = ['total_price' => $fee['total_price'] ?? $feeObj->price];
                     }
                 } else {
                     $feeObj = $this->additionalFeeRepository->getAdditionalFeeById($fee);
@@ -344,7 +299,7 @@ class BookingRepository implements BookingRepositoryInterface
     private function calculateBookingPrices(Booking $booking)
     {
         // Load relasi yang dibutuhkan
-        $booking->load(['cabin', 'hotelOccupancy', 'tripDuration', 'additionalFees']);
+        $booking->load(['cabin', 'hotelOccupancy', 'tripDuration', 'additionalFees', 'trip.surcharges']);
 
         // Hitung harga cabin (ini akan memicu log perhitungan cabin)
         $cabinPrice = $booking->computed_cabin_price;
@@ -379,8 +334,27 @@ class BookingRepository implements BookingRepositoryInterface
             ]);
         }
 
+        // Hitung surcharge jika ada
+        $surchargePrice = 0;
+        if ($booking->trip && $booking->trip->surcharges) {
+            $currentDate = now();
+            $activeSurcharge = $booking->trip->surcharges->first(function ($surcharge) use ($currentDate) {
+                return $surcharge->status === 'Aktif' &&
+                    $currentDate->between($surcharge->start_date, $surcharge->end_date);
+            });
+
+            if ($activeSurcharge) {
+                $surchargePrice = $activeSurcharge->surcharge_price;
+                Log::info('Surcharge Calculation', [
+                    'surcharge_id' => $activeSurcharge->id,
+                    'season' => $activeSurcharge->season,
+                    'surcharge_price' => $surchargePrice
+                ]);
+            }
+        }
+
         // Hitung total dasar
-        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice) * $booking->total_pax;
+        $baseTotal = ($cabinPrice + $hotelPrice + $tripPrice + $surchargePrice) * $booking->total_pax;
 
         // Hitung booking fee
         $bookingFeeTotal = $booking->additionalFees->sum(function ($fee) {
@@ -395,6 +369,7 @@ class BookingRepository implements BookingRepositoryInterface
             'cabin_price' => $cabinPrice,
             'hotel_price' => $hotelPrice,
             'trip_price' => $tripPrice,
+            'surcharge_price' => $surchargePrice,
             'base_total' => $baseTotal,
             'booking_fee_total' => $bookingFeeTotal,
             'final_total_price' => $finalTotalPrice,

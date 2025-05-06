@@ -59,6 +59,10 @@ Route::prefix('landing-page')->group(function () {
     // Public Booking Routes
     Route::post('/bookings', [BookingController::class, 'store']);
     Route::get('/bookings/{id}', [BookingController::class, 'show']);
+
+    // Public Transaction Routes
+    Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::get('/transactions/{id}', [TransactionController::class, 'show']);
 });
 
 Route::middleware('auth:sanctum', 'check.user.status')->group(function () {

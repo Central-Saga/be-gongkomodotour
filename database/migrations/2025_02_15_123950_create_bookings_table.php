@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
             $table->foreignId('trip_duration_id')->constrained('trip_durations')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('hotel_occupancy_id')->nullable()->constrained('hoteloccupancies')->onDelete('cascade');
             $table->string('customer_name');
             $table->string('customer_email');

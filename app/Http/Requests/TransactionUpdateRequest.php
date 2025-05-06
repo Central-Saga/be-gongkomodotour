@@ -23,7 +23,7 @@ class TransactionUpdateRequest extends FormRequest
     {
         return [
             'booking_id' => 'required|exists:bookings,id',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
+            'bank_type' => 'required|in:BCA,Mandiri',
             'total_amount' => 'required|numeric',
             'payment_status' => 'required|in:Menunggu Pembayaran,Lunas,Ditolak',
 

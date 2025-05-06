@@ -19,7 +19,7 @@ class TransactionResource extends JsonResource
         return [
             'id' => $this->id,
             'booking_id' => $this->booking_id,
-            'bank_account_id' => $this->bank_account_id,
+            'bank_type' => $this->bank_type,
             'total_amount' => $this->total_amount,
             'payment_status' => $this->payment_status,
             'created_at' => $this->created_at->toDateTimeString(),
@@ -27,10 +27,6 @@ class TransactionResource extends JsonResource
 
             'booking' => $this->whenLoaded('booking', function () {
                 return BookingResource::make($this->booking);
-            }),
-
-            'bank_account' => $this->whenLoaded('bankAccount', function () {
-                return BankAccountResource::make($this->bankAccount);
             }),
 
             'details' => $this->whenLoaded('details', function () {

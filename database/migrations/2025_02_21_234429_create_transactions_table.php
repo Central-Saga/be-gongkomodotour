@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
-            $table->foreignId('bank_account_id')->constrained('bank_accounts')->onDelete('cascade');
+            $table->enum('bank_type', ['BCA', 'Mandiri']);
             $table->decimal('total_amount', 15, 2);
             $table->enum('payment_status', ['Menunggu Pembayaran', 'Lunas', 'Ditolak']);
             $table->timestamps();
