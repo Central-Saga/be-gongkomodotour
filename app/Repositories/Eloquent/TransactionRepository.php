@@ -31,7 +31,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getAllTransactions()
     {
-        return $this->model->with('details', 'booking')->get();
+        return $this->model->with('details', 'booking', 'assets')->get();
     }
 
     /**
@@ -43,7 +43,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function getTransactionById($id)
     {
         try {
-            return $this->model->with('details', 'booking')->findOrFail($id);
+            return $this->model->with('details', 'booking', 'assets')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Transaction with ID {$id} not found.");
             return null;
@@ -58,7 +58,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByName($name)
     {
-        return $this->model->with('details', 'booking')->where('name', $name)->first();
+        return $this->model->with('details', 'booking', 'assets')->where('name', $name)->first();
     }
 
     /**
@@ -69,7 +69,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByStatus($status)
     {
-        return $this->model->with('details', 'booking')->where('payment_status', $status)->get();
+        return $this->model->with('details', 'booking', 'assets')->where('payment_status', $status)->get();
     }
 
     /**

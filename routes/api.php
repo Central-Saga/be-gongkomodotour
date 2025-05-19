@@ -152,7 +152,7 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::patch('bookings/{id}/status', [BookingController::class, 'updateStatus']);
     });
     // Transactions
-    Route::middleware('permission:mengelola transaction')->group(function () {
+    Route::middleware('permission:mengelola transactions')->group(function () {
         Route::apiResource('transactions', TransactionController::class);
         Route::patch('transactions/{id}/status', [TransactionController::class, 'updateStatus']);
     });

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\DetailTransactionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\AssetResource;
 
 class TransactionResource extends JsonResource
 {
@@ -31,6 +32,10 @@ class TransactionResource extends JsonResource
 
             'details' => $this->whenLoaded('details', function () {
                 return DetailTransactionResource::collection($this->details);
+            }),
+
+            'assets' => $this->whenLoaded('assets', function () {
+                return AssetResource::collection($this->assets);
             }),
         ];
     }

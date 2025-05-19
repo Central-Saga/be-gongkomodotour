@@ -129,6 +129,25 @@ class TransactionService implements TransactionServiceInterface
 
             \Log::info('Transaction created successfully with ID: ' . $transaction->id);
 
+            // Proses upload file assets jika ada
+            if (isset($data['assets']) && is_array($data['assets'])) {
+                \Log::info('Processing assets upload');
+                foreach ($data['assets'] as $assetData) {
+                    if (isset($assetData['file'])) {
+                        $file = $assetData['file'];
+                        $path = $file->store('assets/transactions', 'public');
+
+                        $transaction->assets()->create([
+                            'title' => $assetData['title'],
+                            'description' => $assetData['description'] ?? null,
+                            'file_path' => $path,
+                            'file_url' => asset('storage/' . $path),
+                            'is_external' => $assetData['is_external'] ?? false,
+                        ]);
+                    }
+                }
+            }
+
             // Membuat detail transaksi untuk Hotel Request jika data tersedia
             if (isset($data['hotel_request_details']) && is_array($data['hotel_request_details'])) {
                 \Log::info('Processing hotel request details');
@@ -194,7 +213,7 @@ class TransactionService implements TransactionServiceInterface
 
             $this->clearTransactionCaches();
             // Muat relasi 'details' sebelum mengembalikannya
-            $result = $transaction->load('details', 'booking');
+            $result = $transaction->load('details', 'booking', 'assets');
             \Log::info('Transaction process completed successfully');
             return $result;
         } catch (\Exception $e) {
@@ -216,6 +235,25 @@ class TransactionService implements TransactionServiceInterface
         $transaction = $this->repository->getTransactionById($id);
         if ($transaction) {
             $this->repository->updateTransaction($id, $data);
+
+            // Proses upload file assets jika ada
+            if (isset($data['assets']) && is_array($data['assets'])) {
+                \Log::info('Processing assets upload for update');
+                foreach ($data['assets'] as $assetData) {
+                    if (isset($assetData['file'])) {
+                        $file = $assetData['file'];
+                        $path = $file->store('assets/transactions', 'public');
+
+                        $transaction->assets()->create([
+                            'title' => $assetData['title'],
+                            'description' => $assetData['description'] ?? null,
+                            'file_path' => $path,
+                            'file_url' => asset('storage/' . $path),
+                            'is_external' => $assetData['is_external'] ?? false,
+                        ]);
+                    }
+                }
+            }
 
             // Hapus semua detail transaksi lama terlebih dahulu
             $transaction->details()->delete();
@@ -278,7 +316,7 @@ class TransactionService implements TransactionServiceInterface
 
             $this->clearTransactionCaches();
             // Muat relasi 'details' sebelum mengembalikannya
-            return $transaction->load('details', 'booking');
+            return $transaction->load('details', 'booking', 'assets');
         }
         return false;
     }
