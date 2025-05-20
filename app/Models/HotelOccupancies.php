@@ -33,4 +33,9 @@ class HotelOccupancies extends Model
     {
         return $this->price * $totalPax * $nights;
     }
+
+    public function surcharges()
+    {
+        return $this->hasMany(Surcharge::class, 'hotel_occupancy_id', 'id');
+    }
 }

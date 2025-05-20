@@ -44,7 +44,6 @@ class TripsSeeder extends Seeder
                     ->has(TripPrices::factory()->count(6))
             )
             ->has(AdditionalFee::factory()->count(2))
-            ->has(Surcharge::factory()->count(1))
             ->create()
             ->each(function ($trip) use ($imageFiles) {
                 $this->createAssets($trip, $imageFiles);
@@ -65,7 +64,6 @@ class TripsSeeder extends Seeder
                     ->has(TripPrices::factory()->count(6))
             )
             ->has(AdditionalFee::factory()->count(2))
-            ->has(Surcharge::factory()->count(1))
             ->create()
             ->each(function ($trip) use ($imageFiles) {
                 $this->createAssets($trip, $imageFiles);
@@ -84,7 +82,6 @@ class TripsSeeder extends Seeder
                     ->has(TripPrices::factory()->count(6))
             )
             ->has(AdditionalFee::factory()->count(2))
-            ->has(Surcharge::factory()->count(1))
             ->create()
             ->each(function ($trip) use ($imageFiles) {
                 $this->createAssets($trip, $imageFiles);
@@ -103,7 +100,6 @@ class TripsSeeder extends Seeder
                     ->has(TripPrices::factory()->count(6))
             )
             ->has(AdditionalFee::factory()->count(2))
-            ->has(Surcharge::factory()->count(1))
             ->create()
             ->each(function ($trip) use ($imageFiles) {
                 $this->createAssets($trip, $imageFiles);
