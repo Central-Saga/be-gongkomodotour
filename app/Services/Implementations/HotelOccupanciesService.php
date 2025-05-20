@@ -104,7 +104,17 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
     public function createHotelOccupancies(array $data)
     {
         Log::info('Creating HotelOccupancies with data: ' . json_encode($data));
+        $surcharges = $data['surcharges'] ?? [];
+        unset($data['surcharges']);
+
         $result = $this->hotelOccupanciesRepository->createHotelOccupancies($data);
+
+        if ($result && !empty($surcharges)) {
+            foreach ($surcharges as $surcharge) {
+                $this->addSurcharge($result->id, $surcharge);
+            }
+        }
+
         $this->clearHotelOccupanciesCaches();
         return $result;
     }
@@ -160,5 +170,10 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
         Cache::forget(self::HOTELOCCUPANCIESS_ALL_CACHE_KEY);
         Cache::forget(self::HOTELOCCUPANCIESS_ACTIVE_CACHE_KEY);
         Cache::forget(self::HOTELOCCUPANCIESS_INACTIVE_CACHE_KEY);
+    }
+
+    public function addSurcharge($hotelOccupancyId, array $surchargeData)
+    {
+        return $this->hotelOccupanciesRepository->addSurcharge($hotelOccupancyId, $surchargeData);
     }
 }
