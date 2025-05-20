@@ -53,13 +53,6 @@ class TripResource extends JsonResource
                 return AdditionalFeeResource::collection($this->additionalFees);
             }),
 
-            'surcharges' => $this->whenLoaded('surcharges', function () {
-                return SurchargeResource::collection($this->surcharges->map(function ($surcharge) {
-                    $surcharge->surcharge_price = (float) $surcharge->surcharge_price;
-                    return $surcharge;
-                }));
-            }),
-
             'assets' => $this->whenLoaded('assets', function () {
                 return AssetResource::collection($this->assets);
             }),
