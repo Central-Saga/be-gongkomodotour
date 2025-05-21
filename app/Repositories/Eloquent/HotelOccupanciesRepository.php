@@ -169,4 +169,13 @@ class HotelOccupanciesRepository implements HotelOccupanciesRepositoryInterface
         }
         return null;
     }
+
+    public function addSurcharge($hotelOccupancyId, array $surchargeData)
+    {
+        $hotelOccupancy = $this->findHotelOccupancies($hotelOccupancyId);
+        if ($hotelOccupancy) {
+            return $hotelOccupancy->surcharges()->create($surchargeData);
+        }
+        return null;
+    }
 }

@@ -282,14 +282,6 @@ class TripService implements TripServiceInterface
                 }
             }
 
-            // Jika request memiliki surcharges, buat masing-masing surcharge
-            if (isset($data['surcharges'])) {
-                foreach ($data['surcharges'] as $surcharge) {
-                    $surcharge['trip_id'] = $trip->id;
-                    $this->surchargeRepository->createSurcharge($surcharge);
-                }
-            }
-
             // Jika request memiliki assets, buat masing-masing asset
             if (isset($data['assets'])) {
                 foreach ($data['assets'] as $asset) {
@@ -306,7 +298,7 @@ class TripService implements TripServiceInterface
             // Clear all related caches
             $this->clearTripCaches();
 
-            return $trip->fresh(['tripDuration.itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
+            return $trip->fresh(['tripDuration.itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'assets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Failed to create trip: {$e->getMessage()}");
@@ -439,24 +431,6 @@ class TripService implements TripServiceInterface
                 $this->additionalFeeRepository->deleteAdditionalFeesNotIn($trip->id, $payloadAdditionalFeeIds);
             }
 
-            // Update surcharges secara parsial jika ada di payload
-            if (isset($data['surcharges'])) {
-                $payloadSurchargeIds = [];
-                foreach ($data['surcharges'] as $surchargeData) {
-                    $surchargeData['trip_id'] = $trip->id;
-                    if (isset($surchargeData['id'])) {
-                        $this->surchargeRepository->updateSurcharge($surchargeData['id'], $surchargeData);
-                        $payloadSurchargeIds[] = $surchargeData['id'];
-                    } else {
-                        $newSurcharge = $this->surchargeRepository->createSurcharge($surchargeData);
-                        if ($newSurcharge && isset($newSurcharge->id)) {
-                            $payloadSurchargeIds[] = $newSurcharge->id;
-                        }
-                    }
-                }
-                $this->surchargeRepository->deleteSurchargesNotIn($trip->id, $payloadSurchargeIds);
-            }
-
             // Update assets secara parsial jika ada di payload
             if (isset($data['assets'])) {
                 $payloadAssetIds = [];
@@ -488,7 +462,7 @@ class TripService implements TripServiceInterface
             // Clear cache yang terkait
             $this->clearTripCaches($id);
 
-            return $trip->fresh(['tripDuration.itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'surcharges', 'assets']);
+            return $trip->fresh(['tripDuration.itineraries', 'flightSchedule', 'tripDuration.tripPrices', 'additionalFees', 'assets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating trip: ' . $e->getMessage());

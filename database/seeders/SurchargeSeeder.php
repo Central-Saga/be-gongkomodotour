@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Surcharge;
+use App\Models\HotelOccupancies;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,11 @@ class SurchargeSeeder extends Seeder
      */
     public function run(): void
     {
-        Surcharge::factory()->count(10)->create();
+        $hotelOccupancyIds = HotelOccupancies::pluck('id')->toArray();
+        Surcharge::factory()->count(10)->create([
+            'hotel_occupancy_id' => function () use ($hotelOccupancyIds) {
+                return $hotelOccupancyIds[array_rand($hotelOccupancyIds)];
+            }
+        ]);
     }
 }
