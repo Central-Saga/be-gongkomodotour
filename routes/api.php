@@ -55,6 +55,8 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/faq', [FaqController::class, 'index']);
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::get('/blogs', [BlogController::class, 'index']);
+    Route::get('/blogs/{id}', [BlogController::class, 'show']);
+    
 
     // Public Booking Routes
     Route::post('/bookings', [BookingController::class, 'store']);
