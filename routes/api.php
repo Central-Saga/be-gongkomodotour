@@ -34,6 +34,15 @@ Route::get('/cors-test', function () {
     ]);
 });
 
+// Route debugging server
+Route::get('/debug-server', function () {
+    return response()->json([
+        'message' => 'Server debugging successful',
+        'status' => 'success',
+        'timestamp' => now()->toIso8601String()
+    ]);
+});
+
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/logout', [
@@ -56,7 +65,7 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::get('/blogs', [BlogController::class, 'index']);
     Route::get('/blogs/{id}', [BlogController::class, 'show']);
-    
+
 
     // Public Booking Routes
     Route::post('/bookings', [BookingController::class, 'store']);
