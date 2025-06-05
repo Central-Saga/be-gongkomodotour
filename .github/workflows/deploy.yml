@@ -1,0 +1,66 @@
+# Nama workflow yang akan muncul di tab Actions GitHub
+name: Deploy Laravel API to Jagoan Hosting
+
+# Pemicu: Kapan workflow ini dijalankan?
+on:
+  # Setiap kali ada 'push' ke branch 'main'
+  push:
+    branches:
+      - main  # Ganti ke 'master' jika itu nama branch utama Anda
+
+# Daftar pekerjaan yang akan dilakukan
+jobs:
+  deploy:
+    # Nama pekerjaan
+    name: Deploy to Server
+    # Menggunakan server virtual Ubuntu terbaru dari GitHub
+    runs-on: ubuntu-latest
+
+    # Langkah-langkah yang akan dieksekusi secara berurutan
+    steps:
+    # Langkah 1: Mengunduh kode dari repository Anda ke server virtual GitHub
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # Langkah 2: Menyiapkan lingkungan PHP
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3' # Pastikan versi ini sesuai dengan proyek Anda
+
+    # Langkah 3: Menginstall semua dependensi proyek dengan Composer
+    - name: Install Composer Dependencies
+      run: composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
+
+    # Langkah 4: Menyalin file proyek dari server virtual GitHub ke server Jagoan Hosting Anda
+    - name: Deploy Files to Server
+      uses: easingthemes/ssh-deploy@v5.0.0
+      with:
+        REMOTE_HOST: ${{ secrets.SSH_HOST }}
+        REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+        REMOTE_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        REMOTE_PORT: ${{ secrets.SSH_PORT }}
+        SOURCE: "./"
+        TARGET: ${{ secrets.SERVER_PATH }}
+        # Mengecualikan file/folder ini agar tidak ditimpa di server Anda
+        EXCLUDE: "/.git/, /.github/, /storage/, /.env"
+
+    # Langkah 5: Menjalankan perintah akhir di server Jagoan Hosting setelah file tercopy
+    - name: Run Final Commands on Server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          cd ${{ secrets.SERVER_PATH }}
+          echo "✅ Deployment successful. Running final commands..."
+
+          # Menjalankan migrasi database
+          php artisan migrate --force
+
+          # Mengoptimalkan aplikasi untuk mode produksi
+          php artisan optimize
+
+          echo "⚡️ CI/CD process finished successfully."
