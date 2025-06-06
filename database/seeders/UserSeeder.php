@@ -27,32 +27,32 @@ class UserSeeder extends Seeder
 
         // Create additional users as needed using the factory
         // Example: create an admin user
-        $admin = User::factory()->create([
-            'name'  => 'Admin User',
-            'email' => 'admin@example.com',
-        ]);
-        $admin->assignRole('Admin');
+        // $admin = User::factory()->create([
+        //     'name'  => 'Admin User',
+        //     'email' => 'admin@example.com',
+        // ]);
+        // $admin->assignRole('Admin');
         // Remove the user from the default role
-        $admin->removeRole('Pelanggan');
+        // $admin->removeRole('Pelanggan');
 
         // Create a pelanggan user
-        $pelanggan = User::factory()
-            ->create([
-                'name'  => 'Pelanggan User',
-                'email' => 'pelanggan@example.com',
-            ]);
-        $pelanggan->assignRole('Pelanggan');
-        CustomersFactory::new()->create(['user_id' => $pelanggan->id]);
+        // $pelanggan = User::factory()
+        //     ->create([
+        //         'name'  => 'Pelanggan User',
+        //         'email' => 'pelanggan@example.com',
+        //     ]);
+        // $pelanggan->assignRole('Pelanggan');
+        // CustomersFactory::new()->create(['user_id' => $pelanggan->id]);
 
         // Create 10 more pelanggan users
-        for ($i = 1; $i <= 20; $i++) {
-            $user = User::factory()
-                ->create([
-                    'name'  => 'Pelanggan ' . $i,
-                    'email' => 'pelanggan' . $i . '@example.com',
-                ]);
-            $user->assignRole('Pelanggan');
-            CustomersFactory::new()->create(['user_id' => $user->id]);
-        }
+        // for ($i = 1; $i <= 20; $i++) {
+        //     $user = User::factory()
+        //         ->create([
+        //             'name'  => 'Pelanggan ' . $i,
+        //             'email' => 'pelanggan' . $i . '@example.com',
+        //         ]);
+        //     $user->assignRole('Pelanggan');
+        //     CustomersFactory::new()->create(['user_id' => $user->id]);
+        // }
     }
 }
