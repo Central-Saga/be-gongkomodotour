@@ -3,8 +3,3 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/gongkomo/api.gongkomodotour.com/
     - /bin/cp -r * $DEPLOYPATH
-    - |
-      cd $DEPLOYPATH && \
-      composer install --no-dev --optimize-autoloader && \
-      php artisan migrate --force && \
-      php artisan optimize:clear
