@@ -47,6 +47,8 @@ jobs:
             cp -r /home/${{ secrets.SSH_USER }}/repositories/be-gongkomodotour/* /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/ || echo "Copy failed"
             echo "== CD TO TARGET =="
             cd /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/ || exit 1
+            echo "== RUN COMPOSER INSTALL =="
+            composer install --no-dev --optimize-autoloader || echo "Composer install failed"
             echo "== RUN ARTISAN MIGRATE =="
             php artisan migrate --force || echo "Migrate failed"
             echo "== RUN CONFIG CACHE =="
