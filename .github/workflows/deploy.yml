@@ -40,7 +40,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 45022
           script: |
-            rsync -a --delete /home/${{ secrets.SSH_USER }}/repositories/be-gongkomodotour/ /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/
+            rm -rf /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/*
+            cp -r /home/${{ secrets.SSH_USER }}/repositories/be-gongkomodotour/* /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/
             cd /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/
             php artisan migrate --force
             php artisan config:cache
