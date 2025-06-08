@@ -1,0 +1,31 @@
+name: Deploy Laravel via FTP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /home/gongkomo/api.gongkomodotour.com/
+          exclude: |
+            **/.git*
+            **/node_modules/**
+            **/tests/**
+            **/.github/**
+            **/storage/**
+            **/.env
