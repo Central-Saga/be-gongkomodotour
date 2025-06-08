@@ -40,10 +40,17 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 45022
           script: |
-            rm -rf /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/*
-            cp -r /home/${{ secrets.SSH_USER }}/repositories/be-gongkomodotour/* /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/
-            cd /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan storage:link
+            set -e
+            echo "== STARTING CLEAN TARGET =="
+            rm -rf /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/* || echo "Gagal hapus folder, mungkin kosong?"
+            echo "== COPYING FILES =="
+            cp -r /home/${{ secrets.SSH_USER }}/repositories/be-gongkomodotour/* /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/ || echo "Copy failed"
+            echo "== CD TO TARGET =="
+            cd /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/ || exit 1
+            echo "== RUN ARTISAN MIGRATE =="
+            php artisan migrate --force || echo "Migrate failed"
+            echo "== RUN CONFIG CACHE =="
+            php artisan config:cache || echo "Config cache failed"
+            php artisan route:cache || echo "Route cache failed"
+            php artisan storage:link || echo "Storage link failed"
+            echo "== DEPLOY DONE =="
