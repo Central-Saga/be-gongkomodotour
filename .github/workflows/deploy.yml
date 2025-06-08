@@ -1,4 +1,4 @@
-name: Deploy Laravel ke Jagoan Hosting
+name: Deploy Project Laravel ke Jagoan Hosting
 
 on:
   push:
