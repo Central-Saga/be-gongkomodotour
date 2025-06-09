@@ -116,7 +116,7 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
         }
 
         $this->clearHotelOccupanciesCaches();
-        return $result;
+        return $result->load('surcharges');
     }
 
     /**
@@ -128,9 +128,33 @@ class HotelOccupanciesService implements HotelOccupanciesServiceInterface
      */
     public function updateHotelOccupancies($id, array $data)
     {
+        $surcharges = $data['surcharges'] ?? [];
+        unset($data['surcharges']);
+
         $result = $this->hotelOccupanciesRepository->updateHotelOccupancies($id, $data);
+
+        if ($result && !empty($surcharges)) {
+            // Hapus surcharges yang tidak ada dalam request
+            $existingSurchargeIds = $result->surcharges()->pluck('id')->toArray();
+            $requestedSurchargeIds = collect($surcharges)->pluck('id')->filter()->toArray();
+            $surchargesToDelete = array_diff($existingSurchargeIds, $requestedSurchargeIds);
+
+            if (!empty($surchargesToDelete)) {
+                $result->surcharges()->whereIn('id', $surchargesToDelete)->delete();
+            }
+
+            // Update atau create surcharges
+            foreach ($surcharges as $surcharge) {
+                if (isset($surcharge['id'])) {
+                    $result->surcharges()->where('id', $surcharge['id'])->update($surcharge);
+                } else {
+                    $this->addSurcharge($result->id, $surcharge);
+                }
+            }
+        }
+
         $this->clearHotelOccupanciesCaches();
-        return $result;
+        return $result->load('surcharges');
     }
 
     /**
