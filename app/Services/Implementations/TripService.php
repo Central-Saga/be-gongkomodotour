@@ -240,6 +240,11 @@ class TripService implements TripServiceInterface
             $trip = $this->tripRepository->createTrip($tripData);
             Log::info($trip);
 
+            // Validasi bahwa trip berhasil dibuat
+            if (!$trip || !isset($trip->id)) {
+                throw new \Exception("Trip creation failed: repository returned invalid trip object.");
+            }
+
             // Buat trip durations beserta itineraries dan trip prices jika ada
             if (isset($data['trip_durations'])) {
                 foreach ($data['trip_durations'] as $duration) {
@@ -253,14 +258,20 @@ class TripService implements TripServiceInterface
                     if (isset($duration['itineraries'])) {
                         foreach ($duration['itineraries'] as $itinerary) {
                             $itinerary['trip_duration_id'] = $tripDuration->id;
-                            $this->itinerariesRepository->createItineraries($itinerary);
+                            $newItinerary = $this->itinerariesRepository->createItineraries($itinerary);
+                            if (!$newItinerary || !isset($newItinerary->id)) {
+                                throw new \Exception("Itinerary creation failed: repository returned invalid itinerary object.");
+                            }
                         }
                     }
 
                     if (isset($duration['prices'])) {
                         foreach ($duration['prices'] as $price) {
                             $price['trip_duration_id'] = $tripDuration->id;
-                            $this->tripPricesRepository->createTripPrices($price);
+                            $newPrice = $this->tripPricesRepository->createTripPrices($price);
+                            if (!$newPrice || !isset($newPrice->id)) {
+                                throw new \Exception("Trip price creation failed: repository returned invalid trip price object.");
+                            }
                         }
                     }
                 }
@@ -270,7 +281,10 @@ class TripService implements TripServiceInterface
             if (isset($data['flight_schedules'])) {
                 foreach ($data['flight_schedules'] as $flightSchedule) {
                     $flightSchedule['trip_id'] = $trip->id;
-                    $this->flightScheduleRepository->createFlightSchedule($flightSchedule);
+                    $newFlightSchedule = $this->flightScheduleRepository->createFlightSchedule($flightSchedule);
+                    if (!$newFlightSchedule || !isset($newFlightSchedule->id)) {
+                        throw new \Exception("Flight schedule creation failed: repository returned invalid flight schedule object.");
+                    }
                 }
             }
 
@@ -278,7 +292,10 @@ class TripService implements TripServiceInterface
             if (isset($data['additional_fees'])) {
                 foreach ($data['additional_fees'] as $fee) {
                     $fee['trip_id'] = $trip->id;
-                    $this->additionalFeeRepository->createAdditionalFee($fee);
+                    $newFee = $this->additionalFeeRepository->createAdditionalFee($fee);
+                    if (!$newFee || !isset($newFee->id)) {
+                        throw new \Exception("Additional fee creation failed: repository returned invalid additional fee object.");
+                    }
                 }
             }
 
@@ -289,7 +306,10 @@ class TripService implements TripServiceInterface
                         'model_type' => 'trip',
                         'model_id' => $trip->id
                     ]);
-                    $this->assetService->addAsset('trip', $trip->id, $assetData);
+                    $newAsset = $this->assetService->addAsset('trip', $trip->id, $assetData);
+                    if (!$newAsset || !isset($newAsset->id)) {
+                        throw new \Exception("Asset creation failed: service returned invalid asset object.");
+                    }
                 }
             }
 
