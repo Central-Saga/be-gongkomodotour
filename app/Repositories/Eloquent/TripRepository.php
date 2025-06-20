@@ -146,9 +146,16 @@ class TripRepository implements TripRepositoryInterface
     public function createTrip(array $data)
     {
         try {
-            return $this->trips->create($data);
+            Log::info('Creating trip with data:', $data);
+            $trip = $this->trips->create($data);
+            Log::info('Trip created successfully:', ['trip_id' => $trip->id ?? 'null', 'trip' => $trip]);
+            return $trip;
         } catch (\Exception $e) {
-            Log::error("Failed to create trip: {$e->getMessage()}");
+            Log::error("Failed to create trip: {$e->getMessage()}", [
+                'data' => $data,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return null;
         }
     }

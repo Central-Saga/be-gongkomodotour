@@ -97,9 +97,9 @@ class TripStoreRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'trip_durations' => $this->convertPricesToFloat($this->trip_durations ?? []),
-            'additional_fees' => $this->convertAdditionalFeesToFloat($this->additional_fees ?? []),
-            'surcharges' => $this->convertSurchargesToFloat($this->surcharges ?? []),
+            'trip_durations' => $this->convertPricesToFloat($this->input('trip_durations', [])),
+            'additional_fees' => $this->convertAdditionalFeesToFloat($this->input('additional_fees', [])),
+            'surcharges' => $this->convertSurchargesToFloat($this->input('surcharges', [])),
             'has_boat' => (bool) $this->has_boat
         ]);
 
@@ -111,7 +111,7 @@ class TripStoreRequest extends FormRequest
                         $fee['is_required'] = (bool) $fee['is_required'];
                     }
                     return $fee;
-                }, $this->additional_fees)
+                }, $this->input('additional_fees', []))
             ]);
         }
     }
