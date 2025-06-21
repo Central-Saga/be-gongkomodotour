@@ -8,6 +8,7 @@ use App\Http\Resources\TripResource;
 use App\Http\Requests\TripStoreRequest;
 use App\Http\Requests\TripUpdateRequest;
 use App\Services\Contracts\TripServiceInterface;
+use Illuminate\Support\Facades\Log;
 
 class TripController extends Controller
 {
@@ -66,6 +67,8 @@ class TripController extends Controller
      */
     public function store(TripStoreRequest $request)
     {
+        Log::info('TripController::store called with validated data:', $request->validated());
+
         $trip = $this->tripService->createTrip($request->validated());
         if (!$trip) {
             return response()->json(['message' => 'Gagal membuat trip'], 400);

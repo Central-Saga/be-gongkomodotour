@@ -219,6 +219,8 @@ class TripService implements TripServiceInterface
     public function createTrip(array $data)
     {
         try {
+            Log::info('TripService::createTrip called with data:', $data);
+
             DB::beginTransaction();
 
             // Buat trip utama
@@ -237,8 +239,10 @@ class TripService implements TripServiceInterface
                 'has_hotel',
                 'destination_count'
             ]);
+            Log::info('Trip data to be created:', $tripData);
+
             $trip = $this->tripRepository->createTrip($tripData);
-            Log::info($trip);
+            Log::info('Trip creation result:', ['trip' => $trip, 'trip_id' => $trip->id ?? 'null']);
 
             // Validasi bahwa trip berhasil dibuat
             if (!$trip || !isset($trip->id)) {

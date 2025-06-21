@@ -22,7 +22,7 @@ class TripUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => 'sometimes|required|string|max:255',
+            'name'          => 'sometimes|required|string|max:50',
             'include'       => 'sometimes|required|string',
             'exclude'       => 'sometimes|required|string',
             'note'          => 'sometimes|nullable|string',
