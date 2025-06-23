@@ -17,23 +17,18 @@ class TestimonialResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id'           => $this->id,
-            'customer_id'  => $this->customer_id,
-            'trip_id'      => $this->trip_id,
-            'rating'       => $this->rating,
-            'review'       => $this->review,
-            'is_approved'  => $this->is_approved,
-            'is_highlight' => $this->is_highlight,
-            'created_at'   => $this->created_at,
-            'updated_at'   => $this->updated_at,
-
-            'customer' => $this->whenLoaded('customer', function () {
-                return new CustomerResource($this->customer);
-            }),
-
-            'user' => $this->whenLoaded('customer.user', function () {
-                return new UserResource($this->customer->user);
-            }),
+            'id'               => $this->id,
+            'customer_name'    => $this->customer_name,
+            'customer_email'   => $this->customer_email,
+            'customer_phone'   => $this->customer_phone,
+            'trip_id'          => $this->trip_id,
+            'rating'           => $this->rating,
+            'review'           => $this->review,
+            'is_approved'      => $this->is_approved,
+            'is_highlight'     => $this->is_highlight,
+            'source'           => $this->source,
+            'created_at'       => $this->created_at,
+            'updated_at'       => $this->updated_at,
 
             'trip' => $this->whenLoaded('trip', function () {
                 return new TripResource($this->trip);

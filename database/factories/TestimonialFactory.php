@@ -3,9 +3,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Customers;
 use App\Models\Testimonial;
-use App\Models\User;
 use App\Models\Trips;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -51,12 +49,15 @@ class TestimonialFactory extends Factory
         ];
 
         return [
-            'customer_id'  => Customers::inRandomOrder()->value('id') ?? Customers::factory(),
-            'trip_id'      => Trips::inRandomOrder()->value('id') ?? Trips::factory(),
-            'rating'       => $this->faker->numberBetween(4, 5), // Biasakan rating tinggi untuk testimonial yang ditampilkan
-            'review'       => $this->faker->randomElement($reviews),
-            'is_approved'  => true, // Semua testimonial disetujui
-            'is_highlight' => $this->faker->boolean(20), // 20% chance untuk menjadi highlight
+            'customer_name'    => $this->faker->name(),
+            'customer_email'   => $this->faker->optional(0.8)->email(),
+            'customer_phone'   => $this->faker->optional(0.6)->phoneNumber(),
+            'trip_id'          => Trips::inRandomOrder()->value('id') ?? Trips::factory(),
+            'rating'           => $this->faker->numberBetween(4, 5), // Biasakan rating tinggi untuk testimonial yang ditampilkan
+            'review'           => $this->faker->randomElement($reviews),
+            'is_approved'      => true, // Semua testimonial disetujui
+            'is_highlight'     => $this->faker->boolean(20), // 20% chance untuk menjadi highlight
+            'source'           => 'internal',
         ];
     }
 }

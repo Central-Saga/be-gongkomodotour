@@ -19,8 +19,15 @@ class TestimonialSeeder extends Seeder
 
         // Buat 10 testimonial untuk setiap trip
         foreach ($trips as $trip) {
-            Testimonial::factory()->count(10)->create();
+            Testimonial::factory()->count(10)->create([
+                'trip_id' => $trip->id
+            ]);
         }
+
+        // Buat beberapa testimonial internal (tanpa trip_id)
+        Testimonial::factory()->count(20)->create([
+            'trip_id' => null
+        ]);
 
         // Pastikan ada 10 testimonial yang di-highlight
         $highlightedCount = Testimonial::where('is_highlight', true)->count();

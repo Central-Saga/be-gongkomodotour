@@ -18,14 +18,16 @@ class Testimonial extends Model
      *
      * @var array
      */
-    // filepath: /c:/laragon/www/be-gongkomodotour/app/Models/Testimonial.php
     protected $fillable = [
-        'customer_id',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
         'trip_id',
         'rating',
         'review',
         'is_approved',
         'is_highlight',
+        'source',
     ];
 
     protected $casts = [
@@ -34,18 +36,34 @@ class Testimonial extends Model
     ];
 
     /**
-     * Relasi ke Customers.
-     */
-    public function customer()
-    {
-        return $this->belongsTo(Customers::class, 'customer_id');
-    }
-
-    /**
      * Relasi ke Trips.
      */
     public function trip()
     {
         return $this->belongsTo(Trips::class, 'trip_id');
+    }
+
+    /**
+     * Scope untuk testimonial internal
+     */
+    public function scopeInternal($query)
+    {
+        return $query->where('source', 'internal');
+    }
+
+    /**
+     * Scope untuk testimonial yang disetujui
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
+
+    /**
+     * Scope untuk testimonial yang di-highlight
+     */
+    public function scopeHighlighted($query)
+    {
+        return $query->where('is_highlight', true);
     }
 }

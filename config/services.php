@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'google' => [
+        'places_api_key' => env('AIzaSyAGXCq30VqVjej96v0lyj3LWDntgXFU3e0'),
+        'place_id' => env('ChIJHQWtsFhA0i0RekulUfAA9D0'), // Place ID untuk Gong Komodo Tour
+    ],
+
 ];

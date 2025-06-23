@@ -56,6 +56,9 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/trips/{id}', [TripController::class, 'show']);
     Route::get('/highlighted-trips', [TripController::class, 'getHighlightedTrips']);
     Route::get('/testimonials', [TestimonialController::class, 'index']);
+    Route::get('/all-testimonials', [TestimonialController::class, 'getAllTestimonials']);
+    Route::get('/highlighted-testimonials', [TestimonialController::class, 'getHighlightedTestimonials']);
+    Route::get('/google-reviews', [TestimonialController::class, 'getGoogleReviews']);
     Route::get('/boats', [BoatController::class, 'index']);
     Route::get('/boats/{id}', [BoatController::class, 'show']);
     Route::get('/cabins', [CabinController::class, 'index']);
