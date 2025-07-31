@@ -32,6 +32,9 @@ class BoatResource extends JsonResource
             'assets_cabin'      => $this->whenLoaded('cabin.assets', function () {
                 return AssetResource::collection($this->cabin->assets);
             }),
+            'trips'             => $this->whenLoaded('trips', function () {
+                return TripResource::collection($this->trips);
+            }),
         ];
     }
 }

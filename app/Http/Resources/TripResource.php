@@ -17,6 +17,7 @@ class TripResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'boat_id' => $this->boat_id,
             'include' => $this->include,
             'exclude' => $this->exclude,
             'note' => $this->note,
@@ -29,8 +30,8 @@ class TripResource extends JsonResource
             'destination_count' => $this->destination_count,
             'has_boat' => (bool) $this->has_boat,
             'has_hotel' => (bool) $this->has_hotel,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
 
             // Relasi
             'itineraries' => $this->whenLoaded('tripDuration.itineraries', function () {
@@ -55,6 +56,14 @@ class TripResource extends JsonResource
 
             'assets' => $this->whenLoaded('assets', function () {
                 return AssetResource::collection($this->assets);
+            }),
+
+            'boat' => $this->whenLoaded('boat', function () {
+                return new BoatResource($this->boat);
+            }),
+
+            'testimonials' => $this->whenLoaded('testimonials', function () {
+                return TestimonialResource::collection($this->testimonials);
             }),
         ];
     }

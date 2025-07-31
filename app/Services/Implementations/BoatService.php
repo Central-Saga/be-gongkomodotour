@@ -278,4 +278,15 @@ class BoatService implements BoatServiceInterface
             $this->clearBoatCaches($id);
         }
     }
+
+    /**
+     * Mengambil boat dengan trips yang terkait.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getBoatWithTrips($id)
+    {
+        return $this->boatRepository->getBoatWithTrips($id);
+    }
 }

@@ -226,6 +226,7 @@ class TripService implements TripServiceInterface
             // Buat trip utama
             $tripData = Arr::only($data, [
                 'name',
+                'boat_id',
                 'include',
                 'exclude',
                 'note',
@@ -345,6 +346,7 @@ class TripService implements TripServiceInterface
             // Update data trip utama secara parsial
             $tripData = Arr::only($data, [
                 'name',
+                'boat_id',
                 'include',
                 'exclude',
                 'note',
@@ -565,5 +567,33 @@ class TripService implements TripServiceInterface
         if ($tripId) {
             Cache::forget(self::TRIP_DETAIL_CACHE_KEY . $tripId);
         }
+    }
+
+    /**
+     * Mengambil trip berdasarkan boat ID.
+     *
+     * @param int $boatId
+     * @return mixed
+     */
+    public function getTripsByBoatId($boatId)
+    {
+        $cacheKey = 'trips.boat_id.' . $boatId;
+        return Cache::remember($cacheKey, 3600, function () use ($boatId) {
+            return $this->tripRepository->getTripsByBoatId($boatId);
+        });
+    }
+
+    /**
+     * Mengambil trip dengan relasi boat.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getTripWithBoat($id)
+    {
+        $cacheKey = 'trip.with_boat.' . $id;
+        return Cache::remember($cacheKey, 3600, function () use ($id) {
+            return $this->tripRepository->getTripWithBoat($id);
+        });
     }
 }

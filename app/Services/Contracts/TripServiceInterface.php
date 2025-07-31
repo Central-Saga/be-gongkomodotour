@@ -121,4 +121,20 @@ interface TripServiceInterface
      * @return mixed
      */
     public function updateTripStatus($id, $status);
+
+    /**
+     * Mengambil trip berdasarkan boat ID.
+     *
+     * @param int $boatId
+     * @return mixed
+     */
+    public function getTripsByBoatId($boatId);
+
+    /**
+     * Mengambil trip dengan relasi boat.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getTripWithBoat($id);
 }

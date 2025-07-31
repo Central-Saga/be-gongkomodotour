@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Trips;
+use App\Models\Boat;
 use App\Models\Surcharge;
 use App\Models\TripPrices;
 use App\Models\Itineraries;
@@ -29,11 +30,14 @@ class TripsSeeder extends Seeder
             Storage::makeDirectory('public/trip');
         }
 
+        // Dapatkan semua boat yang tersedia
+        $boats = Boat::all();
+
         // Generate 2 highlighted trips with boat and 3 destinations
         Trips::factory()
             ->count(2)
             ->highlighted()
-            ->withBoat()
+            ->withBoat($boats->random()->id)
             ->withHotel()
             ->withDestinationCount(3)
             ->has(FlightSchedule::factory()->count(1))
@@ -72,7 +76,7 @@ class TripsSeeder extends Seeder
         // Generate 4 non-highlighted trips with boat and random destinations (1-5)
         Trips::factory()
             ->count(4)
-            ->withBoat()
+            ->withBoat($boats->random()->id)
             ->withHotel()
             ->has(FlightSchedule::factory()->count(1))
             ->has(

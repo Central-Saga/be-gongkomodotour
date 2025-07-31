@@ -23,6 +23,7 @@ class TripUpdateRequest extends FormRequest
     {
         return [
             'name'          => 'sometimes|required|string|max:50',
+            'boat_id'       => 'sometimes|nullable|exists:boat,id',
             'include'       => 'sometimes|required|string',
             'exclude'       => 'sometimes|required|string',
             'note'          => 'sometimes|nullable|string',

@@ -101,4 +101,20 @@ interface TripRepositoryInterface
      * @return mixed
      */
     public function getTripByDestinationCountRange($min, $max);
+
+    /**
+     * Mengambil trip berdasarkan boat ID.
+     *
+     * @param int $boatId
+     * @return mixed
+     */
+    public function getTripsByBoatId($boatId);
+
+    /**
+     * Mengambil trip dengan relasi boat.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getTripWithBoat($id);
 }

@@ -23,6 +23,7 @@ class TripStoreRequest extends FormRequest
     {
         return [
             'name'          => 'required|string|max:50',
+            'boat_id'       => 'nullable|exists:boat,id',
             'include'       => 'required|string',
             'exclude'       => 'required|string',
             'note'          => 'nullable|string',

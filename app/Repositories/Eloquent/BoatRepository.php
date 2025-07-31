@@ -101,4 +101,15 @@ class BoatRepository implements BoatRepositoryInterface
         }
         return null;
     }
+
+    /**
+     * Mengambil trips yang terkait dengan boat.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getBoatWithTrips($id)
+    {
+        return $this->model->with(['cabin', 'assets', 'cabin.assets', 'trips'])->findOrFail($id);
+    }
 }

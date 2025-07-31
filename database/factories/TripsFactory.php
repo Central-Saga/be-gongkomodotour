@@ -57,6 +57,7 @@ class TripsFactory extends Factory
 
         return [
             'name' => $this->faker->randomElement($tripNames),
+            'boat_id' => null, // Will be set in seeder if needed
             'include' => $this->faker->randomElement($includes),
             'exclude' => $this->faker->randomElement($excludes),
             'note' => 'Valid for Low Season; additional charges apply during High/Peak Seasons.',
@@ -79,15 +80,7 @@ class TripsFactory extends Factory
         return $this->state(['is_highlight' => 'Yes']);
     }
 
-    public function withBoat()
-    {
-        return $this->state(['has_boat' => true]);
-    }
 
-    public function withoutBoat()
-    {
-        return $this->state(['has_boat' => false]);
-    }
 
     public function withHotel()
     {
@@ -102,5 +95,21 @@ class TripsFactory extends Factory
     public function withDestinationCount($count)
     {
         return $this->state(['destination_count' => $count]);
+    }
+
+    public function withBoat($boatId = null)
+    {
+        return $this->state([
+            'boat_id' => $boatId,
+            'has_boat' => true
+        ]);
+    }
+
+    public function withoutBoat()
+    {
+        return $this->state([
+            'boat_id' => null,
+            'has_boat' => false
+        ]);
     }
 }
