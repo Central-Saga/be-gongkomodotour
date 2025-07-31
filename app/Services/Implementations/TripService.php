@@ -238,7 +238,9 @@ class TripService implements TripServiceInterface
                 'is_highlight',
                 'has_boat',
                 'has_hotel',
-                'destination_count'
+                'destination_count',
+                'operational_days',
+                'tentation'
             ]);
             Log::info('Trip data to be created:', $tripData);
 
@@ -358,7 +360,9 @@ class TripService implements TripServiceInterface
                 'is_highlight',
                 'has_boat',
                 'has_hotel',
-                'destination_count'
+                'destination_count',
+                'operational_days',
+                'tentation'
             ]);
             $trip = $this->tripRepository->updateTrip($id, $tripData);
             if (!$trip || !isset($trip->id)) {
@@ -594,6 +598,34 @@ class TripService implements TripServiceInterface
         $cacheKey = 'trip.with_boat.' . $id;
         return Cache::remember($cacheKey, 3600, function () use ($id) {
             return $this->tripRepository->getTripWithBoat($id);
+        });
+    }
+
+    /**
+     * Mengambil trip berdasarkan tentation.
+     *
+     * @param string $tentation
+     * @return mixed
+     */
+    public function getTripByTentation($tentation)
+    {
+        $cacheKey = 'trips.tentation.' . $tentation;
+        return Cache::remember($cacheKey, 3600, function () use ($tentation) {
+            return $this->tripRepository->getTripByTentation($tentation);
+        });
+    }
+
+    /**
+     * Mengambil trip berdasarkan operational day.
+     *
+     * @param string $day
+     * @return mixed
+     */
+    public function getTripByOperationalDay($day)
+    {
+        $cacheKey = 'trips.operational_day.' . $day;
+        return Cache::remember($cacheKey, 3600, function () use ($day) {
+            return $this->tripRepository->getTripByOperationalDay($day);
         });
     }
 }

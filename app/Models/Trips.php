@@ -27,11 +27,14 @@ class Trips extends Model
         'destination_count',
         'has_boat',
         'has_hotel',
+        'operational_days',
+        'tentation',
     ];
 
     protected $casts = [
         'has_boat' => 'boolean',
         'has_hotel' => 'boolean',
+        'operational_days' => 'array',
     ];
 
     public function flightSchedule()
@@ -62,5 +65,48 @@ class Trips extends Model
     public function boat()
     {
         return $this->belongsTo(Boat::class, 'boat_id');
+    }
+
+    /**
+     * Check if trip operates on specific day
+     *
+     * @param string $day
+     * @return bool
+     */
+    public function operatesOnDay($day)
+    {
+        if (!$this->operational_days) {
+            return true; // If no operational days set, assume operates every day
+        }
+
+        return in_array($day, $this->operational_days);
+    }
+
+    /**
+     * Get available operational days
+     *
+     * @return array
+     */
+    public static function getAvailableDays()
+    {
+        return [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu'
+        ];
+    }
+
+    /**
+     * Check if trip is tentation
+     *
+     * @return bool
+     */
+    public function isTentation()
+    {
+        return $this->tentation === 'Yes';
     }
 }

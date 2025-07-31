@@ -30,6 +30,8 @@ class TripResource extends JsonResource
             'destination_count' => $this->destination_count,
             'has_boat' => (bool) $this->has_boat,
             'has_hotel' => (bool) $this->has_hotel,
+            'operational_days' => $this->operational_days,
+            'tentation' => $this->tentation,
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
 

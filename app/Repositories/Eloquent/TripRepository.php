@@ -274,4 +274,33 @@ class TripRepository implements TripRepositoryInterface
     {
         return $this->trips->with(['boat', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->findOrFail($id);
     }
+
+    /**
+     * Mengambil trip berdasarkan tentation.
+     *
+     * @param string $tentation
+     * @return mixed
+     */
+    public function getTripByTentation($tentation)
+    {
+        return $this->trips->with(['boat', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where('tentation', $tentation)
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan operational day.
+     *
+     * @param string $day
+     * @return mixed
+     */
+    public function getTripByOperationalDay($day)
+    {
+        return $this->trips->with(['boat', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where(function ($query) use ($day) {
+                $query->whereNull('operational_days')
+                      ->orWhereJsonContains('operational_days', $day);
+            })
+            ->get();
+    }
 }

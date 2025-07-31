@@ -36,6 +36,9 @@ class TripStoreRequest extends FormRequest
             'destination_count' => 'required|integer|min:0',
             'has_boat'      => 'required|boolean',
             'has_hotel'     => 'required|boolean',
+            'operational_days' => 'nullable|array',
+            'operational_days.*' => 'string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'tentation'     => 'required|in:Yes,No',
             // Validasi untuk itineraries
             'itineraries' => 'sometimes|array',
             'itineraries.*.day_number' => 'required_with:itineraries|integer',

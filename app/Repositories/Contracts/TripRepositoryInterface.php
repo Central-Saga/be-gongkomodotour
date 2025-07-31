@@ -117,4 +117,27 @@ interface TripRepositoryInterface
      * @return mixed
      */
     public function getTripWithBoat($id);
+
+    /**
+     * Mengambil trip berdasarkan tentation.
+     *
+     * @param string $tentation
+     * @return mixed
+     */
+    public function getTripByTentation($tentation);
+
+    /**
+     * Mengambil trip berdasarkan operational day.
+     *
+     * @param string $day
+     * @return mixed
+     */
+    public function getTripByOperationalDay($day);
+
+    /**
+     * Mengambil trip yang dihighlight.
+     *
+     * @return mixed
+     */
+    public function getHighlightedTrips();
 }

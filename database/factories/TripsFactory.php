@@ -70,6 +70,8 @@ class TripsFactory extends Factory
             'has_boat' => $this->faker->boolean(30), // 30% chance of having boat
             'has_hotel' => $this->faker->boolean(30), // 30% chance of having hotel
             'destination_count' => $this->faker->numberBetween(1, 5), // Random number between 1-5 destinations
+            'operational_days' => $this->faker->randomElements(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], $this->faker->numberBetween(1, 7)),
+            'tentation' => $this->faker->randomElement(['Yes', 'No']),
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -111,5 +113,25 @@ class TripsFactory extends Factory
             'boat_id' => null,
             'has_boat' => false
         ]);
+    }
+
+    public function tentation()
+    {
+        return $this->state(['tentation' => 'Yes']);
+    }
+
+    public function notTentation()
+    {
+        return $this->state(['tentation' => 'No']);
+    }
+
+    public function withOperationalDays($days)
+    {
+        return $this->state(['operational_days' => $days]);
+    }
+
+    public function everyday()
+    {
+        return $this->state(['operational_days' => null]);
     }
 }
