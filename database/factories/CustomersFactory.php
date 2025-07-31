@@ -30,7 +30,7 @@ class CustomersFactory extends Factory
         $nasionality = $isIndonesia ? 'Indonesia' : fake()->country();
 
         return [
-            'user_id' => null,
+            'user_id' => User::factory(),
             'alamat' => $this->faker->address(),
             'no_hp' => $this->faker->phoneNumber(),
             'nasionality' => $nasionality,

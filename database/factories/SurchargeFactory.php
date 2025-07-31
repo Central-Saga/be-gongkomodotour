@@ -16,7 +16,7 @@ class SurchargeFactory extends Factory
         $endDate = $this->faker->dateTimeBetween($startDate, '+6 months');
 
         return [
-            'hotel_occupancy_id' => null, // Will be set by relationship
+            'hotel_occupancy_id' => \App\Models\HotelOccupancies::factory(),
             'season' => $this->faker->randomElement($seasons),
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),

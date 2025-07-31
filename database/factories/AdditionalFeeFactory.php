@@ -24,7 +24,7 @@ class AdditionalFeeFactory extends Factory
         $dayTypes = ['Weekday', 'Weekend', null];
 
         return [
-            'trip_id' => null, // Will be set by relationship
+            'trip_id' => \App\Models\Trips::factory(),
             'fee_category' => $this->faker->randomElement($feeCategories),
             'price' => $this->faker->randomNumber(5, true) * 1000, // e.g., 150000, 250000
             'region' => $this->faker->randomElement($regions),
