@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\CabinResource;
 
 class TripResource extends JsonResource
 {
@@ -62,6 +63,10 @@ class TripResource extends JsonResource
 
             'boat' => $this->whenLoaded('boat', function () {
                 return new BoatResource($this->boat);
+            }),
+
+            'cabin' => $this->whenLoaded('boat.cabin', function () {
+                return CabinResource::collection($this->boat->cabin);
             }),
 
             'testimonials' => $this->whenLoaded('testimonials', function () {
