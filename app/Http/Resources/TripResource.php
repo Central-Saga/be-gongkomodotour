@@ -18,7 +18,7 @@ class TripResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'boat_id' => $this->boat_id,
+            'boat_ids' => $this->boats->pluck('id')->toArray(),
             'include' => $this->include,
             'exclude' => $this->exclude,
             'note' => $this->note,
@@ -61,12 +61,12 @@ class TripResource extends JsonResource
                 return AssetResource::collection($this->assets);
             }),
 
-            'boat' => $this->whenLoaded('boat', function () {
-                return new BoatResource($this->boat);
+            'boats' => $this->whenLoaded('boats', function () {
+                return BoatResource::collection($this->boats);
             }),
 
-            'cabin' => $this->whenLoaded('boat.cabin', function () {
-                return CabinResource::collection($this->boat->cabin);
+            'cabin' => $this->when($this->boats && $this->boats->isNotEmpty() && $this->boats->first()->relationLoaded('cabin'), function () {
+                return CabinResource::collection($this->boats->flatMap->cabin);
             }),
 
             'testimonials' => $this->whenLoaded('testimonials', function () {

@@ -14,7 +14,6 @@ class Trips extends Model
 
     protected $fillable = [
         'name',
-        'boat_id',
         'include',
         'exclude',
         'note',
@@ -62,9 +61,9 @@ class Trips extends Model
         return $this->hasMany(Testimonial::class, 'trip_id', 'id');
     }
 
-    public function boat()
+    public function boats()
     {
-        return $this->belongsTo(Boat::class, 'boat_id');
+        return $this->belongsToMany(Boat::class, 'trip_boat', 'trip_id', 'boat_id');
     }
 
     /**

@@ -19,7 +19,14 @@ return [
 
     'allowed_methods' => ['*'],
 
+    // Menggunakan FRONTEND_URL dari .env atau fallback ke localhost:3000
     'allowed_origins' => array_map('trim', explode(',', env('FRONTEND_URL', 'http://localhost:3000'))),
+
+    // Alternatif: Mengizinkan semua origin untuk development
+    // 'allowed_origins' => ['*'],
+
+    // Alternatif: Mengizinkan origin spesifik
+    // 'allowed_origins' => ['http://localhost:3000', 'http://127.0.0.1:3000'],
 
     'allowed_origins_patterns' => [],
 

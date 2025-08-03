@@ -226,7 +226,6 @@ class TripService implements TripServiceInterface
             // Buat trip utama
             $tripData = Arr::only($data, [
                 'name',
-                'boat_id',
                 'include',
                 'exclude',
                 'note',
@@ -250,6 +249,12 @@ class TripService implements TripServiceInterface
             // Validasi bahwa trip berhasil dibuat
             if (!$trip || !isset($trip->id)) {
                 throw new \Exception("Trip creation failed: repository returned invalid trip object.");
+            }
+
+            // Attach boats jika ada boat_ids
+            if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
+                $trip->boats()->attach($data['boat_ids']);
+                Log::info('Boats attached to trip:', ['trip_id' => $trip->id, 'boat_ids' => $data['boat_ids']]);
             }
 
             // Buat trip durations beserta itineraries dan trip prices jika ada
@@ -348,7 +353,6 @@ class TripService implements TripServiceInterface
             // Update data trip utama secara parsial
             $tripData = Arr::only($data, [
                 'name',
-                'boat_id',
                 'include',
                 'exclude',
                 'note',
@@ -367,6 +371,12 @@ class TripService implements TripServiceInterface
             $trip = $this->tripRepository->updateTrip($id, $tripData);
             if (!$trip || !isset($trip->id)) {
                 throw new \Exception("Trip update failed: repository returned invalid trip object.");
+            }
+
+            // Update boats jika ada boat_ids
+            if (isset($data['boat_ids']) && is_array($data['boat_ids'])) {
+                $trip->boats()->sync($data['boat_ids']);
+                Log::info('Boats synced to trip:', ['trip_id' => $trip->id, 'boat_ids' => $data['boat_ids']]);
             }
 
             // Update trip durations beserta itineraries dan trip prices secara parsial

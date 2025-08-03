@@ -24,6 +24,6 @@ class Boat extends Model
 
     public function trips()
     {
-        return $this->hasMany(Trips::class, 'boat_id');
+        return $this->belongsToMany(Trips::class, 'trip_boat', 'boat_id', 'trip_id');
     }
 }
