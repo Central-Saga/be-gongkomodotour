@@ -107,18 +107,18 @@ class FileController extends Controller
                 ], 400);
             }
 
-                    // Cek apakah file ada di public/storage (untuk shared hosting)
-        $publicPath = public_path('storage/' . $decodedPath);
-        if (!file_exists($publicPath)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'File tidak ditemukan di storage'
-            ], 404);
-        }
+            // Cek apakah file ada di public/storage (untuk shared hosting)
+            $publicPath = public_path('storage/' . $decodedPath);
+            if (!file_exists($publicPath)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'File tidak ditemukan di storage'
+                ], 404);
+            }
 
-        // Ambil file dari public/storage
-        $file = file_get_contents($publicPath);
-        $mimeType = mime_content_type($publicPath);
+            // Ambil file dari public/storage
+            $file = file_get_contents($publicPath);
+            $mimeType = mime_content_type($publicPath);
 
             // Validasi mime type untuk keamanan
             $allowedMimeTypes = [
