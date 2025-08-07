@@ -77,9 +77,6 @@ class FileController extends Controller
                 'Content-Type' => $mimeType,
                 'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
                 'Cache-Control' => 'public, max-age=31536000', // Cache selama 1 tahun
-                'Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => 'GET, OPTIONS',
-                'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -144,9 +141,6 @@ class FileController extends Controller
                 'Content-Type' => $mimeType,
                 'Content-Disposition' => 'inline; filename="' . basename($decodedPath) . '"',
                 'Cache-Control' => 'public, max-age=31536000', // Cache selama 1 tahun
-                'Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => 'GET, OPTIONS',
-                'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
             ]);
         } catch (\Exception $e) {
             return response()->json([

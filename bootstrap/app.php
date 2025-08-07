@@ -24,11 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'cors' => \App\Http\Middleware\CorsMiddleware::class,
         ]);
-
-        // Tambahkan CORS middleware untuk semua API routes
-        $middleware->append(\App\Http\Middleware\CorsMiddleware::class);
     })
     ->withSchedule(function ($schedule) {
         // Jalankan setiap menit untuk memproses email yang terjadwal
