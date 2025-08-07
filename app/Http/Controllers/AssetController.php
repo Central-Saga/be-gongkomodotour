@@ -9,6 +9,8 @@ use App\Http\Requests\AssetStoreRequest;
 use App\Http\Requests\AssetUpdateRequest;
 use App\Http\Requests\AssetMultipleStoreRequest;
 use App\Services\Contracts\AssetServiceInterface;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class AssetController extends Controller
 {
@@ -25,6 +27,56 @@ class AssetController extends Controller
     public function __construct(AssetServiceInterface $assetService)
     {
         $this->assetService = $assetService;
+    }
+
+    /**
+     * Serve gambar secara publik tanpa autentikasi
+     *
+     * @param string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function serveImage(string $id)
+    {
+        $asset = $this->assetService->getAssetById($id);
+
+        if (!$asset) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asset tidak ditemukan'
+            ], 404);
+        }
+
+        // Jika asset eksternal, redirect ke URL eksternal
+        if ($asset->is_external) {
+            return redirect($asset->file_url);
+        }
+
+        // Jika file_path tidak ada
+        if (!$asset->file_path) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'File tidak ditemukan'
+            ], 404);
+        }
+
+        // Cek apakah file ada di storage
+        if (!Storage::disk('public')->exists($asset->file_path)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'File tidak ditemukan di storage'
+            ], 404);
+        }
+
+        // Ambil file dari storage
+        $file = Storage::disk('public')->get($asset->file_path);
+        $mimeType = Storage::disk('public')->mimeType($asset->file_path);
+
+        // Return file dengan header yang tepat
+        return Response::make($file, 200, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . basename($asset->file_path) . '"',
+            'Cache-Control' => 'public, max-age=31536000', // Cache selama 1 tahun
+        ]);
     }
 
     /**

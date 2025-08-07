@@ -24,6 +24,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\GalleryAssetController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\FileController;
 
 // Route untuk debugging CORS
 Route::get('/cors-test', function () {
@@ -160,6 +161,13 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::get('assets', [AssetController::class, 'index']); // Custom index with query parameters
         Route::post('assets/multiple', [AssetController::class, 'storeMultiple']);
     });
+
+    // Public asset serving - tidak memerlukan autentikasi
+    Route::get('assets/{id}/serve', [AssetController::class, 'serveImage']);
+
+    // Public file serving dengan keamanan yang lebih baik
+    Route::get('files/asset/{id}', [FileController::class, 'serveAsset']);
+    Route::get('files/{path}', [FileController::class, 'serveFile'])->where('path', '.*');
     // Bookings - Protected Routes
     Route::middleware('permission:mengelola bookings')->group(function () {
         Route::apiResource('bookings', BookingController::class)->except(['store']);
