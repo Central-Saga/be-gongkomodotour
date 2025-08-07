@@ -30,8 +30,8 @@ class FileUrlService
             return self::getDefaultImageUrl();
         }
 
-        // Generate URL menggunakan route API
-        return url('/api/files/asset/' . $asset->id);
+        // Untuk shared hosting, gunakan URL langsung ke public/storage
+        return url('/storage/' . $asset->file_path);
     }
 
     /**

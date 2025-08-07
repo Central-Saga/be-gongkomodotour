@@ -42,17 +42,18 @@ class FileController extends Controller
                 ], 400);
             }
 
-            // Cek apakah file ada di storage
-            if (!Storage::disk('public')->exists($filePath)) {
+            // Cek apakah file ada di public/storage (untuk shared hosting)
+            $publicPath = public_path('storage/' . $filePath);
+            if (!file_exists($publicPath)) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'File tidak ditemukan di storage'
                 ], 404);
             }
 
-            // Ambil file dari storage
-            $file = Storage::disk('public')->get($filePath);
-            $mimeType = Storage::disk('public')->mimeType($filePath);
+            // Ambil file dari public/storage
+            $file = file_get_contents($publicPath);
+            $mimeType = mime_content_type($publicPath);
 
             // Validasi mime type untuk keamanan
             $allowedMimeTypes = [
@@ -106,17 +107,18 @@ class FileController extends Controller
                 ], 400);
             }
 
-            // Cek apakah file ada di storage
-            if (!Storage::disk('public')->exists($decodedPath)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'File tidak ditemukan di storage'
-                ], 404);
-            }
+                    // Cek apakah file ada di public/storage (untuk shared hosting)
+        $publicPath = public_path('storage/' . $decodedPath);
+        if (!file_exists($publicPath)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'File tidak ditemukan di storage'
+            ], 404);
+        }
 
-            // Ambil file dari storage
-            $file = Storage::disk('public')->get($decodedPath);
-            $mimeType = Storage::disk('public')->mimeType($decodedPath);
+        // Ambil file dari public/storage
+        $file = file_get_contents($publicPath);
+        $mimeType = mime_content_type($publicPath);
 
             // Validasi mime type untuk keamanan
             $allowedMimeTypes = [
