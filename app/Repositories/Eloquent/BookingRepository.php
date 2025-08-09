@@ -43,13 +43,13 @@ class BookingRepository implements BookingRepositoryInterface
     {
         return $this->booking->with([
             'trip',
-            'trip.surcharges',
             'tripDuration',
             'tripDuration.tripPrices',
             'boat',
             'cabin',
             'user',
             'hotelOccupancy',
+            'hotelOccupancy.surcharges',
             'additionalFees'
         ])->get();
     }
@@ -65,13 +65,13 @@ class BookingRepository implements BookingRepositoryInterface
         try {
             return $this->booking->with([
                 'trip',
-                'trip.surcharges',
                 'tripDuration',
                 'tripDuration.tripPrices',
                 'boat',
                 'cabin',
                 'user',
                 'hotelOccupancy',
+                'hotelOccupancy.surcharges',
                 'additionalFees'
             ])->findOrFail($id);
         } catch (ModelNotFoundException $e) {
@@ -299,7 +299,7 @@ class BookingRepository implements BookingRepositoryInterface
     private function calculateBookingPrices(Booking $booking)
     {
         // Load relasi yang dibutuhkan
-        $booking->load(['cabin', 'hotelOccupancy', 'tripDuration', 'additionalFees', 'trip.surcharges']);
+        $booking->load(['cabin', 'hotelOccupancy', 'hotelOccupancy.surcharges', 'tripDuration', 'additionalFees']);
 
         // Hitung harga cabin (ini akan memicu log perhitungan cabin)
         $cabinPrice = $booking->computed_cabin_price;
@@ -334,17 +334,17 @@ class BookingRepository implements BookingRepositoryInterface
             ]);
         }
 
-        // Hitung surcharge jika ada
+        // Hitung surcharge jika ada (menggunakan surcharges dari hotel occupancy)
         $surchargePrice = 0;
-        if ($booking->trip && $booking->trip->surcharges) {
+        if ($booking->hotelOccupancy && $booking->hotelOccupancy->relationLoaded('surcharges')) {
             $currentDate = now();
-            $activeSurcharge = $booking->trip->surcharges->first(function ($surcharge) use ($currentDate) {
+            $activeSurcharge = $booking->hotelOccupancy->surcharges->first(function ($surcharge) use ($currentDate) {
                 return $surcharge->status === 'Aktif' &&
                     $currentDate->between($surcharge->start_date, $surcharge->end_date);
             });
 
             if ($activeSurcharge) {
-                $surchargePrice = $activeSurcharge->surcharge_price;
+                $surchargePrice = (float) $activeSurcharge->surcharge_price;
                 Log::info('Surcharge Calculation', [
                     'surcharge_id' => $activeSurcharge->id,
                     'season' => $activeSurcharge->season,
