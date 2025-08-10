@@ -33,6 +33,7 @@ use App\Repositories\Eloquent\CustomersRepository;
 use App\Repositories\Eloquent\SurchargeRepository;
 use App\Services\Implementations\CustomersService;
 use App\Repositories\Eloquent\BookingFeeRepository;
+use App\Repositories\Contracts\BookingFeeRepositoryInterface;
 use App\Repositories\Eloquent\EmailBlastRepository;
 use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\SubscriberRepository;
@@ -87,7 +88,7 @@ use App\Repositories\Eloquent\TestimonialRepository;
 use App\Repositories\Contracts\TestimonialRepositoryInterface;
 use App\Services\Contracts\TestimonialServiceInterface;
 use App\Services\Implementations\TestimonialService;
-use App\Repositories\Contracts\BookingFeeRepositoryInterface;
+
 use App\Repositories\Contracts\EmailBlastRepositoryInterface;
 use App\Repositories\Contracts\PermissionRepositoryInterface;
 use App\Repositories\Contracts\SubscriberRepositoryInterface;
@@ -100,6 +101,10 @@ use App\Services\Contracts\EmailBlastRecipientServiceInterface;
 use App\Repositories\Contracts\AdditionalFeeRepositoryInterface;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use App\Repositories\Contracts\HotelOccupanciesRepositoryInterface;
+use App\Services\Contracts\CarouselServiceInterface;
+use App\Services\Implementations\CarouselService;
+use App\Repositories\Contracts\CarouselRepositoryInterface;
+use App\Repositories\Eloquent\CarouselRepository;
 use App\Repositories\Contracts\EmailBlastRecipientRepositoryInterface;
 use App\Services\Contracts\AssetServiceInterface;
 use App\Services\Implementations\AssetService;
@@ -223,10 +228,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
         $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
-
-        // Binding BookingFeeRepositoryInterface to BookingFeeRepository
-        $this->app->bind(BookingFeeRepositoryInterface::class, BookingFeeRepository::class);
-
+        
         // Binding BookingServiceInterface to BookingService
         $this->app->bind(BookingServiceInterface::class, BookingService::class);
 
@@ -259,6 +261,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding AssetServiceInterface to AssetService
         $this->app->bind(AssetServiceInterface::class, AssetService::class);
+
+        // Binding CarouselRepositoryInterface to CarouselRepository
+        $this->app->bind(CarouselRepositoryInterface::class, CarouselRepository::class);
+
+        // Binding CarouselServiceInterface to CarouselService
+        $this->app->bind(CarouselServiceInterface::class, CarouselService::class);
     }
 
     /**
