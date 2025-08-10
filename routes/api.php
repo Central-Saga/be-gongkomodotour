@@ -2,29 +2,30 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BoatController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\CabinController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\EmailBlastController;
-use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\GalleryAssetController;
 use App\Http\Controllers\HotelOccupanciesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EmailBlastRecipientController;
-use App\Http\Controllers\SubscriberController;
-use App\Http\Controllers\FaqController;
-use App\Http\Controllers\TestimonialController;
-use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\GalleryAssetController;
-use App\Http\Controllers\AssetController;
-use App\Http\Controllers\CarouselController;  
+
 
 
 // Route untuk debugging CORS
@@ -72,7 +73,6 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/blogs/{id}', [BlogController::class, 'show']);
     Route::get('/carousels', [CarouselController::class, 'index']);
     Route::get('/carousels/{id}', [CarouselController::class, 'show']);
-
 
     // Public Booking Routes
     Route::post('/bookings', [BookingController::class, 'store']);
