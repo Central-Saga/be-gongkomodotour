@@ -47,6 +47,7 @@ class RoleAndPermissionSeeder extends Seeder
             'subscribers',
             'bank_accounts',
             'email_blast_recipients',
+            'carousels',
         ];
 
         // create permissions for each table using "mengelola {table}"
