@@ -24,6 +24,8 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\GalleryAssetController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\CarouselController;  
+
 
 // Route untuk debugging CORS
 Route::get('/cors-test', function () {
@@ -68,6 +70,8 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/gallery', [GalleryController::class, 'index']);
     Route::get('/blogs', [BlogController::class, 'index']);
     Route::get('/blogs/{id}', [BlogController::class, 'show']);
+    Route::get('/carousels', [CarouselController::class, 'index']);
+    Route::get('/carousels/{id}', [CarouselController::class, 'show']);
 
 
     // Public Booking Routes
@@ -174,6 +178,11 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
     Route::middleware('permission:mengelola bank account')->group(function () {
         Route::apiResource('bank_accounts', BankAccountController::class);
         Route::patch('bank_accounts/{id}/status', [BankAccountController::class, 'updateStatus']);
+    });
+
+    Route::middleware('permission:mengelola carousels')->group(function () {
+        Route::apiResource('carousels', CarouselController::class);
+        Route::patch('carousels/{id}/status', [CarouselController::class, 'updateStatus']);
     });
 });
 Route::get('/index-users', [UserController::class, 'index']);
