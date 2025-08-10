@@ -76,8 +76,9 @@ class BookingResource extends JsonResource
                 return AdditionalFeeResource::collection($this->additionalFees);
             }),
 
-            'surcharges' => $this->whenLoaded('trip.surcharges', function () {
-                return SurchargeResource::collection($this->trip->surcharges);
+            // Surcharges diambil dari hotel occupancy (bukan dari trip)
+            'surcharges' => $this->whenLoaded('hotelOccupancy', function () {
+                return SurchargeResource::collection($this->hotelOccupancy->surcharges ?? collect());
             }),
         ];
     }
