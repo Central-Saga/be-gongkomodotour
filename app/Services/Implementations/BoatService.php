@@ -132,8 +132,34 @@ class BoatService implements BoatServiceInterface
             // Buat cabins jika ada
             if (isset($data['cabins'])) {
                 foreach ($data['cabins'] as $cabin) {
-                    $cabin['boat_id'] = $boat->id;
-                    $this->cabinRepository->createCabin($cabin);
+                    $cabinData = Arr::only($cabin, [
+                        'cabin_name',
+                        'bed_type',
+                        'min_pax',
+                        'max_pax',
+                        'base_price',
+                        'additional_price',
+                        'status'
+                    ]);
+                    $cabinData['boat_id'] = $boat->id;
+                    $newCabin = $this->cabinRepository->createCabin($cabinData);
+
+                    // Proses files cabin jika ada
+                    if (isset($cabin['files']) && is_array($cabin['files'])) {
+                        foreach ($cabin['files'] as $index => $file) {
+                            $title = $cabin['file_titles'][$index] ?? 'Cabin Image ' . ($index + 1);
+                            $description = $cabin['file_descriptions'][$index] ?? null;
+
+                            $assetData = [
+                                'file' => $file,
+                                'title' => $title,
+                                'description' => $description,
+                                'model_type' => 'cabin',
+                                'model_id' => $newCabin->id
+                            ];
+                            $this->assetService->addAsset('cabin', $newCabin->id, $assetData);
+                        }
+                    }
                 }
             }
 
@@ -191,13 +217,68 @@ class BoatService implements BoatServiceInterface
                 foreach ($data['cabins'] as $cabinData) {
                     Log::info($cabinData);
                     $cabinData['boat_id'] = $boat->id;
+
                     if (isset($cabinData['id'])) {
-                        $this->cabinRepository->updateCabin($cabinData['id'], $cabinData);
+                        // Update cabin yang sudah ada
+                        $cabinUpdateData = Arr::only($cabinData, [
+                            'cabin_name',
+                            'bed_type',
+                            'min_pax',
+                            'max_pax',
+                            'base_price',
+                            'additional_price',
+                            'status'
+                        ]);
+                        $this->cabinRepository->updateCabin($cabinData['id'], $cabinUpdateData);
                         $payloadCabinIds[] = $cabinData['id'];
+
+                        // Proses files cabin baru jika ada
+                        if (isset($cabinData['files']) && is_array($cabinData['files'])) {
+                            foreach ($cabinData['files'] as $index => $file) {
+                                $title = $cabinData['file_titles'][$index] ?? 'Cabin Image ' . ($index + 1);
+                                $description = $cabinData['file_descriptions'][$index] ?? null;
+
+                                $assetData = [
+                                    'file' => $file,
+                                    'title' => $title,
+                                    'description' => $description,
+                                    'model_type' => 'cabin',
+                                    'model_id' => $cabinData['id']
+                                ];
+                                $this->assetService->addAsset('cabin', $cabinData['id'], $assetData);
+                            }
+                        }
                     } else {
-                        $newCabin = $this->cabinRepository->createCabin($cabinData);
+                        // Buat cabin baru
+                        $newCabinData = Arr::only($cabinData, [
+                            'cabin_name',
+                            'bed_type',
+                            'min_pax',
+                            'max_pax',
+                            'base_price',
+                            'additional_price',
+                            'status'
+                        ]);
+                        $newCabin = $this->cabinRepository->createCabin($newCabinData);
                         if ($newCabin && isset($newCabin->id)) {
                             $payloadCabinIds[] = $newCabin->id;
+
+                            // Proses files cabin baru
+                            if (isset($cabinData['files']) && is_array($cabinData['files'])) {
+                                foreach ($cabinData['files'] as $index => $file) {
+                                    $title = $cabinData['file_titles'][$index] ?? 'Cabin Image ' . ($index + 1);
+                                    $description = $cabinData['file_descriptions'][$index] ?? null;
+
+                                    $assetData = [
+                                        'file' => $file,
+                                        'title' => $title,
+                                        'description' => $description,
+                                        'model_type' => 'cabin',
+                                        'model_id' => $newCabin->id
+                                    ];
+                                    $this->assetService->addAsset('cabin', $newCabin->id, $assetData);
+                                }
+                            }
                         }
                     }
                 }
