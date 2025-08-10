@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 
 class TransactionRepository implements TransactionRepositoryInterface
@@ -30,7 +31,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getAllTransactions()
     {
-        return $this->model->with('details', 'booking', 'bankAccount')->get();
+        return $this->model->with('details', 'booking', 'assets')->get();
     }
 
     /**
@@ -42,7 +43,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function getTransactionById($id)
     {
         try {
-            return $this->model->with('details', 'booking', 'bankAccount')->findOrFail($id);
+            return $this->model->with('details', 'booking', 'assets')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Transaction with ID {$id} not found.");
             return null;
@@ -57,7 +58,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByName($name)
     {
-        return $this->model->with('details', 'booking', 'bankAccount')->where('name', $name)->first();
+        return $this->model->with('details', 'booking', 'assets')->where('name', $name)->first();
     }
 
     /**
@@ -68,7 +69,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function getTransactionByStatus($status)
     {
-        return $this->model->with('details', 'booking', 'bankAccount')->where('payment_status', $status)->get();
+        return $this->model->with('details', 'booking', 'assets')->where('payment_status', $status)->get();
     }
 
     /**
@@ -80,9 +81,21 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function createTransaction(array $data)
     {
         try {
-            return $this->model->create($data);
+            Log::info('Repository: Attempting to create transaction');
+            Log::info('Repository: Transaction data:', $data);
+
+            $transaction = $this->model->create($data);
+
+            if ($transaction) {
+                Log::info('Repository: Transaction created successfully with ID: ' . $transaction->id);
+                return $transaction;
+            }
+
+            Log::error('Repository: Failed to create transaction - no error but transaction is null');
+            return null;
         } catch (\Exception $e) {
-            Log::error("Failed to create transaction: {$e->getMessage()}");
+            Log::error("Repository: Failed to create transaction: {$e->getMessage()}");
+            Log::error("Repository: Stack trace: " . $e->getTraceAsString());
             return null;
         }
     }
@@ -102,7 +115,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         }
         try {
             $transaction->update($data);
-            return $transaction;
+            return $transaction->fresh(['details', 'booking']);
         } catch (\Exception $e) {
             Log::error("Failed to update transaction with ID {$id}: {$e->getMessage()}");
             return null;
@@ -158,9 +171,9 @@ class TransactionRepository implements TransactionRepositoryInterface
         $transaction = $this->findTransaction($id);
 
         if ($transaction) {
-            $transaction->status = $status;
+            $transaction->payment_status = $status;
             $transaction->save();
-            return $transaction;
+            return $transaction->fresh(['details', 'booking']);
         }
         return null;
     }

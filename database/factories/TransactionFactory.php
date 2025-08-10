@@ -22,7 +22,7 @@ class TransactionFactory extends Factory
     {
         return [
             'booking_id' => $this->faker->randomElement(Booking::pluck('id')->toArray()),
-            'bank_account_id' => $this->faker->randomElement(BankAccount::pluck('id')->toArray()),
+            'bank_type' => $this->faker->randomElement(['BCA', 'Mandiri']),
             'total_amount' => $this->faker->numberBetween(1000000, 10000000),
             'payment_status' => $this->faker->randomElement(['Menunggu Pembayaran', 'Lunas', 'Ditolak']),
         ];

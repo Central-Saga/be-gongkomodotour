@@ -25,15 +25,17 @@ class CustomersFactory extends Factory
      */
     public function definition(): array
     {
+        // 70% kemungkinan nasionality Indonesia
+        $isIndonesia = fake()->boolean(50);
+        $nasionality = $isIndonesia ? 'Indonesia' : fake()->country();
+
         return [
-            'user_id'      => User::inRandomOrder()->value('id') ?? User::factory(),
+            'user_id' => User::factory(),
             'alamat' => $this->faker->address(),
             'no_hp' => $this->faker->phoneNumber(),
-            'nasionality' => $this->faker->country(),
-            'region' => $this->faker->state(),
-            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'nasionality' => $nasionality,
+            'region' => $isIndonesia ? 'Domestic' : 'Overseas',
+            'status' => 'Aktif',
         ];
     }
 }

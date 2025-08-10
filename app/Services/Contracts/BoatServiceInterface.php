@@ -82,4 +82,12 @@ interface BoatServiceInterface
      * @return mixed
      */
     public function updateBoatStatus($id, $status);
+
+    /**
+     * Mengambil boat dengan trips yang terkait.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getBoatWithTrips($id);
 }

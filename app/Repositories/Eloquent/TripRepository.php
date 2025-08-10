@@ -30,7 +30,9 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getAllTrips()
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges')->get();
+        $trips = $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->get();
+
+        return $trips;
     }
 
     /**
@@ -43,9 +45,21 @@ class TripRepository implements TripRepositoryInterface
     {
         try {
             // Mengambil trip berdasarkan ID, handle jika tidak ditemukan
-            return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges')->findOrFail($id);
+            $trip = $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->findOrFail($id);
+
+            // Log data trip dan relasinya
+            Log::info('Trip Data:', [
+                'trip' => $trip->toArray(),
+                'trip_duration' => $trip->tripDuration->toArray(),
+                'itineraries' => $trip->tripDuration->flatMap->itineraries->toArray()
+            ]);
+
+            return $trip;
         } catch (ModelNotFoundException $e) {
             Log::error("Trip with ID {$id} not found.");
+            return null;
+        } catch (\Exception $e) {
+            Log::error("Error getting trip with ID {$id}: " . $e->getMessage());
             return null;
         }
     }
@@ -58,7 +72,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByName($name)
     {
-        return $this->trips->where('name', $name)->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges')->first();
+        return $this->trips->where('name', $name)->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->first();
     }
 
     /**
@@ -69,7 +83,7 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByStatus($status)
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges')->where('status', $status)->get();
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->where('status', $status)->get();
     }
 
     /**
@@ -80,7 +94,47 @@ class TripRepository implements TripRepositoryInterface
      */
     public function getTripByType($type)
     {
-        return $this->trips->with('itineraries', 'flightSchedule', 'tripDuration', 'tripDuration.tripPrices', 'additionalFees', 'surcharges')->where('type', $type)->get();
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->where('type', $type)->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan has_boat.
+     *
+     * @param bool $hasBoat
+     * @return mixed
+     */
+    public function getTripByHasBoat($hasBoat)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where('has_boat', $hasBoat)
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan destination_count.
+     *
+     * @param int $destinationCount
+     * @return mixed
+     */
+    public function getTripByDestinationCount($destinationCount)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where('destination_count', $destinationCount)
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan range destination_count.
+     *
+     * @param int $min
+     * @param int $max
+     * @return mixed
+     */
+    public function getTripByDestinationCountRange($min, $max)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->whereBetween('destination_count', [$min, $max])
+            ->get();
     }
 
     /**
@@ -92,9 +146,16 @@ class TripRepository implements TripRepositoryInterface
     public function createTrip(array $data)
     {
         try {
-            return $this->trips->create($data);
+            Log::info('Creating trip with data:', $data);
+            $trip = $this->trips->create($data);
+            Log::info('Trip created successfully:', ['trip_id' => $trip->id ?? 'null', 'trip' => $trip]);
+            return $trip;
         } catch (\Exception $e) {
-            Log::error("Failed to create trip: {$e->getMessage()}");
+            Log::error("Failed to create trip: {$e->getMessage()}", [
+                'data' => $data,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return null;
         }
     }
@@ -177,5 +238,73 @@ class TripRepository implements TripRepositoryInterface
             return $trip;
         }
         return null;
+    }
+
+    /**
+     * Mengambil trip yang dihighlight.
+     *
+     * @return mixed
+     */
+    public function getHighlightedTrips()
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where('is_highlight', true)
+            ->where('status', 'Aktif')
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan boat ID.
+     *
+     * @param int $boatId
+     * @return mixed
+     */
+    public function getTripsByBoatId($boatId)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->whereHas('boats', function ($query) use ($boatId) {
+                $query->where('boat.id', $boatId);
+            })
+            ->get();
+    }
+
+    /**
+     * Mengambil trip dengan relasi boat.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getTripWithBoat($id)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])->findOrFail($id);
+    }
+
+    /**
+     * Mengambil trip berdasarkan tentation.
+     *
+     * @param string $tentation
+     * @return mixed
+     */
+    public function getTripByTentation($tentation)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where('tentation', $tentation)
+            ->get();
+    }
+
+    /**
+     * Mengambil trip berdasarkan operational day.
+     *
+     * @param string $day
+     * @return mixed
+     */
+    public function getTripByOperationalDay($day)
+    {
+        return $this->trips->with(['boats.cabin', 'flightSchedule', 'tripDuration.itineraries', 'tripDuration.tripPrices', 'additionalFees', 'assets', 'testimonials'])
+            ->where(function ($query) use ($day) {
+                $query->whereNull('operational_days')
+                    ->orWhereJsonContains('operational_days', $day);
+            })
+            ->get();
     }
 }

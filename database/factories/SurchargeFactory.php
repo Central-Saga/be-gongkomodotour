@@ -2,28 +2,28 @@
 
 namespace Database\Factories;
 
-use App\Models\Trips;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Surcharge;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Surcharge>
- */
 class SurchargeFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Surcharge::class;
+
     public function definition(): array
     {
+        $seasons = ['High Season', 'Peak Season', 'Holiday Season'];
+        $startDate = $this->faker->dateTimeBetween('now', '+6 months');
+        $endDate = $this->faker->dateTimeBetween($startDate, '+6 months');
+
         return [
-            'trip_id' => $this->faker->randomElement(Trips::pluck('id')->toArray()),
-            'season' => $this->faker->randomElement(['High Season', 'Low Season']),
-            'start_date' => $this->faker->date(),
-            'end_date' => $this->faker->date(),
-            'surcharge_price' => $this->faker->randomFloat(2, 0, 100),
-            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
+            'hotel_occupancy_id' => \App\Models\HotelOccupancies::factory(),
+            'season' => $this->faker->randomElement($seasons),
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'surcharge_price' => $this->faker->randomNumber(5, true) * 1000, // e.g., 500000, 750000
+            'status' => 'Aktif',
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

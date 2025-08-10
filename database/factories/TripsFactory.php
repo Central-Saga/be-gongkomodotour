@@ -2,74 +2,136 @@
 
 namespace Database\Factories;
 
-use App\Models\Trips;
-use App\Models\Surcharge;
-use App\Models\TripPrices;
-use App\Models\Itineraries;
-use App\Models\TripDuration;
-use App\Models\AdditionalFee;
-use App\Models\FlightSchedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Trips;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Trips>
- */
 class TripsFactory extends Factory
 {
     protected $model = Trips::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $tripNames = [
+            'Bali Cultural Journey',
+            'Lombok Coastal Adventure',
+            'Yogyakarta Heritage Tour',
+            'Sumatra Jungle Trek',
+            'Java Volcano Expedition',
+            'Sulawesi Diving Experience',
+            'Papua Tribal Exploration',
+            'Maluku Spice Island Tour',
+            'Borneo Orangutan Safari',
+            'Timor Historical Trail',
+            'Raja Ampat Snorkeling Escape',
+            'Flores Mountain Retreat'
+        ];
+
+        $meetingPoints = [
+            'Ngurah Rai Airport (DPS)',
+            'Lombok International Airport (LOP)',
+            'Adisucipto Airport (JOG)',
+            'Minangkabau Airport (PDG)',
+            'Soekarno-Hatta Airport (CGK)',
+            'Haluoleo Airport (KDI)',
+            'Sentani Airport (DJJ)',
+            'Pattimura Airport (AMQ)',
+            'Sepinggan Airport (BPN)',
+            'El Tari Airport (KOE)',
+            'Juanda Airport (SUB)',
+            'Frans Kaisiepo Airport (BIK)'
+        ];
+
+        $includes = [
+            'Transportation, Local Guide, Entrance Fee, Hotel Accommodation, Meals, Insurance',
+            'Flight Ticket, Snorkeling Equipment, Mineral Water, Local Guide, Transportation',
+            'Hotel Accommodation, Meals, Entrance Fee, Cultural Workshop, Insurance',
+            'Trekking Gear, Local Guide, Transportation, Camping Equipment, Meals'
+        ];
+
+        $excludes = [
+            'Personal Expenses, Tipping, Soft Drinks & Alcohol',
+            'Documentation Fee, Personal Insurance, Extra Activities',
+            'Souvenirs, Additional Meals, Travel Insurance',
+            'Tipping, Personal Expenses, Optional Tours'
+        ];
+
         return [
-            'name' => $this->faker->words(3, true),
-            'include' => $this->faker->paragraph(),
-            'exclude' => $this->faker->paragraph(),
-            'note' => $this->faker->sentence(),
-            'start_time' => $this->faker->time('H:i:s'),
-            'end_time' => $this->faker->time('H:i:s'),
-            'meeting_point' => $this->faker->address(),
+            'name' => $this->faker->randomElement($tripNames),
+            'boat_id' => null, // Will be set in seeder if needed
+            'include' => $this->faker->randomElement($includes),
+            'exclude' => $this->faker->randomElement($excludes),
+            'note' => 'Valid for Low Season; additional charges apply during High/Peak Seasons.',
+            'start_time' => $this->faker->randomElement(['07:00:00', '08:00:00', '09:00:00']),
+            'end_time' => $this->faker->randomElement(['17:00:00', '18:00:00', '19:00:00']),
+            'meeting_point' => $this->faker->randomElement($meetingPoints),
             'type' => $this->faker->randomElement(['Open Trip', 'Private Trip']),
-            'status' => $this->faker->randomElement(['Aktif', 'Non Aktif']),
+            'status' => 'Aktif',
+            'is_highlight' => 'No', // Default to 'No'
+            'has_boat' => $this->faker->boolean(30), // 30% chance of having boat
+            'has_hotel' => $this->faker->boolean(30), // 30% chance of having hotel
+            'destination_count' => $this->faker->numberBetween(1, 5), // Random number between 1-5 destinations
+            'operational_days' => $this->faker->randomElements(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], $this->faker->numberBetween(1, 7)),
+            'tentation' => $this->faker->randomElement(['Yes', 'No']),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
-    public function configure()
+    public function highlighted()
     {
-        return $this->afterCreating(function (Trips $trip) {
-            // Membuat 3 itineraries untuk trip tersebut
-            Itineraries::factory()->count(3)->create([
-                'trip_id' => $trip->id,
-            ]);
+        return $this->state(['is_highlight' => 'Yes']);
+    }
 
-            // Membuat 2 flight schedule untuk trip tersebut
-            FlightSchedule::factory()->count(2)->create([
-                'trip_id' => $trip->id,
-            ]);
 
-            // Membuat 2 trip durations untuk trip tersebut
-            // dan untuk tiap trip duration, buat 2 trip prices
-            TripDuration::factory()->count(2)->create([
-                'trip_id' => $trip->id,
-            ])->each(function ($tripDuration) {
-                TripPrices::factory()->count(2)->create([
-                    'trip_duration_id' => $tripDuration->id,
-                ]);
-            });
 
-            // Membuat 2 additional fees untuk trip tersebut
-            AdditionalFee::factory()->count(2)->create([
-                'trip_id' => $trip->id,
-            ]);
+    public function withHotel()
+    {
+        return $this->state(['has_hotel' => true]);
+    }
 
-            // Membuat 2 surcharges untuk trip tersebut
-            Surcharge::factory()->count(2)->create([
-                'trip_id' => $trip->id,
-            ]);
-        });
+    public function withoutHotel()
+    {
+        return $this->state(['has_hotel' => false]);
+    }
+
+    public function withDestinationCount($count)
+    {
+        return $this->state(['destination_count' => $count]);
+    }
+
+    public function withBoat($boatId = null)
+    {
+        return $this->state([
+            'boat_id' => $boatId,
+            'has_boat' => true
+        ]);
+    }
+
+    public function withoutBoat()
+    {
+        return $this->state([
+            'boat_id' => null,
+            'has_boat' => false
+        ]);
+    }
+
+    public function tentation()
+    {
+        return $this->state(['tentation' => 'Yes']);
+    }
+
+    public function notTentation()
+    {
+        return $this->state(['tentation' => 'No']);
+    }
+
+    public function withOperationalDays($days)
+    {
+        return $this->state(['operational_days' => $days]);
+    }
+
+    public function everyday()
+    {
+        return $this->state(['operational_days' => null]);
     }
 }

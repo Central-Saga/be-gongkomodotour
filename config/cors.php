@@ -15,11 +15,22 @@ return [
     |
     */
 
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+    // Opsi 1: Mengizinkan origin spesifik (recommended untuk production)
+    'allowed_origins' => [
+        'http://localhost:3000',
+        'https://localhost:3000',
+        'http://127.0.0.1:3000',
+        'https://127.0.0.1:3000',
+        'https://gongkomodotour.test',
+        'https://gongkomodotour.com'
+    ],
+
+    // Opsi 2: Mengizinkan semua origin (untuk development jika masih ada masalah)
+    // 'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 

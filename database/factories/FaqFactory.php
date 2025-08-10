@@ -19,8 +19,8 @@ class FaqFactory extends Factory
         return [
             'question'      => $this->faker->sentence,
             'answer'        => $this->faker->paragraphs(3, true),
-            'category'      => $this->faker->optional()->word,
-            'display_order' => $this->faker->numberBetween(0, 30),
+            'category'      => $this->faker->randomElement(['Umum', 'Pembayaran', 'Pemesanan', 'Pembatalan', 'Lainnya']),
+            'display_order' => $this->faker->numberBetween(1, 6),
             'status'        => $this->faker->randomElement(['Aktif', 'Non Aktif']),
         ];
     }

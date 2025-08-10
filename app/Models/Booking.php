@@ -17,17 +17,22 @@ class Booking extends Model
     protected $fillable = [
         'trip_id',
         'trip_duration_id',
-        'customer_id',
         'user_id',
         'hotel_occupancy_id',
+        'customer_name',
+        'customer_email',
+        'customer_address',
+        'customer_country',
+        'customer_phone',
         'total_price',
         'total_pax',
         'status',
         'start_date',
         'end_date',
+        'is_hotel_requested'
     ];
 
-    protected $appends = ['computed_cabin_price', 'computed_total_price'];
+    // protected $appends = ['computed_cabin_price'];
 
     public function trip()
     {
@@ -37,11 +42,6 @@ class Booking extends Model
     public function tripDuration()
     {
         return $this->belongsTo(TripDuration::class);
-    }
-
-    public function customer()
-    {
-        return $this->belongsTo(Customers::class);
     }
 
     public function boat()
@@ -59,7 +59,7 @@ class Booking extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault();
     }
 
     public function hotelOccupancy()

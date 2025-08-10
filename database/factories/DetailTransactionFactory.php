@@ -31,6 +31,8 @@ class DetailTransactionFactory extends Factory
             'transaction_id' => Transaction::factory(),
             'type'           => $type,
             'amount'         => $this->faker->randomFloat(2, 100, 1000),
+            'reference_type' => $selectedReferenceType === 'Surcharge' ? Surcharge::class : HotelRequest::class,
+            'reference_id'   => $selectedReferenceType === 'Surcharge' ? Surcharge::factory() : HotelRequest::factory(),
         ];
     }
 

@@ -25,7 +25,7 @@ class GalleryUpdateRequest extends FormRequest
             // Data galeri dasar
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'sometimes|required|string|max:255',
+            'category' => 'sometimes|required|string|in:Fasilitas,Kamar,Penginapan,Lainnya',
             'status' => 'sometimes|required|in:Aktif,Non Aktif',
         ];
     }

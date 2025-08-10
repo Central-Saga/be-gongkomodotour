@@ -46,7 +46,7 @@ class HotelOccupanciesController extends Controller
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
-        return HotelOccupancyResource::collection($hotelOccupancies);
+        return HotelOccupancyResource::collection($hotelOccupancies->load('surcharges'));
     }
     /**
      * Store a newly created resource in storage.
@@ -66,7 +66,7 @@ class HotelOccupanciesController extends Controller
         if (!$hotelOccupancy) {
             return response()->json(['message' => 'Hotel Occupancy not found'], 404);
         }
-        return new HotelOccupancyResource($hotelOccupancy);
+        return new HotelOccupancyResource($hotelOccupancy->load('surcharges'));
     }
 
     /**
@@ -99,7 +99,7 @@ class HotelOccupanciesController extends Controller
     public function getActiveHotelOccupancies()
     {
         $hotelOccupancies = $this->hotelOccupanciesService->getActiveHotelOccupancies();
-        return HotelOccupancyResource::collection($hotelOccupancies);
+        return HotelOccupancyResource::collection($hotelOccupancies->load('surcharges'));
     }
 
     /**

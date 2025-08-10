@@ -16,11 +16,11 @@ class SurchargeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'trip_id' => $this->trip_id,
+            'hotel_occupancy_id' => $this->hotel_occupancy_id,
             'season' => $this->season,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'surcharge_price' => $this->surcharge_price,
+            'surcharge_price' => (float) $this->surcharge_price,
             'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),

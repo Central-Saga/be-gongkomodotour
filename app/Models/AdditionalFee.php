@@ -21,6 +21,7 @@ class AdditionalFee extends Model
         'pax_min',
         'pax_max',
         'day_type',
+        'is_required',
         'status',
     ];
 

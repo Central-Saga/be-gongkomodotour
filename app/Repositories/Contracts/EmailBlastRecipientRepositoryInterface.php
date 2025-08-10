@@ -76,4 +76,12 @@ interface EmailBlastRecipientRepositoryInterface
      * @return mixed
      */
     public function updateEmailBlastRecipientStatus($id, $status);
+
+    /**
+     * Menghapus semua emailBlastRecipient berdasarkan email_blast_id.
+     *
+     * @param int $emailBlastId
+     * @return mixed
+     */
+    public function deleteEmailBlastRecipientsByEmailBlastId($emailBlastId);
 }

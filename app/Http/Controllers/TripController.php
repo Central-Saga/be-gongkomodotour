@@ -8,6 +8,7 @@ use App\Http\Resources\TripResource;
 use App\Http\Requests\TripStoreRequest;
 use App\Http\Requests\TripUpdateRequest;
 use App\Services\Contracts\TripServiceInterface;
+use Illuminate\Support\Facades\Log;
 
 class TripController extends Controller
 {
@@ -66,7 +67,9 @@ class TripController extends Controller
      */
     public function store(TripStoreRequest $request)
     {
-        $trip = $this->tripService->createTrip($request->all());
+        Log::info('TripController::store called with validated data:', $request->validated());
+
+        $trip = $this->tripService->createTrip($request->validated());
         if (!$trip) {
             return response()->json(['message' => 'Gagal membuat trip'], 400);
         }
@@ -90,7 +93,7 @@ class TripController extends Controller
      */
     public function update(TripUpdateRequest $request, string $id)
     {
-        $trip = $this->tripService->updateTrip($id, $request->all());
+        $trip = $this->tripService->updateTrip($id, $request->validated());
         if (!$trip) {
             return response()->json(['message' => 'Trip tidak ditemukan'], 404);
         }
@@ -125,5 +128,17 @@ class TripController extends Controller
             return response()->json(['message' => 'Failed to update trip status'], 404);
         }
         return new TripResource($trip);
+    }
+
+    /**
+     * Get highlighted trips.
+     */
+    public function getHighlightedTrips()
+    {
+        $trips = $this->tripService->getHighlightedTrips();
+        if (!$trips) {
+            return response()->json(['message' => 'Trip tidak ditemukan'], 404);
+        }
+        return TripResource::collection($trips);
     }
 }

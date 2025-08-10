@@ -18,17 +18,19 @@ class CustomersRepository implements CustomersRepositoryInterface
 
     public function getAllCustomers()
     {
-        return $this->model->all();
+        return $this->model->with('user')->get();
+        Log::info($this->model->with('user')->get());
     }
 
     public function getCustomerById($id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->with('user')->findOrFail($id);
     }
 
     public function createCustomer(array $data)
     {
-        return $this->model->create($data);
+        $customer = $this->model->create($data);
+        return $customer->load('user');
     }
 
     public function updateCustomer($id, array $data)
@@ -37,6 +39,7 @@ class CustomersRepository implements CustomersRepositoryInterface
 
         if ($customer) {
             $customer->update($data);
+            $customer->load('user');
         }
 
         return $customer;

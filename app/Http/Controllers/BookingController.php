@@ -7,14 +7,26 @@ use App\Http\Resources\BookingResource;
 use App\Http\Requests\BookingStoreRequest;
 use App\Http\Requests\BookingUpdateRequest;
 use App\Services\Contracts\BookingServiceInterface;
+use App\Services\Contracts\TripServiceInterface;
+use App\Services\Contracts\CabinServiceInterface;
+use App\Services\Contracts\BoatServiceInterface;
+use App\Http\Resources\TripResource;
+use App\Http\Resources\CabinResource;
+use App\Http\Resources\BoatResource;
 
 class BookingController extends Controller
 {
     protected $bookingService;
+    protected $tripService;
+    protected $cabinService;
+    protected $boatService;
 
-    public function __construct(BookingServiceInterface $bookingService)
+    public function __construct(BookingServiceInterface $bookingService, TripServiceInterface $tripService, CabinServiceInterface $cabinService, BoatServiceInterface $boatService)
     {
         $this->bookingService = $bookingService;
+        $this->tripService = $tripService;
+        $this->cabinService = $cabinService;
+        $this->boatService = $boatService;
     }
 
     public function index(Request $request)
@@ -77,15 +89,47 @@ class BookingController extends Controller
      */
     public function updateStatus(string $id, Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:Pending,Confirmed,Cancelled',
         ]);
 
-        $booking = $this->bookingService->updateBookingStatus($id, $request->validated());
+        // Mengirim langsung nilai status, bukan array validated
+        $booking = $this->bookingService->updateBookingStatus($id, $validated['status']);
 
         if (!$booking) {
             return response()->json(['message' => 'Failed to update booking status'], 404);
         }
         return new BookingResource($booking);
+    }
+
+    /**
+     * Get booking page data
+     */
+    public function getBookingPage(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:open,private',
+            'packageId' => 'required|exists:trips,id',
+            'date' => 'required|date',
+        ]);
+
+        $trip = $this->tripService->getTripById($request->packageId);
+        if (!$trip) {
+            return response()->json(['message' => 'Trip not found'], 404);
+        }
+
+        // Get available cabins for the selected date
+        $availableCabins = $this->cabinService->getAvailableCabins($request->date);
+
+        // Get available boats for the selected date
+        $availableBoats = $this->boatService->getAvailableBoats($request->date);
+
+        return response()->json([
+            'trip' => new TripResource($trip),
+            'available_cabins' => CabinResource::collection($availableCabins),
+            'available_boats' => BoatResource::collection($availableBoats),
+            'selected_date' => $request->date,
+            'type' => $request->type
+        ]);
     }
 }

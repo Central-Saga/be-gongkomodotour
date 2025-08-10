@@ -13,7 +13,7 @@ class Surcharge extends Model
     protected $table = 'surcharges';
 
     protected $fillable = [
-        'trip_id',
+        'hotel_occupancy_id',
         'season',
         'start_date',
         'end_date',
@@ -21,9 +21,9 @@ class Surcharge extends Model
         'status',
     ];
 
-    public function trip()
+    public function hotelOccupancy()
     {
-        return $this->belongsTo(Trip::class);
+        return $this->belongsTo(HotelOccupancies::class, 'hotel_occupancy_id', 'id');
     }
 
     public function detailTransactions()

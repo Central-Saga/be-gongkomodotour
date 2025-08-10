@@ -91,4 +91,20 @@ class EmailBlastRecipientRepository implements EmailBlastRecipientRepositoryInte
         }
         return null;
     }
+
+    /**
+     * Menghapus semua emailBlastRecipient berdasarkan email_blast_id.
+     *
+     * @param int $emailBlastId
+     * @return mixed
+     */
+    public function deleteEmailBlastRecipientsByEmailBlastId($emailBlastId)
+    {
+        try {
+            return $this->model->where('email_blast_id', $emailBlastId)->delete();
+        } catch (\Exception $e) {
+            Log::error("Failed to delete email blast recipients: {$e->getMessage()}");
+            throw $e;
+        }
+    }
 }

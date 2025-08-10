@@ -26,4 +26,10 @@ class Asset extends Model
     {
         return $this->morphTo();
     }
+
+    // Relasi ke carousel
+    public function carousel()
+    {
+        return $this->morphTo();
+    }
 }

@@ -27,7 +27,11 @@ class BookingFactory extends Factory
         return [
             'trip_id' => $this->faker->randomElement(Trips::pluck('id')->toArray()),
             'trip_duration_id' => $this->faker->randomElement(TripDuration::pluck('id')->toArray()),
-            'customer_id' => $this->faker->randomElement(Customers::pluck('id')->toArray()),
+            'customer_name' => $this->faker->name(),
+            'customer_email' => $this->faker->unique()->safeEmail(),
+            'customer_address' => $this->faker->address(),
+            'customer_country' => $this->faker->country(),
+            'customer_phone' => $this->faker->phoneNumber(),
             'user_id' => $this->faker->randomElement(User::pluck('id')->toArray()),
             'hotel_occupancy_id' => $this->faker->randomElement(HotelOccupancies::pluck('id')->toArray()),
             'total_price' => 0,
@@ -35,6 +39,7 @@ class BookingFactory extends Factory
             'start_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'end_date' => $this->faker->dateTimeBetween('now', '+1 year'),
             'status' => $this->faker->randomElement(['Pending', 'Confirmed', 'Cancelled']),
+            'is_hotel_requested' => $this->faker->boolean(),
         ];
     }
 

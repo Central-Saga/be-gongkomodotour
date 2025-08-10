@@ -22,12 +22,19 @@ class Trips extends Model
         'meeting_point',
         'type',
         'status',
+        'is_highlight',
+        'destination_count',
+        'has_boat',
+        'has_hotel',
+        'operational_days',
+        'tentation',
     ];
 
-    public function itineraries()
-    {
-        return $this->hasMany(Itineraries::class, 'trip_id', 'id');
-    }
+    protected $casts = [
+        'has_boat' => 'boolean',
+        'has_hotel' => 'boolean',
+        'operational_days' => 'array',
+    ];
 
     public function flightSchedule()
     {
@@ -44,8 +51,61 @@ class Trips extends Model
         return $this->hasMany(AdditionalFee::class, 'trip_id', 'id');
     }
 
-    public function surcharges()
+    public function assets()
     {
-        return $this->hasMany(Surcharge::class, 'trip_id', 'id');
+        return $this->morphMany(Asset::class, 'assetable');
+    }
+
+    public function testimonials()
+    {
+        return $this->hasMany(Testimonial::class, 'trip_id', 'id');
+    }
+
+    public function boats()
+    {
+        return $this->belongsToMany(Boat::class, 'trip_boat', 'trip_id', 'boat_id');
+    }
+
+    /**
+     * Check if trip operates on specific day
+     *
+     * @param string $day
+     * @return bool
+     */
+    public function operatesOnDay($day)
+    {
+        if (!$this->operational_days) {
+            return true; // If no operational days set, assume operates every day
+        }
+
+        return in_array($day, $this->operational_days);
+    }
+
+    /**
+     * Get available operational days
+     *
+     * @return array
+     */
+    public static function getAvailableDays()
+    {
+        return [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu'
+        ];
+    }
+
+    /**
+     * Check if trip is tentation
+     *
+     * @return bool
+     */
+    public function isTentation()
+    {
+        return $this->tentation === 'Yes';
     }
 }

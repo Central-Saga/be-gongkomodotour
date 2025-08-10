@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('surcharges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
+            $table->foreignId('hotel_occupancy_id')->constrained('hoteloccupancies')->onDelete('cascade');
             $table->string('season');
             $table->date('start_date');
             $table->date('end_date');

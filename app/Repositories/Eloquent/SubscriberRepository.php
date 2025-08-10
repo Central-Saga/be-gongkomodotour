@@ -22,7 +22,7 @@ class SubscriberRepository implements SubscriberRepositoryInterface
      */
     public function getAllSubscriber()
     {
-        return $this->model->all();
+        return $this->model->with('customer')->get();
     }
 
     /**

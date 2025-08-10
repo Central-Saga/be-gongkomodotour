@@ -1,0 +1,58 @@
+name: Deploy Project Laravel ke Jagoan Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, bcmath, xml, curl, zip, intl, pdo, pdo_mysql
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Copy project to server (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 45022
+          source: "."
+          target: "gongkomo/repositories/be-gongkomodotour"
+
+      - name: Run post-deploy script on server (via SSH)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 45022
+          script: |
+            set -e
+            echo "== STARTING CLEAN TARGET =="
+            rm -rf /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/* || echo "Gagal hapus folder, mungkin kosong?"
+            echo "== COPYING FILES =="
+            cp -r /home/${{ secrets.SSH_USER }}/repositories/be-gongkomodotour/* /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/ || echo "Copy failed"
+            echo "== CD TO TARGET =="
+            cd /home/${{ secrets.SSH_USER }}/api.gongkomodotour.com/ || exit 1
+            echo "== RUN COMPOSER INSTALL =="
+            composer install --no-dev --optimize-autoloader || echo "Composer install failed"
+            echo "== RUN ARTISAN MIGRATE =="
+            php artisan migrate --force || echo "Migrate failed"
+            echo "== RUN CONFIG CACHE =="
+            php artisan config:cache || echo "Config cache failed"
+            php artisan route:cache || echo "Route cache failed"
+            php artisan storage:link || echo "Storage link failed"
+            echo "== DEPLOY DONE =="

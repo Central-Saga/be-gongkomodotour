@@ -14,19 +14,19 @@ class Transaction extends Model
 
     protected $fillable = [
         'booking_id',
-        'bank_account_id',
+        'bank_type',
         'total_amount',
         'payment_status',
+    ];
+
+    protected $casts = [
+        'bank_type' => 'string',
+        'total_amount' => 'decimal:2',
     ];
 
     public function booking()
     {
         return $this->belongsTo(Booking::class, 'booking_id', 'id');
-    }
-
-    public function bankAccount()
-    {
-        return $this->belongsTo(BankAccount::class, 'bank_account_id', 'id');
     }
 
     public function details()

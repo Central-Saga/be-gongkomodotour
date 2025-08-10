@@ -24,9 +24,16 @@ class HotelOccupanciesUpdateRequest extends FormRequest
         return [
             'hotel_name' => 'sometimes|required|string|max:255',
             'hotel_type' => 'sometimes|required|string|max:50',
-            'occupancy' => 'sometimes|required|string|in:Single Occupancy, Double Occupancy',
+            'occupancy' => 'sometimes|required|string|in:Single Occupancy,Double Occupancy',
             'price' => 'sometimes|required|numeric',
-            'status' => 'sometimes|required|string|in:Aktif, Non Aktif',
+            'status' => 'sometimes|required|string|in:Aktif,Non Aktif',
+            'surcharges' => 'sometimes|array',
+            'surcharges.*.id' => 'sometimes|required|exists:surcharges,id',
+            'surcharges.*.season' => 'required_with:surcharges|string',
+            'surcharges.*.start_date' => 'required_with:surcharges|date',
+            'surcharges.*.end_date' => 'required_with:surcharges|date|after_or_equal:surcharges.*.start_date',
+            'surcharges.*.surcharge_price' => 'required_with:surcharges|numeric',
+            'surcharges.*.status' => 'required_with:surcharges|string|in:Aktif,Non Aktif',
         ];
     }
 }

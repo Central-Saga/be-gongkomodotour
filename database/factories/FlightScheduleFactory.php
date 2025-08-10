@@ -2,28 +2,40 @@
 
 namespace Database\Factories;
 
-use App\Models\Trips;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\FlightSchedule;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FlightSchedule>
- */
 class FlightScheduleFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = FlightSchedule::class;
+
     public function definition(): array
     {
+        $airports = [
+            'DPS' => 'Ngurah Rai Airport',
+            'LOP' => 'Lombok International Airport',
+            'JOG' => 'Adisucipto Airport',
+            'PDG' => 'Minangkabau Airport',
+            'CGK' => 'Soekarno-Hatta Airport',
+            'KDI' => 'Haluoleo Airport',
+            'DJJ' => 'Sentani Airport',
+            'AMQ' => 'Pattimura Airport',
+            'BPN' => 'Sepinggan Airport',
+            'KOE' => 'El Tari Airport',
+        ];
+
+        $departure = $this->faker->randomElement(array_keys($airports));
+        $arrival = $this->faker->randomElement(array_diff(array_keys($airports), [$departure]));
+        $etdTime = $this->faker->time('H:i:00', '09:00:00');
+        $etaTime = $this->faker->time('H:i:00', '16:00:00');
+
         return [
-            'trip_id'   => Trips::factory(),
-            'route'     => $this->faker->city . ' - ' . $this->faker->city,
-            'eta_time'  => $this->faker->time('H:i:s'),
-            'eta_text'  => $this->faker->sentence(3),
-            'etd_time'  => $this->faker->time('H:i:s'),
-            'etd_text'  => $this->faker->sentence(3),
+            'trip_id' => null, // Will be set by relationship
+            'route' => "$departure - $arrival",
+            'eta_time' => $etaTime,
+            'eta_text' => "Arrive at $arrival at $etaTime",
+            'etd_time' => $etdTime,
+            'etd_text' => "Depart from $departure at $etdTime",
         ];
     }
 }

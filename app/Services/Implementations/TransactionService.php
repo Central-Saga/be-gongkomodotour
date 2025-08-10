@@ -118,23 +118,53 @@ class TransactionService implements TransactionServiceInterface
      */
     public function createTransaction(array $data)
     {
-        $transaction = $this->repository->createTransaction($data);
-        if ($transaction) {
+        try {
+            \Log::info('Creating transaction with data:', $data);
+
+            $transaction = $this->repository->createTransaction($data);
+            if (!$transaction) {
+                \Log::error('Failed to create transaction in repository');
+                return false;
+            }
+
+            \Log::info('Transaction created successfully with ID: ' . $transaction->id);
+
+            // Proses upload file assets jika ada
+            if (isset($data['assets']) && is_array($data['assets'])) {
+                \Log::info('Processing assets upload');
+                foreach ($data['assets'] as $assetData) {
+                    if (isset($assetData['file'])) {
+                        $file = $assetData['file'];
+                        $path = $file->store('assets/transactions', 'public');
+
+                        $transaction->assets()->create([
+                            'title' => $assetData['title'],
+                            'description' => $assetData['description'] ?? null,
+                            'file_path' => $path,
+                            'file_url' => asset('storage/' . $path),
+                            'is_external' => $assetData['is_external'] ?? false,
+                        ]);
+                    }
+                }
+            }
+
             // Membuat detail transaksi untuk Hotel Request jika data tersedia
             if (isset($data['hotel_request_details']) && is_array($data['hotel_request_details'])) {
+                \Log::info('Processing hotel request details');
                 foreach ($data['hotel_request_details'] as $detail) {
                     // Jika hotel_request_id tidak ada pada payload, maka buat HotelRequest baru
                     if (!isset($detail['hotel_request_id'])) {
+                        \Log::info('Creating new hotel request');
                         $hotelRequest = HotelRequest::create([
                             'transaction_id'       => $transaction->id,
-                            'user_id'              => auth()->id(), // sesuaikan dengan logika otentikasi yang digunakan
+                            'user_id'              => auth()->id(),
                             'confirmed_note'       => $detail['confirmed_note'] ?? '',
                             'requested_hotel_name' => $detail['requested_hotel_name'] ?? '',
                             'request_status'       => 'Menunggu Konfirmasi',
                             'confirmed_price'      => $detail['confirmed_price'] ?? 0,
                         ]);
-                        // Tetapkan id hotel_request yang baru saja dibuat ke detail
                         $detail['hotel_request_id'] = $hotelRequest->id;
+                        \Log::info('Hotel request created with ID: ' . $hotelRequest->id);
                     }
 
                     $transaction->details()->create([
@@ -150,11 +180,13 @@ class TransactionService implements TransactionServiceInterface
             // Pengecekan otomatis surcharge berdasarkan tanggal booking
             $booking = Booking::find($data['booking_id']);
             if ($booking) {
+                \Log::info('Checking for matching surcharge for booking dates: ' . $booking->start_date . ' to ' . $booking->end_date);
                 $matchingSurcharge = Surcharge::where('start_date', $booking->start_date)
                     ->where('end_date', $booking->end_date)
                     ->first();
 
                 if ($matchingSurcharge) {
+                    \Log::info('Found matching surcharge with ID: ' . $matchingSurcharge->id);
                     $transaction->details()->create([
                         'amount'         => $matchingSurcharge->amount,
                         'description'    => 'Automatically added surcharge based on booking dates',
@@ -167,6 +199,7 @@ class TransactionService implements TransactionServiceInterface
 
             // Jika masih ada data surcharge_details yang dikirim secara manual, proses juga
             if (isset($data['surcharge_details']) && is_array($data['surcharge_details'])) {
+                \Log::info('Processing manual surcharge details');
                 foreach ($data['surcharge_details'] as $detail) {
                     $transaction->details()->create([
                         'amount'         => $detail['amount'] ?? 0,
@@ -180,9 +213,14 @@ class TransactionService implements TransactionServiceInterface
 
             $this->clearTransactionCaches();
             // Muat relasi 'details' sebelum mengembalikannya
-            return $transaction->load('details', 'booking', 'bankAccount');
+            $result = $transaction->load('details', 'booking', 'assets');
+            \Log::info('Transaction process completed successfully');
+            return $result;
+        } catch (\Exception $e) {
+            \Log::error('Error creating transaction: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return false;
         }
-        return false;
     }
 
     /**
@@ -197,6 +235,25 @@ class TransactionService implements TransactionServiceInterface
         $transaction = $this->repository->getTransactionById($id);
         if ($transaction) {
             $this->repository->updateTransaction($id, $data);
+
+            // Proses upload file assets jika ada
+            if (isset($data['assets']) && is_array($data['assets'])) {
+                \Log::info('Processing assets upload for update');
+                foreach ($data['assets'] as $assetData) {
+                    if (isset($assetData['file'])) {
+                        $file = $assetData['file'];
+                        $path = $file->store('assets/transactions', 'public');
+
+                        $transaction->assets()->create([
+                            'title' => $assetData['title'],
+                            'description' => $assetData['description'] ?? null,
+                            'file_path' => $path,
+                            'file_url' => asset('storage/' . $path),
+                            'is_external' => $assetData['is_external'] ?? false,
+                        ]);
+                    }
+                }
+            }
 
             // Hapus semua detail transaksi lama terlebih dahulu
             $transaction->details()->delete();
@@ -259,7 +316,7 @@ class TransactionService implements TransactionServiceInterface
 
             $this->clearTransactionCaches();
             // Muat relasi 'details' sebelum mengembalikannya
-            return $transaction->load('details', 'booking', 'bankAccount');
+            return $transaction->load('details', 'booking', 'assets');
         }
         return false;
     }

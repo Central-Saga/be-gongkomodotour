@@ -18,14 +18,19 @@ class BookingResource extends JsonResource
             'id' => $this->id,
             'trip_id' => $this->trip_id,
             'trip_duration_id' => $this->trip_duration_id,
-            'customer_id' => $this->customer_id,
             'user_id' => $this->user_id,
             'hotel_occupancy_id' => $this->hotel_occupancy_id,
             'total_price' => $this->total_price,
             'total_pax' => $this->total_pax,
             'status' => $this->status,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+            'customer_name' => $this->customer_name,
+            'customer_email' => $this->customer_email,
+            'customer_address' => $this->customer_address,
+            'customer_country' => $this->customer_country,
+            'customer_phone' => $this->customer_phone,
+            'is_hotel_requested' => $this->is_hotel_requested,
 
             'trip' => $this->whenLoaded('trip', function () {
                 return TripResource::make($this->trip);
@@ -35,16 +40,28 @@ class BookingResource extends JsonResource
                 return TripDurationResource::make($this->tripDuration);
             }),
 
-            'customer' => $this->whenLoaded('customer', function () {
-                return CustomerResource::make($this->customer);
-            }),
-
             'boat' => $this->whenLoaded('boat', function () {
                 return BoatResource::collection($this->boat);
             }),
 
             'cabin' => $this->whenLoaded('cabin', function () {
-                return CabinResource::collection($this->cabin);
+                return CabinResource::collection($this->cabin)->map(function ($cabin) {
+                    return [
+                        'id' => $cabin->id,
+                        'boat_id' => $cabin->boat_id,
+                        'cabin_name' => $cabin->cabin_name,
+                        'bed_type' => $cabin->bed_type,
+                        'min_pax' => $cabin->min_pax,
+                        'max_pax' => $cabin->max_pax,
+                        'base_price' => $cabin->base_price,
+                        'additional_price' => $cabin->additional_price,
+                        'status' => $cabin->status,
+                        'created_at' => $cabin->created_at,
+                        'updated_at' => $cabin->updated_at,
+                        'booking_total_pax' => $cabin->pivot->total_pax,
+                        'booking_total_price' => $cabin->pivot->total_price
+                    ];
+                });
             }),
 
             'user' => $this->whenLoaded('user', function () {
@@ -57,6 +74,10 @@ class BookingResource extends JsonResource
 
             'additional_fees' => $this->whenLoaded('additionalFees', function () {
                 return AdditionalFeeResource::collection($this->additionalFees);
+            }),
+
+            'surcharges' => $this->whenLoaded('trip.surcharges', function () {
+                return SurchargeResource::collection($this->trip->surcharges);
             }),
         ];
     }

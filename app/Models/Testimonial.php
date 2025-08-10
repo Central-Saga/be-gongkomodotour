@@ -10,33 +10,60 @@ class Testimonial extends Model
 {
     use HasFactory;
 
-        // Menentukan nama tabel yang digunakan
-        protected $table = 'testimonial';
+    // Menentukan nama tabel yang digunakan
+    protected $table = 'testimonial';
 
     /**
      * Atribut yang dapat diisi secara massal.
      *
      * @var array
      */
-    // filepath: /c:/laragon/www/be-gongkomodotour/app/Models/Testimonial.php
     protected $fillable = [
-        'customer_id',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
+        'trip_id',
         'rating',
         'review',
         'is_approved',
         'is_highlight',
+        'source',
     ];
-    
+
     protected $casts = [
         'is_approved' => 'boolean',
         'is_highlight' => 'boolean',
     ];
 
     /**
-     * Relasi ke Customers.
+     * Relasi ke Trips.
      */
-    public function customer()
+    public function trip()
     {
-        return $this->belongsTo(Customers::class, 'customer_id');
+        return $this->belongsTo(Trips::class, 'trip_id');
+    }
+
+    /**
+     * Scope untuk testimonial internal
+     */
+    public function scopeInternal($query)
+    {
+        return $query->where('source', 'internal');
+    }
+
+    /**
+     * Scope untuk testimonial yang disetujui
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
+
+    /**
+     * Scope untuk testimonial yang di-highlight
+     */
+    public function scopeHighlighted($query)
+    {
+        return $query->where('is_highlight', true);
     }
 }

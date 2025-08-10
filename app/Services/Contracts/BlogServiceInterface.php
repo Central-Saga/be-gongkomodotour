@@ -64,14 +64,31 @@ interface BlogServiceInterface
     /**
      * Mengambil semua blog yang dipublikasikan.
      *
+     * @param string|null $category
      * @return mixed
      */
-    public function getPublishedBlog();
+    public function getPublishedBlog($category = null);
 
     /**
      * Mengambil semua blog yang berstatus draft.
      *
+     * @param string|null $category
      * @return mixed
      */
-    public function getDraftBlog();
+    public function getDraftBlog($category = null);
+
+    /**
+     * Mengambil blog berdasarkan kategori.
+     *
+     * @param string $category
+     * @return mixed
+     */
+    public function getBlogByCategory($category);
+
+    /**
+     * Mereset semua cache blog.
+     *
+     * @return void
+     */
+    public function resetBlogCache();
 }

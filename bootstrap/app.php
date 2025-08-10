@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
+        $middleware->statefulApi();
+
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
@@ -25,6 +27,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         //
+    })
+    ->withSchedule(function ($schedule) {
+        // Jalankan setiap menit untuk memproses email yang terjadwal
+        $schedule->command('email:process-scheduled')->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

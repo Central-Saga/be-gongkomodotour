@@ -23,6 +23,18 @@ class BoatResource extends JsonResource
             'status'            => $this->status,
             'created_at'        => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at'        => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+            'cabin'             => $this->whenLoaded('cabin', function () {
+                return CabinResource::collection($this->cabin);
+            }),
+            'assets'            => $this->whenLoaded('assets', function () {
+                return AssetResource::collection($this->assets);
+            }),
+            'assets_cabin'      => $this->whenLoaded('cabin.assets', function () {
+                return AssetResource::collection($this->cabin->assets);
+            }),
+            'trips'             => $this->whenLoaded('trips', function () {
+                return TripResource::collection($this->trips);
+            }),
         ];
     }
 }

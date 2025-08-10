@@ -25,7 +25,18 @@ class HotelOccupanciesFactory extends Factory
     public function definition(): array
     {
         return [
-            'hotel_name' => $this->faker->company(),
+            'hotel_name' => $this->faker->randomElement([
+                'Hotel Santika',
+                'Grand Mercure',
+                'The Jayakarta',
+                'Aston Hotel',
+                'Swiss-Belinn',
+                'Ibis Hotel',
+                'Novotel',
+                'Pullman Hotel',
+                'Harris Hotel',
+                'Fave Hotel'
+            ]),
             'hotel_type' => $this->faker->randomElement(['Luxury', 'Budget', 'Boutique']),
             'occupancy' => $this->faker->randomElement(['Single Occupancy', 'Double Occupancy']),
             'price' => $this->faker->randomFloat(2, 50, 500),

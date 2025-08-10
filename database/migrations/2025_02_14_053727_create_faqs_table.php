@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('question');
             $table->text('answer');
-            $table->string('category')->nullable();
-            $table->integer('display_order')->default(0);
-            $table->enum('status', allowed: ['Aktif', 'Non Aktif'])->default('Aktif');
+            $table->enum('category', ['Umum', 'Pembayaran', 'Pemesanan', 'Pembatalan', 'Lainnya'])->default('Umum');
+            $table->integer('display_order')->default(1);
+            $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
             $table->timestamps();
         });
     }

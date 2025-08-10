@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('testimonial', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('trip_id')->constrained('trips')->onDelete('cascade');
             $table->integer('rating');
             $table->text('review');
             $table->boolean('is_approved')->default(false);

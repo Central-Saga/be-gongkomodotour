@@ -30,6 +30,11 @@ class TripDuration extends Model
         return $this->hasMany(TripPrices::class, 'trip_duration_id', 'id');
     }
 
+    public function itineraries()
+    {
+        return $this->hasMany(Itineraries::class, 'trip_duration_id', 'id');
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);

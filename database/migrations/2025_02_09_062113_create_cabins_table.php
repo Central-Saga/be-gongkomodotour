@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('boat_id')->constrained('boat')->onDelete('cascade');
             $table->string('cabin_name');
-            $table->string('bed_type');
+            $table->enum('bed_type', ['Single', 'Double', 'Queen', 'King']);
             $table->integer('min_pax');
             $table->integer('max_pax');
             $table->decimal('base_price', 10, 2);

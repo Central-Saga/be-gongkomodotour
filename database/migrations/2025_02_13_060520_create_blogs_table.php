@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('author_id');
             $table->string('title');
             $table->string('slug')->unique();
+            $table->enum('category', ['travel', 'tips']);
             $table->text('content');
             $table->enum('status', ['draft', 'published'])->default('draft');
             $table->timestamps();

@@ -67,4 +67,24 @@ interface FaqRepositoryInterface
      * @return mixed
      */
     public function findFaq($id);
+
+    /**
+     * Menggeser display order ke atas.
+     *
+     * @param int $fromOrder
+     * @param int|null $toOrder
+     * @param int|null $excludeId
+     * @return mixed
+     */
+    public function shiftDisplayOrderUp($fromOrder, $toOrder = null, $excludeId = null);
+
+    /**
+     * Menggeser display order ke bawah.
+     *
+     * @param int $fromOrder
+     * @param int $toOrder
+     * @param int $excludeId
+     * @return mixed
+     */
+    public function shiftDisplayOrderDown($fromOrder, $toOrder, $excludeId);
 }

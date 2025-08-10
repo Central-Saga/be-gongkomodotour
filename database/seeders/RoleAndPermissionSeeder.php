@@ -57,6 +57,7 @@ class RoleAndPermissionSeeder extends Seeder
         // create additional permissions
         $additionalPermissions = [
             'melakukan transactions',
+            'melihat hotel occupancy',
             'melakukan request hotel',
             'melakukan pembayaran',
             'melakukan booking',
@@ -85,6 +86,7 @@ class RoleAndPermissionSeeder extends Seeder
         // For Pelanggan, assign only specific additional permissions
         $pelanggan->givePermissionTo([
             'melakukan transactions',
+            'melihat hotel occupancy',
             'melakukan request hotel',
             'melakukan pembayaran',
             'melakukan booking',

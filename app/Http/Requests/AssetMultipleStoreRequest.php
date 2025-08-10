@@ -27,7 +27,7 @@ class AssetMultipleStoreRequest extends FormRequest
 
             // Untuk upload multiple file
             'files' => 'required_without:file_urls|array',
-            'files.*' => 'file|mimes:jpeg,png,jpg,gif|max:2048',
+            'files.*' => 'file|mimetypes:image/jpeg,image/png,image/jpg,image/gif|max:10240',
             'file_titles' => 'sometimes|array',
             'file_titles.*' => 'string|max:255',
             'file_descriptions' => 'sometimes|array',

@@ -10,13 +10,13 @@ class EmailBlastRecipientStoreRequest extends FormRequest
     {
         return true;
     }
-    
+
     public function rules(): array
     {
         return [
             'email_blast_id'  => 'required|integer|exists:email_blast,id',
             'recipient_email' => 'required|email|max:255',
-            'status'          => 'sometimes|string|in:pending,sent,failed',
+            'status'          => 'sometimes|string|in:Aktif,Non Aktif',
         ];
     }
 }

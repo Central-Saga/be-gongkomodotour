@@ -24,7 +24,9 @@ class CabinResource extends JsonResource
             'base_price'       => $this->base_price,
             'additional_price' => $this->additional_price,
             'status'           => $this->status,
-            'boat'             => new BoatResource($this->whenLoaded('boat')),
+            'assets'           => $this->whenLoaded('assets', function () {
+                return AssetResource::collection($this->assets);
+            }),
             'created_at'       => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at'       => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
         ];

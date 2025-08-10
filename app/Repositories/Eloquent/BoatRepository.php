@@ -18,17 +18,19 @@ class BoatRepository implements BoatRepositoryInterface
 
     public function getAllBoat()
     {
-        return $this->model->all();
+        return $this->model->with(['cabin', 'assets', 'cabin.assets'])->get();
     }
 
     public function getBoatById($id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->with(['cabin', 'assets', 'cabin.assets'])->findOrFail($id);
     }
 
     public function createBoat(array $data)
     {
-        return $this->model->create($data);
+        $model = $this->model->create($data);
+        $model->load(['cabin', 'assets', 'cabin.assets']);
+        return $model;
     }
 
     public function updateBoat($id, array $data)
@@ -37,6 +39,7 @@ class BoatRepository implements BoatRepositoryInterface
 
         if ($boat) {
             $boat->update($data);
+            $boat->load(['cabin', 'assets', 'cabin.assets']);
         }
 
         return $boat;
@@ -55,12 +58,12 @@ class BoatRepository implements BoatRepositoryInterface
 
     public function getBoatByName($name)
     {
-        return $this->model->where('name', $name)->first();
+        return $this->model->with(['cabin', 'assets', 'cabin.assets'])->where('name', $name)->first();
     }
 
     public function getBoatByStatus($status)
     {
-        return $this->model->where('status', $status)->get();
+        return $this->model->with(['cabin', 'assets', 'cabin.assets'])->where('status', $status)->get();
     }
 
     /**
@@ -72,8 +75,7 @@ class BoatRepository implements BoatRepositoryInterface
     public function findBoat($id)
     {
         try {
-            return $this->model->findOrFail($id);
-            return Boat::findOrFail($id);
+            return $this->model->with(['cabin', 'assets', 'cabin.assets'])->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Log::error("Boat with ID {$id} not found.");
             return null;
@@ -94,8 +96,20 @@ class BoatRepository implements BoatRepositoryInterface
         if ($boat) {
             $boat->status = $status;
             $boat->save();
+            $boat->load(['cabin', 'assets', 'cabin.assets']);
             return $boat;
         }
         return null;
+    }
+
+    /**
+     * Mengambil trips yang terkait dengan boat.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function getBoatWithTrips($id)
+    {
+        return $this->model->with(['cabin', 'assets', 'cabin.assets', 'trips'])->findOrFail($id);
     }
 }

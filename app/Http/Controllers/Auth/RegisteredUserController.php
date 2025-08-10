@@ -9,10 +9,14 @@ use Illuminate\Validation\Rules;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\Customers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rules\Password;
+use App\Models\Subscriber;
+use App\Http\Resources\CustomerResource;
+use App\Http\Resources\UserResource;
 
 class RegisteredUserController extends Controller
 {
@@ -35,6 +39,23 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->string('password')),
         ]);
 
+        $customer = Customers::create([
+            'user_id' => $user->id,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+            'nasionality' => $request->nasionality,
+            'region' => $request->region,
+            'status' => 'Aktif', // Status otomatis diatur ke "Aktif"
+        ]);
+
+        // Membuat subscriber baru
+        $subscriber = Subscriber::create([
+            'customer_id' => $customer->id,
+            'email' => $request->email,
+            'name' => $request->name,
+            'status' => 'Aktif',
+        ]);
+
         // Cari role 'Pelanggan'
         $pelangganRole = Role::where('name', 'Pelanggan')->first();
 
@@ -54,11 +75,17 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        $roles = $user->getRoleNames();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name');
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user
+            'user' => new UserResource($user),
+            'customer' => new CustomerResource($user->customer),
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'status' => 'Registration successful'
         ]);
     }
 }

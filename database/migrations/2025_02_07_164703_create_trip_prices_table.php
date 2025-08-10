@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('pax_max');
             $table->decimal('price_per_pax', 15, 2);
             $table->enum('status', ['Aktif', 'Non Aktif'])->default('Aktif');
+            $table->enum('region', ['Domestic', 'Overseas', 'Domestic & Overseas']);
             $table->timestamps();
         });
     }

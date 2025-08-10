@@ -21,4 +21,9 @@ class Boat extends Model
     {
         return $this->morphMany(Asset::class, 'assetable');
     }
+
+    public function trips()
+    {
+        return $this->belongsToMany(Trips::class, 'trip_boat', 'boat_id', 'trip_id');
+    }
 }

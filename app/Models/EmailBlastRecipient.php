@@ -16,4 +16,9 @@ class EmailBlastRecipient extends Model
         'recipient_email',
         'status',
     ];
+
+    public function emailBlast()
+    {
+        return $this->belongsTo(EmailBlast::class);
+    }
 }

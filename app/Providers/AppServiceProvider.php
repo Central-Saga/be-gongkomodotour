@@ -220,7 +220,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Binding TestimonialServiceInterface to TestimonialService
         $this->app->bind(TestimonialServiceInterface::class, TestimonialService::class);
-      
+
         // Binding AdditionalFeeRepositoryInterface to AdditionalFeeRepository
         $this->app->bind(AdditionalFeeRepositoryInterface::class, AdditionalFeeRepository::class);
 
