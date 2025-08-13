@@ -39,30 +39,39 @@ class AssetFactory extends Factory
         // Buat instance dari model yang terpilih menggunakan factory masing-masing
         $assetable = $selectedType::factory()->create();
 
-        // Generate Unsplash URL dengan tema yang sesuai
-        $travelKeywords = [
-            'boat,sea',
-            'beach,ocean',
-            'mountain,landscape',
-            'tropical,island',
-            'adventure,travel',
-            'sunset,water',
-            'nature,forest',
-            'cultural,heritage'
-        ];
-
-        $randomKeyword = $this->faker->randomElement($travelKeywords);
-        $unsplashUrl = "https://source.unsplash.com/random/1200x600?{$randomKeyword}";
+        // Gunakan TravelImageFactory untuk generate gambar yang reliable
+        $travelImageFactory = new TravelImageFactory($this->faker);
+        $imageUrl = $travelImageFactory->generateTravelImage();
 
         return [
             'title'         => $this->faker->sentence,
             'description'   => $this->faker->paragraph,
-            'file_path'     => $unsplashUrl, // Gunakan Unsplash
-            'file_url'      => $unsplashUrl, // Gunakan Unsplash juga
+            'file_path'     => $imageUrl,
+            'file_url'      => $imageUrl,
             'is_external'   => true, // Set sebagai external karena menggunakan URL
             // Setter untuk relasi polymorphic
             'assetable_id'   => $assetable->id,
             'assetable_type' => $assetable->getMorphClass(),
         ];
+    }
+
+    /**
+     * Buat asset untuk carousel tertentu
+     */
+    public function forCarousel($carousel)
+    {
+        return $this->state(function (array $attributes) use ($carousel) {
+            // Gunakan TravelImageFactory untuk generate gambar yang reliable
+            $travelImageFactory = new TravelImageFactory($this->faker);
+            $imageUrl = $travelImageFactory->generateTravelImage();
+
+            return [
+                'assetable_id' => $carousel->id,
+                'assetable_type' => get_class($carousel),
+                'file_path' => $imageUrl,
+                'file_url' => $imageUrl,
+                'is_external' => true,
+            ];
+        });
     }
 }

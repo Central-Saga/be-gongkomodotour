@@ -38,4 +38,14 @@ interface CarouselServiceInterface
      * Ambil carousel tidak aktif.
      */
     public function getInactiveCarousel();
+
+    /**
+     * Ambil carousel dengan jumlah assets tertentu.
+     */
+    public function getCarouselWithAssetsCount($count = 1);
+
+    /**
+     * Ambil carousel berdasarkan urutan.
+     */
+    public function getCarouselByOrder();
 }

@@ -30,8 +30,14 @@ class CarouselController extends Controller
     public function index(Request $request)
     {
         $status = $request->query('status');
+        $order = $request->query('order', false);
+        $assetsCount = $request->query('assets_count');
 
-        if ($status === null) {
+        if ($order) {
+            $carousel = $this->carouselService->getCarouselByOrder();
+        } elseif ($assetsCount) {
+            $carousel = $this->carouselService->getCarouselWithAssetsCount($assetsCount);
+        } elseif ($status === null) {
             $carousel = $this->carouselService->getAllCarousel();
         } elseif ($status == 1) {
             $carousel = $this->carouselService->getActiveCarousel();
@@ -40,6 +46,7 @@ class CarouselController extends Controller
         } else {
             return response()->json(['error' => 'Invalid status parameter'], 400);
         }
+
         return CarouselResource::collection($carousel);
     }
 
@@ -86,5 +93,24 @@ class CarouselController extends Controller
             return response()->json(['message' => 'Carousel not found'], 404);
         }
         return response()->json(['message' => 'Carousel deleted successfully'], 200);
+    }
+
+    /**
+     * Get carousel with specific assets count.
+     */
+    public function withAssetsCount(Request $request)
+    {
+        $count = $request->query('count', 1);
+        $carousel = $this->carouselService->getCarouselWithAssetsCount($count);
+        return CarouselResource::collection($carousel);
+    }
+
+    /**
+     * Get carousel ordered by order_num.
+     */
+    public function ordered()
+    {
+        $carousel = $this->carouselService->getCarouselByOrder();
+        return CarouselResource::collection($carousel);
     }
 }

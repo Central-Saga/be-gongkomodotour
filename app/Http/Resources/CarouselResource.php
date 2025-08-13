@@ -18,11 +18,11 @@ class CarouselResource extends JsonResource
             'id'          => $this->id,
             'title'       => $this->title,
             'description' => $this->description,
-            'link'        => $this->link,
             'order_num'   => $this->order_num,
             'is_active'   => $this->is_active,
-            'assets'      => $this->whenLoaded('assets', function () {
-                return AssetResource::collection($this->assets);
+            'assets'      => AssetResource::collection($this->whenLoaded('assets', $this->assets)),
+            'primary_image' => $this->when($this->primary_image, function () {
+                return new AssetResource($this->primary_image);
             }),
             'created_at'  => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at'  => $this->updated_at ? $this->updated_at->toDateTimeString() : null,

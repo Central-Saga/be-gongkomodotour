@@ -38,4 +38,14 @@ interface CarouselRepositoryInterface
      * Ambil carousel tidak aktif.
      */
     public function getInactive();
+
+    /**
+     * Ambil carousel dengan jumlah assets tertentu.
+     */
+    public function getWithAssetsCount($count = 1);
+
+    /**
+     * Ambil carousel berdasarkan urutan.
+     */
+    public function getByOrder();
 }

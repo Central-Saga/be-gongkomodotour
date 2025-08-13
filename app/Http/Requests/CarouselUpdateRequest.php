@@ -24,11 +24,13 @@ class CarouselUpdateRequest extends FormRequest
         return [
             'title'       => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'link'        => 'nullable|url|max:255',
             'order_num'   => 'sometimes|required|integer|min:0',
             'is_active'   => 'sometimes|required|boolean',
-            'asset_ids'   => 'nullable|array',
-            'asset_ids.*' => 'exists:assets,id',
+            'assets'      => 'nullable|array',
+            'assets.*.title' => 'nullable|string|max:255',
+            'assets.*.description' => 'nullable|string',
+            'assets.*.file_url' => 'nullable|url|max:500',
+            'assets.*.is_external' => 'nullable|boolean',
         ];
     }
 }

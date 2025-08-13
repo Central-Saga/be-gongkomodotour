@@ -40,4 +40,7 @@ return [
         'place_id' => env('GOOGLE_PLACE_ID'), // Place ID untuk Gong Komodo Tour
     ],
 
+    'unsplash' => [
+        'key' => env('UNSPLASH_ACCESS_KEY'),
+    ],
 ];

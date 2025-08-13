@@ -9,6 +9,7 @@ use App\Models\Asset;
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Carousel>
  *
  * Factory untuk membuat Carousel dengan gambar dari Unsplash
+ * Gambar carousel sekarang dihandle oleh model Asset (relasi polymorphic)
  *
  * Cara penggunaan:
  * 1. Carousel biasa: Carousel::factory()->create()
@@ -27,7 +28,6 @@ class CarouselFactory extends Factory
         return [
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph,
-            'link' => $this->faker->url,
             'order_num' => $this->faker->numberBetween(1, 10),
             'is_active' => true,
         ];
@@ -42,15 +42,15 @@ class CarouselFactory extends Factory
     public function withAssets($count = 1)
     {
         return $this->afterCreating(function ($carousel) use ($count) {
-            // Buat asset dengan gambar Unsplash untuk carousel ini
+            // Buat asset dengan gambar yang reliable untuk carousel ini
             for ($i = 0; $i < $count; $i++) {
-                Asset::factory()->create([
+                Asset::create([
                     'assetable_id' => $carousel->id,
-                    'assetable_type' => Carousel::class,
+                    'assetable_type' => get_class($carousel),
                     'title' => $this->faker->sentence,
                     'description' => $this->faker->paragraph,
-                    'file_path' => $this->generateUnsplashUrl(),
-                    'file_url' => $this->generateUnsplashUrl(),
+                    'file_path' => $this->generateImageUrl(),
+                    'file_url' => $this->generateImageUrl(),
                     'is_external' => true,
                 ]);
             }
@@ -58,24 +58,61 @@ class CarouselFactory extends Factory
     }
 
     /**
-     * Generate Unsplash URL dengan tema wisata
-     *
-     * @return string URL gambar Unsplash
+     * Buat carousel dengan assets dari Unsplash only
+     * ⚠️  Warning: Bisa error jika API rate limit atau down
      */
-    private function generateUnsplashUrl()
+    public function withUnsplashAssets($count = 1)
     {
-        $travelKeywords = [
-            'boat,sea',
-            'beach,ocean',
-            'mountain,landscape',
-            'tropical,island',
-            'adventure,travel',
-            'sunset,water',
-            'nature,forest',
-            'cultural,heritage'
-        ];
+        return $this->afterCreating(function ($carousel) use ($count) {
+            for ($i = 0; $i < $count; $i++) {
+                $travelImageFactory = new \Database\Factories\TravelImageFactory($this->faker);
+                $imageUrl = $travelImageFactory->generateUnsplashOnly();
 
-        $randomKeyword = $this->faker->randomElement($travelKeywords);
-        return "https://source.unsplash.com/random/1200x600?{$randomKeyword}";
+                Asset::create([
+                    'assetable_id' => $carousel->id,
+                    'assetable_type' => get_class($carousel),
+                    'title' => $this->faker->sentence,
+                    'description' => $this->faker->paragraph,
+                    'file_path' => $imageUrl,
+                    'file_url' => $imageUrl,
+                    'is_external' => true,
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Buat carousel dengan assets dari sumber tertentu
+     */
+    public function withAssetsFromSource($count = 1, $source = 'mixed')
+    {
+        return $this->afterCreating(function ($carousel) use ($count, $source) {
+            for ($i = 0; $i < $count; $i++) {
+                $travelImageFactory = new \Database\Factories\TravelImageFactory($this->faker);
+                $imageUrl = $travelImageFactory->generateImageWithPreference($source);
+
+                Asset::create([
+                    'assetable_id' => $carousel->id,
+                    'assetable_type' => get_class($carousel),
+                    'title' => $this->faker->sentence,
+                    'description' => $this->faker->paragraph,
+                    'file_path' => $imageUrl,
+                    'file_url' => $imageUrl,
+                    'is_external' => true,
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Generate URL gambar yang reliable untuk carousel
+     *
+     * @return string URL gambar
+     */
+    private function generateImageUrl()
+    {
+        // Gunakan TravelImageFactory untuk generate gambar yang reliable
+        $travelImageFactory = new \Database\Factories\TravelImageFactory($this->faker);
+        return $travelImageFactory->generateTravelImage();
     }
 }

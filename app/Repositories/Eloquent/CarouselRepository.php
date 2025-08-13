@@ -15,12 +15,12 @@ class CarouselRepository implements CarouselRepositoryInterface
 
     public function getAll()
     {
-        return $this->model->all();
+        return $this->model->with('assets')->get();
     }
 
     public function getById($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('assets')->find($id);
     }
 
     public function create(array $data)
@@ -41,6 +41,8 @@ class CarouselRepository implements CarouselRepositoryInterface
     {
         $carousel = $this->getById($id);
         if ($carousel) {
+            // Hapus assets terlebih dahulu
+            $carousel->assets()->delete();
             $carousel->delete();
         }
         return $carousel;
@@ -48,11 +50,27 @@ class CarouselRepository implements CarouselRepositoryInterface
 
     public function getActive()
     {
-        return $this->model->where('is_active', true)->get();
+        return $this->model->where('is_active', true)->with('assets')->get();
     }
 
     public function getInactive()
     {
-        return $this->model->where('is_active', false)->get();
+        return $this->model->where('is_active', false)->with('assets')->get();
+    }
+
+    /**
+     * Get carousel with specific assets count
+     */
+    public function getWithAssetsCount($count = 1)
+    {
+        return $this->model->withCount('assets')->having('assets_count', '>=', $count)->get();
+    }
+
+    /**
+     * Get carousel by order
+     */
+    public function getByOrder()
+    {
+        return $this->model->orderBy('order_num', 'asc')->with('assets')->get();
     }
 }
