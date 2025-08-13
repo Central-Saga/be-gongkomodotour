@@ -20,13 +20,10 @@ use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\GalleryAssetController;
 use App\Http\Controllers\HotelOccupanciesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EmailBlastRecipientController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\GalleryAssetController;
-use App\Http\Controllers\AssetController;
 use App\Http\Controllers\FileController;
 
 // Route untuk debugging CORS
@@ -192,5 +189,6 @@ Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
         Route::apiResource('carousels', CarouselController::class);
         Route::patch('carousels/{id}/status', [CarouselController::class, 'updateStatus']);
     });
+    
 });
 Route::get('/index-users', [UserController::class, 'index']);
