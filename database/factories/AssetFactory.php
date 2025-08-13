@@ -9,6 +9,7 @@ use App\Models\Cabin;
 use App\Models\Boat;
 use App\Models\Blog;
 use App\Models\Transaction;
+use App\Models\Carousel;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Asset>
@@ -29,6 +30,7 @@ class AssetFactory extends Factory
             Boat::class,
             Blog::class,
             Transaction::class,
+            Carousel::class,
         ];
 
         // Pilih salah satu tipe secara acak
@@ -37,11 +39,27 @@ class AssetFactory extends Factory
         // Buat instance dari model yang terpilih menggunakan factory masing-masing
         $assetable = $selectedType::factory()->create();
 
+        // Generate Unsplash URL dengan tema yang sesuai
+        $travelKeywords = [
+            'boat,sea',
+            'beach,ocean',
+            'mountain,landscape',
+            'tropical,island',
+            'adventure,travel',
+            'sunset,water',
+            'nature,forest',
+            'cultural,heritage'
+        ];
+
+        $randomKeyword = $this->faker->randomElement($travelKeywords);
+        $unsplashUrl = "https://source.unsplash.com/random/1200x600?{$randomKeyword}";
+
         return [
             'title'         => $this->faker->sentence,
             'description'   => $this->faker->paragraph,
-            'file_path'     => $this->faker->imageUrl(),
-            'file_url'      => $this->faker->url,
+            'file_path'     => $unsplashUrl, // Gunakan Unsplash
+            'file_url'      => $unsplashUrl, // Gunakan Unsplash juga
+            'is_external'   => true, // Set sebagai external karena menggunakan URL
             // Setter untuk relasi polymorphic
             'assetable_id'   => $assetable->id,
             'assetable_type' => $assetable->getMorphClass(),
