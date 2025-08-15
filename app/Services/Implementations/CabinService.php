@@ -116,6 +116,18 @@ class CabinService implements CabinServiceInterface
      */
     public function updateCabin($id, array $data)
     {
+        // Ambil cabin existing untuk memastikan boat_id tidak hilang
+        $existingCabin = $this->getCabinById($id);
+
+        if (!$existingCabin) {
+            return null;
+        }
+
+        // Jika boat_id tidak dikirim, gunakan yang existing
+        if (!isset($data['boat_id'])) {
+            $data['boat_id'] = $existingCabin->boat_id;
+        }
+
         $result = $this->cabinRepository->updateCabin($id, $data);
         $this->clearCabinCaches();
         return $result;

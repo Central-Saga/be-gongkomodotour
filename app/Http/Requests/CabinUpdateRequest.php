@@ -1,24 +1,27 @@
-<?php 
+<?php
 
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CabinUpdateRequest extends FormRequest {
-    public function authorize() {
+class CabinUpdateRequest extends FormRequest
+{
+    public function authorize()
+    {
         return true;
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [
-            'boat_id' => 'sometimes|required|exists:boat,id',
+            'boat_id' => 'sometimes|exists:boat,id',
             'cabin_name' => 'sometimes|required|string|max:255',
-            'bed_type' => 'sometimes|required|string|in:single,double,queen,king',
+            'bed_type' => 'sometimes|required|string|in:Single,Double,Queen,King',
             'min_pax' => 'sometimes|required|integer|min:1',
             'max_pax' => 'sometimes|required|integer|min:1',
             'base_price' => 'sometimes|required|numeric|min:0',
             'additional_price' => 'nullable|numeric|min:0',
-            'status' => 'sometimes|required|in:available,booked',
+            'status' => 'sometimes|required|in:Aktif,Non Aktif',
         ];
     }
 }
