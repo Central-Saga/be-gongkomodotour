@@ -48,7 +48,7 @@ class AssetStoreRequest extends FormRequest
             'transaction' => 'transactions',
             'blog' => 'blog',
             'trip' => 'trips',
-            'carousel' => 'carousels',
+            'carousel' => 'carousel',
         ];
 
         return $tables[$modelType] ?? 'galleries';
