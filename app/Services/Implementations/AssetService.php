@@ -9,6 +9,7 @@ use App\Models\Cabin;
 use App\Models\Transaction;
 use App\Models\Blog;
 use App\Models\Trips;
+use App\Models\Carousel;
 use App\Services\Contracts\AssetServiceInterface;
 use App\Repositories\Contracts\AssetRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
@@ -31,6 +32,7 @@ class AssetService implements AssetServiceInterface
         'transaction' => Transaction::class,
         'blog' => Blog::class,
         'trip' => Trips::class,
+        'carousel' => \App\Models\Carousel::class,
     ];
 
     /**
