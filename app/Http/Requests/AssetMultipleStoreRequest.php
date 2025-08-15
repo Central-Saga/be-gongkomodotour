@@ -22,7 +22,7 @@ class AssetMultipleStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model_type' => 'required|string|in:gallery,boat,cabin,transaction,blog,trip',
+            'model_type' => 'required|string|in:gallery,boat,cabin,transaction,blog,trip,carousel',
             'model_id' => 'required|integer|exists:' . $this->getModelTable($this->model_type) . ',id',
 
             // Untuk upload multiple file
@@ -60,6 +60,7 @@ class AssetMultipleStoreRequest extends FormRequest
             'transaction' => 'transactions',
             'blog' => 'blog',
             'trip' => 'trips',
+            'carousel' => 'carousels',
         ];
 
         return $tables[$modelType] ?? 'galleries';

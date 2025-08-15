@@ -22,7 +22,7 @@ class AssetStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model_type' => 'required|string|in:gallery,boat,cabin,transaction,blog,trip',
+            'model_type' => 'required|string|in:gallery,boat,cabin,transaction,blog,trip,carousel',
             'model_id' => 'required|integer|exists:' . $this->getModelTable($this->model_type) . ',id',
             'file' => 'required_without:file_url|file|mimes:jpeg,png,jpg,gif|max:10240',
             'file_url' => 'required_without:file|url',
@@ -48,6 +48,7 @@ class AssetStoreRequest extends FormRequest
             'transaction' => 'transactions',
             'blog' => 'blog',
             'trip' => 'trips',
+            'carousel' => 'carousels',
         ];
 
         return $tables[$modelType] ?? 'galleries';
