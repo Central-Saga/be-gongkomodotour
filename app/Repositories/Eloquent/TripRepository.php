@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Trips;
 use App\Repositories\Contracts\TripRepositoryInterface;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TripRepository implements TripRepositoryInterface
 {

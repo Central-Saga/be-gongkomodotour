@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Itineraries;
 use App\Repositories\Contracts\ItinerariesRepositoryInterface;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ItinerariesRepository implements ItinerariesRepositoryInterface
 {

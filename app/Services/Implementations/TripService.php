@@ -521,16 +521,27 @@ class TripService implements TripServiceInterface
         try {
             DB::beginTransaction();
 
+            // Get trip first to ensure it exists
+            $trip = $this->getTripById($id);
+            if (!$trip) {
+                throw new \Exception("Trip with ID {$id} not found.");
+            }
+
             // Delete related data first
-            $this->itinerariesRepository->deleteItineraries($id);
-            $this->flightScheduleRepository->deleteFlightSchedule($id);
-            $this->tripDurationRepository->deleteTripDuration($id);
+            // Delete itineraries through trip durations
+            $tripDurations = $trip->tripDuration;
+            foreach ($tripDurations as $tripDuration) {
+                $tripDuration->itineraries()->delete();
+            }
+            
+            // Delete flight schedules by trip_id
+            $trip->flightSchedule()->delete();
+            
+            // Delete trip durations by trip_id
+            $trip->tripDuration()->delete();
 
             // Delete related assets
-            $trip = $this->getTripById($id);
-            if ($trip) {
-                $trip->assets()->delete();
-            }
+            $trip->assets()->delete();
 
             // Delete the trip
             $result = $this->tripRepository->deleteTrip($id);

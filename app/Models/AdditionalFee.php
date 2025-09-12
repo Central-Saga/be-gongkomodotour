@@ -27,7 +27,7 @@ class AdditionalFee extends Model
 
     public function trip()
     {
-        return $this->belongsTo(Trip::class);
+        return $this->belongsTo(Trips::class, 'trip_id', 'id');
     }
 
     /**

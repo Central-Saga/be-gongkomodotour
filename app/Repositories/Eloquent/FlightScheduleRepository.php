@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\FlightSchedule;
 use App\Repositories\Contracts\FlightScheduleRepositoryInterface;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class FlightScheduleRepository implements FlightScheduleRepositoryInterface
 {
