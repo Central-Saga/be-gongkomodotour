@@ -78,6 +78,14 @@ interface AdditionalFeeRepositoryInterface
     public function deleteAdditionalFeesNotIn($trip_id, $existing_id);
 
     /**
+     * Menghapus semua additional fees berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteAdditionalFeesByTripId($trip_id);
+
+    /**
      * Mengupdate additional fee status.
      *
      * @param int $id

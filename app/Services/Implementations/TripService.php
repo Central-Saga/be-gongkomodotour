@@ -522,9 +522,10 @@ class TripService implements TripServiceInterface
             DB::beginTransaction();
 
             // Delete related data first
-            $this->itinerariesRepository->deleteItineraries($id);
-            $this->flightScheduleRepository->deleteFlightSchedule($id);
-            $this->tripDurationRepository->deleteTripDuration($id);
+            $this->itinerariesRepository->deleteItinerariesByTripId($id);
+            $this->flightScheduleRepository->deleteFlightScheduleByTripId($id);
+            $this->tripDurationRepository->deleteTripDurationByTripId($id);
+            $this->additionalFeeRepository->deleteAdditionalFeesByTripId($id);
 
             // Delete related assets
             $trip = $this->getTripById($id);

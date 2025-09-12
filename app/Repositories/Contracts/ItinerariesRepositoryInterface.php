@@ -69,6 +69,14 @@ interface ItinerariesRepositoryInterface
     public function deleteItinerariesNotIn($trip_id, $existing_id);
 
     /**
+     * Menghapus semua itineraries berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteItinerariesByTripId($trip_id);
+
+    /**
      * Mengupdate itineraries status.
      *
      * @param int $id

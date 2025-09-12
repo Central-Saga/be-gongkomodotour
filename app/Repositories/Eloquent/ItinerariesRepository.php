@@ -166,6 +166,33 @@ class ItinerariesRepository implements ItinerariesRepositoryInterface
     }
 
     /**
+     * Menghapus semua itineraries berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteItinerariesByTripId($trip_id)
+    {
+        try {
+            // Cari semua trip_duration_ids yang terkait dengan trip_id
+            $tripDurationIds = \App\Models\TripDuration::where('trip_id', $trip_id)->pluck('id');
+            
+            if ($tripDurationIds->isEmpty()) {
+                Log::info("No trip durations found for trip_id {$trip_id}");
+                return true; // Tidak ada data untuk dihapus, return true
+            }
+            
+            // Hapus semua itineraries yang terkait dengan trip_duration_ids tersebut
+            $deleted = $this->itineraries->whereIn('trip_duration_id', $tripDurationIds)->delete();
+            Log::info("Deleted {$deleted} itineraries for trip_id {$trip_id}");
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Failed to delete itineraries with trip_id {$trip_id}: {$e->getMessage()}");
+            return false;
+        }
+    }
+
+    /**
      * Mengupdate itineraries status.
      *
      * @param int $id

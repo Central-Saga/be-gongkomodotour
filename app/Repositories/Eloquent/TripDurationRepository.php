@@ -166,6 +166,24 @@ class TripDurationRepository implements TripDurationRepositoryInterface
     }
 
     /**
+     * Menghapus semua tripduration berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteTripDurationByTripId($trip_id)
+    {
+        try {
+            $deleted = $this->tripduration->where('trip_id', $trip_id)->delete();
+            Log::info("Deleted {$deleted} trip durations for trip_id {$trip_id}");
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Failed to delete trip durations with trip_id {$trip_id}: {$e->getMessage()}");
+            return false;
+        }
+    }
+
+    /**
      * Mengupdate tripduration status.
      *
      * @param int $id

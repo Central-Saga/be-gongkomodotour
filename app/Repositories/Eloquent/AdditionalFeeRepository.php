@@ -185,6 +185,24 @@ class AdditionalFeeRepository implements AdditionalFeeRepositoryInterface
     }
 
     /**
+     * Menghapus semua additional fees berdasarkan trip_id.
+     *
+     * @param int $trip_id
+     * @return mixed
+     */
+    public function deleteAdditionalFeesByTripId($trip_id)
+    {
+        try {
+            $deleted = $this->additionalFee->where('trip_id', $trip_id)->delete();
+            Log::info("Deleted {$deleted} additional fees for trip_id {$trip_id}");
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Failed to delete additional fees with trip_id {$trip_id}: {$e->getMessage()}");
+            return false;
+        }
+    }
+
+    /**
      * Mengupdate additional fee status.
      *
      * @param int $id
