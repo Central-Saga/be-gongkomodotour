@@ -76,4 +76,13 @@ interface CabinRepositoryInterface
      * @return mixed
      */
     public function updateCabinStatus($id, $status);
+
+    /**
+     * Menghapus cabin yang tidak ada di boat.
+     *
+     * @param int $boatId
+     * @param array $cabinIds
+     * @return mixed
+     */
+    public function deleteCabinsNotIn($boatId, array $cabinIds);
 }

@@ -211,11 +211,11 @@ class BoatService implements BoatServiceInterface
 
             // Update cabins secara parsial
             if (isset($data['cabins'])) {
-                Log::info($data['cabins']);
+                Log::info('Cabins data: ' . json_encode($data['cabins']));
                 $payloadCabinIds = [];
-                Log::info($payloadCabinIds);
+                Log::info('Payload cabin IDs: ' . json_encode($payloadCabinIds));
                 foreach ($data['cabins'] as $cabinData) {
-                    Log::info($cabinData);
+                    Log::info('Cabin data: ' . json_encode($cabinData));
                     $cabinData['boat_id'] = $boat->id;
 
                     if (isset($cabinData['id'])) {
@@ -251,6 +251,7 @@ class BoatService implements BoatServiceInterface
                     } else {
                         // Buat cabin baru
                         $newCabinData = Arr::only($cabinData, [
+                            'boat_id',
                             'cabin_name',
                             'bed_type',
                             'min_pax',
@@ -356,7 +357,7 @@ class BoatService implements BoatServiceInterface
         if ($boat) {
             $result = $this->boatRepository->updateBoatStatus($id, $status);
 
-            $this->clearBoatCaches($id);
+            $this->clearBoatCaches();
         }
     }
 
