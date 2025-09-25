@@ -39,14 +39,16 @@ class HotelOccupanciesFactory extends Factory
             ]),
             'hotel_type' => $this->faker->randomElement(['Luxury', 'Budget', 'Boutique']),
             'occupancy' => $this->faker->randomElement([
-                'Single Occupancy', 
-                'Double Occupancy', 
-                'Twin Occupancy', 
-                'Triple Occupancy', 
-                'Quad Occupancy',
-                'Family Room',
+                'Single',
+                'Double',
+                'Twin',
+                'Triple',
+                'Quad',
+                'Family',
                 'Suite',
-                'Deluxe Room'
+                'Studio',
+                'Deluxe Twin',
+                'Deluxe Double'
             ]),
             'price' => $this->faker->randomFloat(2, 50, 500),
             'status' => $this->faker->randomElement(array: ['Aktif', 'Non Aktif']),
