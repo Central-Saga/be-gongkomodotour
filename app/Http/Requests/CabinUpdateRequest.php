@@ -16,7 +16,7 @@ class CabinUpdateRequest extends FormRequest
         return [
             'boat_id' => 'sometimes|exists:boat,id',
             'cabin_name' => 'sometimes|required|string|max:255',
-            'bed_type' => 'sometimes|required|string|in:Single,Double,Queen,King',
+            'bed_type' => 'sometimes|required|string|max:255',
             'min_pax' => 'sometimes|required|integer|min:1',
             'max_pax' => 'sometimes|required|integer|min:1',
             'base_price' => 'sometimes|required|numeric|min:0',

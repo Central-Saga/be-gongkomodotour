@@ -15,7 +15,18 @@ class CabinFactory extends Factory
         return [
             'boat_id' => Boat::factory(),
             'cabin_name' => 'Cabin ' . $this->faker->word,
-            'bed_type' => $this->faker->randomElement(['single', 'double', 'queen', 'king']),
+            'bed_type' => $this->faker->randomElement([
+                'Single Bed',
+                'Double Bed', 
+                'Queen Bed',
+                'King Bed',
+                'Twin Beds',
+                'Bunk Beds',
+                'Sofa Bed',
+                'Murphy Bed',
+                'Waterbed',
+                'Futon'
+            ]),
             'min_pax' => 1,
             'max_pax' => $this->faker->numberBetween(2, 6),
             'base_price' => $this->faker->randomFloat(2, 100, 2000),
