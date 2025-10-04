@@ -135,6 +135,7 @@ class BoatService implements BoatServiceInterface
                     $cabinData = Arr::only($cabin, [
                         'cabin_name',
                         'bed_type',
+                        'bathroom',
                         'min_pax',
                         'max_pax',
                         'base_price',
@@ -223,6 +224,7 @@ class BoatService implements BoatServiceInterface
                         $cabinUpdateData = Arr::only($cabinData, [
                             'cabin_name',
                             'bed_type',
+                            'bathroom',
                             'min_pax',
                             'max_pax',
                             'base_price',
@@ -254,6 +256,7 @@ class BoatService implements BoatServiceInterface
                             'boat_id',
                             'cabin_name',
                             'bed_type',
+                            'bathroom',
                             'min_pax',
                             'max_pax',
                             'base_price',

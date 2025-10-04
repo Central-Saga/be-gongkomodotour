@@ -19,6 +19,7 @@ class CabinResource extends JsonResource
             'boat_id'          => $this->boat_id,
             'cabin_name'       => $this->cabin_name,
             'bed_type'         => $this->bed_type,
+            'bathroom'         => $this->bathroom,
             'min_pax'          => $this->min_pax,
             'max_pax'          => $this->max_pax,
             'base_price'       => $this->base_price,

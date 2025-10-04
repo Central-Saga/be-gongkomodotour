@@ -10,7 +10,7 @@ class Cabin extends Model
     use HasFactory;
 
     protected $table = 'cabin';
-    protected $fillable = ['boat_id', 'cabin_name', 'bed_type', 'min_pax', 'max_pax', 'base_price', 'additional_price', 'status'];
+    protected $fillable = ['boat_id', 'cabin_name', 'bed_type', 'bathroom', 'min_pax', 'max_pax', 'base_price', 'additional_price', 'status'];
 
     public function boat()
     {

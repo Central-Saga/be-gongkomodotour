@@ -27,6 +27,18 @@ class CabinFactory extends Factory
                 'Waterbed',
                 'Futon'
             ]),
+            'bathroom' => $this->faker->randomElement([
+                'Private Bathroom',
+                'Shared Bathroom',
+                'En-suite Bathroom',
+                'Jack and Jill Bathroom',
+                'Master Bathroom',
+                'Guest Bathroom',
+                'Half Bathroom',
+                'Full Bathroom',
+                'Wet Room',
+                'Powder Room'
+            ]),
             'min_pax' => 1,
             'max_pax' => $this->faker->numberBetween(2, 6),
             'base_price' => $this->faker->randomFloat(2, 100, 2000),
