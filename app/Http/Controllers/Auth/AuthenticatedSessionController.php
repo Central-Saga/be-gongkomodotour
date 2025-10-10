@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -18,19 +19,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): JsonResponse
     {
-        // $request->authenticate();
+        // Aktifkan rate limiter untuk mencegah brute force attack
+        $request->authenticate();
 
-        // $request->session()->regenerate();
+        // Manual authentication sudah ditangani oleh $request->authenticate()
+        // yang sudah include rate limiting dan error handling
 
-        // return response()->noContent();
-
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'message' => 'Invalid login details'
-            ], 401);
-        }
-
-        $user = Auth::user()->load('customer');
+        /** @var User $user */
+        $user = Auth::user();
+        $user->load('customer');
 
         if ($user->status !== 'Aktif') {
             Auth::logout();

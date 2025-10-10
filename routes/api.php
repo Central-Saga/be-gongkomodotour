@@ -44,12 +44,17 @@ Route::get('/debug-server', function () {
     ]);
 });
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-Route::post('/register', [RegisteredUserController::class, 'store']);
+// Authentication routes dengan rate limiting
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('throttle:5,1'); // 5 percobaan per menit
+
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('throttle:3,1'); // 3 percobaan per menit
+
 Route::post('/logout', [
     AuthenticatedSessionController::class,
     'destroy'
-])->middleware('auth:sanctum');
+])->middleware(['auth:sanctum', 'throttle:10,1']); // 10 percobaan per menit
 
 // Route publik untuk landing page
 Route::prefix('landing-page')->group(function () {
@@ -81,7 +86,7 @@ Route::prefix('landing-page')->group(function () {
     Route::get('/transactions/{id}', [TransactionController::class, 'show']);
 });
 
-Route::middleware('auth:sanctum', 'check.user.status')->group(function () {
+Route::middleware(['auth:sanctum', 'check.user.status'])->group(function () {
     // Permissions
     Route::middleware('permission:mengelola permissions')->group(function () {
         Route::apiResource('permissions', PermissionController::class);

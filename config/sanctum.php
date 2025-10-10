@@ -47,7 +47,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => null, // null = token tidak expire, atau set ke menit (contoh: 60 untuk 1 jam)
 
     /*
     |--------------------------------------------------------------------------
