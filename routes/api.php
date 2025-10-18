@@ -174,6 +174,9 @@ Route::middleware(['auth:sanctum', 'check.user.status'])->group(function () {
     // Public file serving dengan keamanan yang lebih baik
     Route::get('files/asset/{id}', [FileController::class, 'serveAsset']);
     Route::get('files/{path}', [FileController::class, 'serveFile'])->where('path', '.*');
+    
+    // Route untuk serve asset berdasarkan path (untuk kompatibilitas)
+    Route::get('assets/{path}', [FileController::class, 'serveFile'])->where('path', '.*');
     // Bookings - Protected Routes
     Route::middleware('permission:mengelola bookings')->group(function () {
         Route::apiResource('bookings', BookingController::class)->except(['store']);
