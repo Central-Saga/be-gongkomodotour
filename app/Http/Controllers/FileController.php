@@ -62,6 +62,7 @@ class FileController extends Controller
                 'image/png',
                 'image/gif',
                 'image/webp',
+                'image/avif',
                 'application/pdf',
                 'text/plain'
             ];
@@ -127,6 +128,7 @@ class FileController extends Controller
                 'image/png',
                 'image/gif',
                 'image/webp',
+                'image/avif',
                 'application/pdf',
                 'text/plain'
             ];

@@ -24,7 +24,7 @@ class AssetStoreRequest extends FormRequest
         return [
             'model_type' => 'required|string|in:gallery,boat,cabin,transaction,blog,trip,carousel',
             'model_id' => 'required|integer|exists:' . $this->getModelTable($this->model_type) . ',id',
-            'file' => 'required_without:file_url|file|mimes:jpeg,png,jpg,gif|max:10240',
+            'file' => 'required_without:file_url|file|mimes:jpeg,png,jpg,gif,webp,avif|max:10240',
             'file_url' => 'required_without:file|url',
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',

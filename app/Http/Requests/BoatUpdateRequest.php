@@ -31,14 +31,14 @@ class BoatUpdateRequest extends FormRequest
             'cabins.*.status' => 'required_with:cabins|in:Aktif,Non Aktif',
             // Validasi untuk files cabin (jika ada)
             'cabins.*.files' => 'sometimes|array',
-            'cabins.*.files.*' => 'file|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'cabins.*.files.*' => 'file|mimes:jpeg,png,jpg,gif,webp,avif|max:10240',
             'cabins.*.file_titles' => 'sometimes|array',
             'cabins.*.file_titles.*' => 'string|max:255',
             'cabins.*.file_descriptions' => 'sometimes|array',
             'cabins.*.file_descriptions.*' => 'nullable|string',
             'assets' => 'sometimes|array',
             'assets.*.id' => 'nullable|exists:assets,id',
-            'assets.*.file' => 'sometimes|required_with:assets|file|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'assets.*.file' => 'sometimes|required_with:assets|file|mimes:jpeg,png,jpg,gif,webp,avif|max:10240',
             'assets.*.title' => 'sometimes|required_with:assets|string|max:255',
             'assets.*.description' => 'nullable|string'
         ];
@@ -47,9 +47,9 @@ class BoatUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'cabins.*.files.*.mimes' => 'File cabin harus berupa gambar (jpeg, png, jpg, gif, webp)',
+            'cabins.*.files.*.mimes' => 'File cabin harus berupa gambar (jpeg, png, jpg, gif, webp, avif)',
             'cabins.*.files.*.max' => 'Ukuran file cabin maksimal 10MB',
-            'assets.*.file.mimes' => 'File asset boat harus berupa gambar (jpeg, png, jpg, gif, webp)',
+            'assets.*.file.mimes' => 'File asset boat harus berupa gambar (jpeg, png, jpg, gif, webp, avif)',
             'assets.*.file.max' => 'Ukuran file asset boat maksimal 10MB',
         ];
     }
