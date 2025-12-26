@@ -37,7 +37,7 @@ class TransactionStoreRequest extends FormRequest
             'assets' => 'nullable|array',
             'assets.*.title' => 'required_with:assets|string|max:255',
             'assets.*.description' => 'nullable|string',
-            'assets.*.file' => 'required_with:assets|file|mimes:jpeg,png,jpg,pdf|max:10240',
+            'assets.*.file' => 'required_with:assets|file|mimes:jpeg,png,jpg,pdf,heic|max:10240',
             'assets.*.is_external' => 'nullable|boolean',
         ];
     }
