@@ -44,10 +44,6 @@ Route::get('/debug-server', function () {
     ]);
 });
 
-Route::get('csrf-token', function (Request $request) {
-    return response()->json(['csrf_token' => $request->session()->token()]);
-})->middleware('web');
-
 // Authentication routes dengan rate limiting
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('throttle:5,1'); // 5 percobaan per menit
