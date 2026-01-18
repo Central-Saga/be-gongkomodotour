@@ -12,8 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(prepend: [
-            \App\Http\Middleware\EncryptCookies::class,
+        $middleware->encryptCookies(except: [
+            'XSRF-TOKEN',
         ]);
 
         $middleware->api(prepend: [
