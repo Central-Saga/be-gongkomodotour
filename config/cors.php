@@ -19,8 +19,12 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // Mengizinkan semua origin untuk sementara (akan diubah ke spesifik setelah stabil)
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'https://sandbox.gongkomodotour.com',
+        // Tambahkan domain lain jika diperlukan:
+        // 'https://gongkomodotour.com',
+        // 'https://www.gongkomodotour.com',
+    ],
 
     'allowed_origins_patterns' => [],
 
