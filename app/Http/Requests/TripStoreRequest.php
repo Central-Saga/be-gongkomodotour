@@ -69,7 +69,8 @@ class TripStoreRequest extends FormRequest
             'trip_durations.*.prices' => 'sometimes|array',
             'trip_durations.*.prices.*.pax_min' => 'required_with:trip_durations.*.prices|integer',
             'trip_durations.*.prices.*.pax_max' => 'required_with:trip_durations.*.prices|integer',
-            'trip_durations.*.prices.*.price_per_pax' => 'required_with:trip_durations.*.prices|numeric|min:0',
+            'trip_durations.*.prices.*.price_type' => 'sometimes|in:fixed,by_request',
+            'trip_durations.*.prices.*.price_per_pax' => 'nullable|numeric|min:0',
             'trip_durations.*.prices.*.status' => 'required_with:trip_durations.*.prices|in:Aktif,Non Aktif',
             'trip_durations.*.prices.*.region' => 'required_with:trip_durations.*.prices|in:Domestic,Overseas,Domestic & Overseas',
 
@@ -97,6 +98,38 @@ class TripStoreRequest extends FormRequest
     }
 
     /**
+     * Configure the validator.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $durations = $this->input('trip_durations', []);
+            foreach ($durations as $dIndex => $duration) {
+                $prices = $duration['prices'] ?? [];
+                foreach ($prices as $pIndex => $price) {
+                    $priceType = $price['price_type'] ?? 'fixed';
+                    $pricePerPax = $price['price_per_pax'] ?? null;
+                    if ($priceType === 'fixed') {
+                        if ($pricePerPax === null) {
+                            $validator->errors()->add(
+                                "trip_durations.{$dIndex}.prices.{$pIndex}.price_per_pax",
+                                'The price per pax is required when price type is fixed.'
+                            );
+                        }
+                    } else {
+                        if ($pricePerPax !== null) {
+                            $validator->errors()->add(
+                                "trip_durations.{$dIndex}.prices.{$pIndex}.price_per_pax",
+                                'The price per pax must be null when price type is by_request.'
+                            );
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation(): void
@@ -107,6 +140,26 @@ class TripStoreRequest extends FormRequest
             'surcharges' => $this->convertSurchargesToFloat($this->input('surcharges', [])),
             'has_boat' => (bool) $this->has_boat
         ]);
+
+        // Map price_per_pax -> price_per_pax_nullable and force null for by_request (default price_type = fixed for backward compatibility)
+        $durations = $this->input('trip_durations', []);
+        foreach ($durations as $dKey => $duration) {
+            if (isset($duration['prices'])) {
+                foreach ($duration['prices'] as $pKey => $price) {
+                    $type = $price['price_type'] ?? 'fixed';
+                    if (!isset($durations[$dKey]['prices'][$pKey]['price_type'])) {
+                        $durations[$dKey]['prices'][$pKey]['price_type'] = $type;
+                    }
+                    $durations[$dKey]['prices'][$pKey]['price_per_pax_nullable'] = $type === 'by_request'
+                        ? null
+                        : ($price['price_per_pax'] ?? null);
+                    if ($type === 'by_request') {
+                        $durations[$dKey]['prices'][$pKey]['price_per_pax'] = null;
+                    }
+                }
+            }
+        }
+        $this->merge(['trip_durations' => $durations]);
 
         // Konversi is_required ke boolean
         if ($this->has('additional_fees')) {
@@ -129,8 +182,11 @@ class TripStoreRequest extends FormRequest
         return array_map(function ($duration) {
             if (isset($duration['prices'])) {
                 $duration['prices'] = array_map(function ($price) {
-                    if (isset($price['price_per_pax'])) {
+                    if (isset($price['price_per_pax']) && $price['price_per_pax'] !== null) {
                         $price['price_per_pax'] = (float) $price['price_per_pax'];
+                    }
+                    if (isset($price['price_per_pax_nullable']) && $price['price_per_pax_nullable'] !== null) {
+                        $price['price_per_pax_nullable'] = (float) $price['price_per_pax_nullable'];
                     }
                     return $price;
                 }, $duration['prices']);

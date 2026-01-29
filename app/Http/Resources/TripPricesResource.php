@@ -19,6 +19,7 @@ class TripPricesResource extends JsonResource
             'trip_duration_id' => $this->trip_duration_id,
             'pax_min' => $this->pax_min,
             'pax_max' => $this->pax_max,
+            'price_type' => $this->price_type ?? 'fixed',
             'price_per_pax' => $this->price_per_pax,
             'status' => $this->status,
             'region' => $this->region,

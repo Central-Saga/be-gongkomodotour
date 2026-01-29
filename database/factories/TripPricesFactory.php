@@ -41,11 +41,14 @@ class TripPricesFactory extends Factory
         $region = $this->faker->randomElement(['Domestic', 'Overseas', 'Domestic & Overseas']);
         $range = $this->faker->randomElement($priceRanges[$region]);
 
+        $price = $this->faker->numberBetween($range[2], $range[3]);
+
         return [
             'trip_duration_id' => null, // Will be set by relationship
             'pax_min' => $range[0],
             'pax_max' => $range[1],
-            'price_per_pax' => $this->faker->numberBetween($range[2], $range[3]),
+            'price_type' => 'fixed',
+            'price_per_pax_nullable' => $price,
             'status' => 'Aktif',
             'region' => $region,
         ];
